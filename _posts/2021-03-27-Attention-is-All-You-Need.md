@@ -12,6 +12,6 @@ author_profile: True
 toc: True
 ---
 
-# Attention is All You Need
+
 
 Contents
