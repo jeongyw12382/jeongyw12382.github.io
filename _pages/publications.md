@@ -1,3 +1,10 @@
+---
+title: Publications
+layout: publications
+permalink: /publications
+author_profile: True
+---
+
 # Publications
 
 ## 2021
