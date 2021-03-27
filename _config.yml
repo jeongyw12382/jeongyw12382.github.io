@@ -97,8 +97,8 @@ author:
   name             : "Yoonwoo Jeong"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "I am a computer vision researcher, working on CVLAB, POSTECH"
-  location         : "77 Cheongam Rd, Nam-gu, \n Pohang, Gyeongbuk, 37673 \nKorea"
-  email            :
+  location         : "Pohang, Gyeongbuk, 37673 \nKorea"
+  email            : "jyw123822@gmail.com"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
