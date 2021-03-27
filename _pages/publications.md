@@ -1,7 +1,7 @@
 ---
 title: Publications
 layout: publications
-permalink: /publications
+permalink: /publications/
 author_profile: True
 ---
 
