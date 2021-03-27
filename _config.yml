@@ -95,7 +95,7 @@ analytics:
 # Site Author
 author:
   name             : "YoonwooJeong"
-  avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  avatar           : "/assets/images/yoonwoo.png" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "I am a computer vision researcher, working on CVLAB, POSTECH"
   location         : "Pohang, Gyeongbuk, 37673 \nKorea"
   links:
