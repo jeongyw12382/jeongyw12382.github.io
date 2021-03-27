@@ -16,13 +16,13 @@ minimal_mistakes_skin    : "mint" # "air", "aqua", "contrast", "dark", "dirt", "
 
 # Site Settings
 locale                   : "en-US"
-title                    : "Yoon Woo Jeong"
+title                    : "YoonWooJeong"
 title_separator          : "-"
-subtitle                 : # site tagline that appears below site title in masthead
+subtitle                 : "Computer Vision Note"
 name                     : "Yoonwoo Jeong"
 description              : "I'm a computer vision researcher, working on POSTECH, CVLAB."
-url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
-baseurl                  : # the subpath of your site, e.g. "/blog"
+url                      : "https://yoonwoojeong.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+baseurl                  : "/main" # the subpath of your site, e.g. "/blog"
 repository               : "jeongyw12382/jeongyw12382.github.io"
 teaser                   : "assets/images/yoonwoo.jpg" # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 logo                     : # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
