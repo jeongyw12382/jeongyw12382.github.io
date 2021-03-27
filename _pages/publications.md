@@ -1,12 +1,5 @@
 ---
 title: Publications
-categories:
-  - jekyll
-  - minimal-mistakes
-tags:
-  - github pages
-  - jekyll 
-  - minimal-mistakes
 layout: publications
 permalink: /publications/
 author_profile: True
@@ -20,4 +13,4 @@ author_profile: True
 
 Learning to Distill Convolutional Features into Compact Local Descriptors (WACV2021) (2nd author)
 
-- Jongmin Lee, Yoonwoo Jeong, Seungwook Kim, Juhong Min, Minsu Cho
+- Jongmin Lee, **Yoonwoo Jeong**, Seungwook Kim, Juhong Min, Minsu Cho
