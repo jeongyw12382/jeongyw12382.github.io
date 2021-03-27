@@ -1,5 +1,12 @@
 ---
 title: Publications
+categories:
+  - jekyll
+  - minimal-mistakes
+tags:
+  - github pages
+  - jekyll 
+  - minimal-mistakes
 layout: publications
 permalink: /publications/
 author_profile: True
