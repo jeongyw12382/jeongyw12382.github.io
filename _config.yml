@@ -12,11 +12,11 @@
 
 # theme                  : "minimal-mistakes-jekyll"
 # remote_theme           : "mmistakes/minimal-mistakes"
-minimal_mistakes_skin    : "mint" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+minimal_mistakes_skin    : "air" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
 locale                   : "en-US"
-title                    : "YoonWooJeong"
+title                    : "YoonwooJeong"
 title_separator          : "-"
 subtitle                 : "Computer Vision Note"
 name                     : "Yoonwoo Jeong"
@@ -94,11 +94,10 @@ analytics:
 
 # Site Author
 author:
-  name             : "Yoonwoo Jeong"
+  name             : "YoonwooJeong"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "I am a computer vision researcher, working on CVLAB, POSTECH"
   location         : "Pohang, Gyeongbuk, 37673 \nKorea"
-  email            : "jyw123822@gmail.com"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
