@@ -17,5 +17,7 @@ This is an one-paper-summary of the paper named **Attention is All You Need**, w
 
 ![image info](/assets/images/Attention_is_All_You_Need.png)
 
+> paper link: [https://arxiv.org/abs/1706.03762.pdf](https://arxiv.org/abs/1706.03762.pdf)
+
 
 ## About Transformer
