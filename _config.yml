@@ -38,7 +38,7 @@ defaults:
 
 # Site Settings
 locale                   : "en-US"
-title                    : "YoonwooJeong"
+title                    : "One Paper Summary"
 title_separator          : "-"
 subtitle                 : "Computer Vision Note"
 name                     : "Yoonwoo Jeong"
