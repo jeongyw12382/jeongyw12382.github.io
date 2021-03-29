@@ -7,8 +7,8 @@ toc: True
 
 ## All about Transformer
 
-#### 1. Attention is All You Need (NeurIPS2017) 
-- [link](https://jeongyw12382.github.io/attention-is-all-you-need/)
+#### 1. Attention is All You Need (NeurIPS2017).
+- <span style="color:blue">[link](https://jeongyw12382.github.io/attention-is-all-you-need/)</span>
 - The first paper which introduces "Transformer" architecture. 
 
 
