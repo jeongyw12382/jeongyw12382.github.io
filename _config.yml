@@ -119,7 +119,7 @@ author:
   name             : "YoonwooJeong"
   avatar           : "/assets/images/yoonwoo.png" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "I am a computer vision researcher, working on CVLAB, POSTECH"
-  location         : "Pohang, Gyeongbuk, 37673 \nKorea"
+  location         : "Korea"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
