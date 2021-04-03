@@ -10,7 +10,16 @@ permalink: /feature-metric-registration
 last_modified_at: 2021-03-25T22:28:00
 author_profile: True
 toc: True
+header: 
+    teaser: "/assets/images/Feature-Metric-Registration-A-Fast-Semi-Supervised-Approach-For-Robust-Point-Cloud-Registration-Without-Correspondences.png"
 ---
+
+## Author Information
+**Xiaoshui Huang** (The Unitversity of Sydney, Australia) : [<ins>Google Scholar</ins>](https://scholar.google.com/citations?user=rp7mYNsAAAAJ&hl=en&oi=ao)
+
+**Guofeng Mei** (University of Technology Sydney, Australia) : [<ins>Google Scholar</ins>](https://scholar.google.com/citations?hl=en&user=VsmIGqsAAAAJ)
+    
+**Jian Zhang** (University of Technology Sydney, Australia)
 
 ## One Paper Summary
 This is an one-paper-summary of the paper named **Feature-metric Registration : A Fast Semi-supervised Appraoch for Robust Point Cloud Registration without Correspondences**, which is accepted in CVPR20. You could freely download it and use for your individual note. Feel free to contact me if you want to modify this paper summary for any public usage. 

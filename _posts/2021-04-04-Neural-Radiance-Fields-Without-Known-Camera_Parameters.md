@@ -10,7 +10,19 @@ permalink: /neural-radiance-fields-without-known-camera-parameters
 last_modified_at: 2021-04-04T22:28:00
 author_profile: True
 toc: True
+header:
+    teaser: "/assets/images/Neural_Radiance_Fields_Without_Known_Camera_Parameters.png"
 ---
+
+## Author Information
+**Zirui Wang** (Active Vision Lab, University of Oxford)
+
+**Shangzhe Wu** (Visual Geometry Group, University of Oxford): [<ins>Google Scholar</ins>](https://scholar.google.com/citations?user=36NmvrMAAAAJ&hl=en&oi=sra)
+
+**Weidi Xie** (Visual Geometry Group, University of Oxford) : [<ins>Google Scholar</ins>](https://scholar.google.com/citations?user=Vtrqj4gAAAAJ&hl=en&oi=sra)
+
+**Min Chen** (e-research Centre, University of Oxford) : [<ins>Google Scholar</ins>](https://scholar.google.com/citations?hl=en&user=GmWA-LoAAAAJ)
+
 
 ## One Paper Summary
 This is an one-paper-summary of the paper named **NeRF--: Neural Radiance Fields Without Known Camera Parameters**, which is uploaded in Arxiv21. You could freely download it and use for your individual note. Feel free to contact me if you want to modify this paper summary for any public usage. 
