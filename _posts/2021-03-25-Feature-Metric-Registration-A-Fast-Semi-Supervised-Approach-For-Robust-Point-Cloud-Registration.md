@@ -1,6 +1,6 @@
 ---
 title: "Feature-metric Registration : A Fast Semi-supervised Appraoch for Robust Point Cloud Registration without Correspondences"
-excerpt: "A short paper review of the paper"
+excerpt: "A short paper review of the paper Feature-metric Registration : A Fast Semi-supervised Appraoch for Robust Point Cloud Registration without Correspondences"
 categories:
     - 3D Registration
 tags:
