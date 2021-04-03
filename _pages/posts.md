@@ -15,8 +15,15 @@ You could enter the link by **clicking the article** you desire to read.
 
 ### [2. Transformer in Transformer (Arxiv2021)](https://jeongyw12382.github.io/transformer-in-transformer)
 
-### 3. PCT: Point Cloud Transformer (Arxiv2020)
-- TBA
+### 3. Generative Pretraining from Pixels V2 (ImageGPT) (ICML2020)
+
+### 4. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding (BERT) ()
+
+### 5. Reformer: The Efficient Transformer (ICLR2020)
+
+### 6. An Image is Worth 16X16 Words: Transformers for Image Recognition at Scale (ICLR2021)
+
+### 7. PCT: Point Cloud Transformer (Arxiv2020)
 
 ## 3D Registration
 
