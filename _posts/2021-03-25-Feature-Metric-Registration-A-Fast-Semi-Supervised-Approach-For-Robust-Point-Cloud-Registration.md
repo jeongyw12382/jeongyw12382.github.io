@@ -17,4 +17,4 @@ This is an one-paper-summary of the paper named **Feature-metric Registration : 
 
 [![](/assets/images/Feature-Metric-Registration-A-Fast-Semi-Supervised-Approach-For-Robust-Point-Cloud-Registration-Without-Correspondences.png)](/assets/images/Feature-Metric-Registration-A-Fast-Semi-Supervised-Approach-For-Robust-Point-Cloud-Registration-Without-Correspondences.png)
 
-> paper link: [<ins>https://arxiv.org/pdf/2102.07064.pdf</ins>](https://arxiv.org/pdf/2102.07064.pdf)
+> paper link: [<ins>https://arxiv.org/pdf/2005.01014.pdf</ins>](https://arxiv.org/pdf/2005.01014.pdf)
