@@ -1,6 +1,6 @@
 ---
-title: "Feature-metric Registration : A Fast Semi-supervised Appraoch for Robust Point Cloud Registration without Correspondences"
-excerpt: "A short paper review of the paper Feature-metric Registration : A Fast Semi-supervised Appraoch for Robust Point Cloud Registration without Correspondences"
+title: "Feature-metric Registration : A Fast Semi-supervised Approach for Robust Point Cloud Registration without Correspondences"
+excerpt: "A short paper review of the paper Feature-metric Registration : A Fast Semi-supervised Approach for Robust Point Cloud Registration without Correspondences"
 categories:
     - 3D Registration
 tags:
@@ -22,7 +22,7 @@ header:
 **Jian Zhang** (University of Technology Sydney, Australia)
 
 ## One Paper Summary
-This is an one-paper-summary of the paper named **Feature-metric Registration : A Fast Semi-supervised Appraoch for Robust Point Cloud Registration without Correspondences**, which is accepted in CVPR20. You could freely download it and use for your individual note. Feel free to contact me if you want to modify this paper summary for any public usage. 
+This is an one-paper-summary of the paper named **Feature-metric Registration : A Fast Semi-supervised Approach for Robust Point Cloud Registration without Correspondences**, which is accepted in CVPR20. You could freely download it and use for your individual note. Feel free to contact me if you want to modify this paper summary for any public usage. 
 
 [![](/assets/images/Feature-Metric-Registration-A-Fast-Semi-Supervised-Approach-For-Robust-Point-Cloud-Registration-Without-Correspondences.png)](/assets/images/Feature-Metric-Registration-A-Fast-Semi-Supervised-Approach-For-Robust-Point-Cloud-Registration-Without-Correspondences.png)
 
