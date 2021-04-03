@@ -7,7 +7,7 @@ tags:
     - Feature-based Registartion
     - Characteristic Pose
 permalink: /feature-metric-registration
-last_modified_at: 2021-04-04T22:28:00
+last_modified_at: 2021-03-25T22:28:00
 author_profile: True
 toc: True
 ---
