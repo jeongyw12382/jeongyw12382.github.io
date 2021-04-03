@@ -5,5 +5,3 @@ author_profile: True
 toc: True
 layout: single
 ---
-
-# Currently Preparing

@@ -7,7 +7,6 @@ layout: single
 ---
 
 ## 2021
-- Nothing yet
 
 ## 2020 
 
