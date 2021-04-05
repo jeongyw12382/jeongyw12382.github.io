@@ -15,7 +15,7 @@ You could enter the link by **clicking the article** you desire to read.
 
 ### [2. Transformer in Transformer (Arxiv2021)](https://jeongyw12382.github.io/transformer-in-transformer)
 
-### 3. Generative Pretraining from Pixels V2 (ImageGPT) (ICML2020)
+### [3. Generative Pretraining from Pixels V2 (ImageGPT) (ICML2020)](https://jeongyw12382.github.io/generative-pretraining-from-pixels-v2)
 
 ### 4. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding (BERT) ()
 
