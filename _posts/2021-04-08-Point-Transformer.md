@@ -7,7 +7,7 @@ tags:
     - Point Transformer
     - Arxiv
 permalink: /point-transformer
-last_modified_at: 2021-04-04T22:28:00
+last_modified_at: 2021-04-08T23:47:00
 author_profile: True
 toc: True
 header:
@@ -27,7 +27,7 @@ header:
 **Vladen Koltun** (Intel Labs) : [<ins>Google Scholar</ins>](https://scholar.google.com/citations?user=kg4bCpgAAAAJ&hl=en&oi=sra)
 
 ## One Paper Summary
-This is an one-paper-summary of the paper named **Point Transformer**, which is uploaded in Arxiv21. You could freely download it and use for your individual note. Feel free to contact me if you want to modify this paper summary for any public usage. 
+This is an one-paper-summary of the paper named **Point Transformer**, which is uploaded in Arxiv20. You could freely download it and use for your individual note. Feel free to contact me if you want to modify this paper summary for any public usage. 
 
 [![](/assets/images/Point_Transformer.png)](/assets/images/Point_Transformer.png)
 
