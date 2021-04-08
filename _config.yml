@@ -301,3 +301,9 @@ defaults:
       comments: # true
       share: true
       related: true
+
+# Tracking
+nalytics:
+  provider               : "google" # false (default), "google", "google-universal", "custom"
+  google:
+    tracking_id          : "G-L04Q7K29YG"
