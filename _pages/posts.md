@@ -19,6 +19,11 @@ You could enter the link by **clicking the article** you desire to read.
 6. An Image is Worth 16X16 Words: Transformers for Image Recognition at Scale (ICLR2021)
 7. [PCT: Point Cloud Transformer (Arxiv2021)](https://jeongyw12382.github.io/point-cloud-transformer)
 8. [Point Transformer (Arxiv2020)](https://jeongyw12382.github.io/point-transformer)
+9. [Training Tips for Transformer](https://jeongyw12382.github.io/training-tips-for-transformer)
+
+## Graph Neural Networks
+
+1. [E(n) Equivariant Graph Neural Networks](https://jeongyw12382.github.io/en-equivariant-graph-neural-networks)
 
 ## 3D Registration
 
