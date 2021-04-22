@@ -14,12 +14,14 @@ You could enter the link by **clicking the article** you desire to read.
 1. [Attention is All You Need (NeurIPS2017)](https://jeongyw12382.github.io/attention-is-all-you-need/)
 2. [Transformer in Transformer (Arxiv2021)](https://jeongyw12382.github.io/transformer-in-transformer)
 3. [Generative Pretraining from Pixels V2 (ImageGPT) (ICML2020)](https://jeongyw12382.github.io/generative-pretraining-from-pixels-v2)
-4. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding (BERT)
-5. Reformer: The Efficient Transformer (ICLR2020)
+4. [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](https://jeongyw12382.github.io/bert)
+5. [Reformer: The Efficient Transformer (ICLR2020)](https://jeongyw12382.github.io/reformer)
 6. An Image is Worth 16X16 Words: Transformers for Image Recognition at Scale (ICLR2021)
-7. [PCT: Point Cloud Transformer (Arxiv2021)](https://jeongyw12382.github.io/point-cloud-transformer)
-8. [Point Transformer (Arxiv2020)](https://jeongyw12382.github.io/point-transformer)
-9. [Training Tips for Transformer](https://jeongyw12382.github.io/training-tips-for-transformer)
+7. [GPT1: Improving Language Understanding by Generative Pre-training](https://jeongyw12382.github.io/gpt1)
+8. [PCT: Point Cloud Transformer (Arxiv2021)](https://jeongyw12382.github.io/point-cloud-transformer)
+9. [Point Transformer (Arxiv2020)](https://jeongyw12382.github.io/point-transformer)
+10. [Training Tips for Transformer](https://jeongyw12382.github.io/training-tips-for-transformer)
+11. [Linformer: Self-Attention with Linear Complexity](https://jeongyw12382.github.io/linformer)
 
 ## Graph Neural Networks
 
@@ -38,3 +40,7 @@ You could enter the link by **clicking the article** you desire to read.
 1. Dynamic Routing Between Capsules (NeurIPS17)
 2. STAR-Caps: Capsule Networks with Straight-Through Attentive Routing (NeurIPS19)
 3. DeepCaps: Going Deeper with Capsule Networks
+
+## Domain Generalization
+
+1. [Domain Generalization with MixStyle](https://jeongyw12382.github.io/mixstyle)
