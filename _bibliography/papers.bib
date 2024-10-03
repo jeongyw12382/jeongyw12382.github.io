@@ -1,0 +1,147 @@
+---
+---
+
+@string{CVPR = {{IEEE/CVF} Conference on Computer Vision and Pattern Recognition (<b>CVPR</b>),}}
+@string{ICCV = {{IEEE/CVF} Conference on International Conference on Computer Vision (<b>ICCV</b>),}}
+@string{ECCV = {European Conference on Computer Vision (<b>ECCV</b>),}}
+@string{IJCV = {International Journal of Computer Vision (<b>IJCV</b>),}}
+@string{ICRA = {IEEE International Conference on Robotics and Automation (<b>ICRA</b>),}}
+@string{ICML = {International Conference on Machine Learning (<b>ICML</b>),}}
+@string{WACV = {IEEE/CVF Winter Conference on Applications of Computer Vision(<b>IJCV</b>),}}
+@string{BMVC = {British Machine Vision Conference (<b>BMVC</b>),}}
+@string{NeurIPS = {Conference on Neural Information Processing Systems (<b>NeurIPS</b>),}}
+@string{NeurIPS-W = {Conference on Neural Information Processing Systems Workshop (<b>NeurIPS-W</b>),}}
+@string{NeurIPS-D = {Conference on Neural Information Processing Systems Dataset and Benchmark (<b>NeurIPS-D</b>),}}
+@string{arXiv = {arXiv preprint,}}
+
+
+@inproceedings{jeong2024nvsadapter,
+  title={NVS-Adapter: Plug-and-Play Novel View Synthesis from a Single Image},
+  author={Yoonwoo Jeong and Jinwoo Lee and Chiheon Kim and Minsu Cho and Doyup Lee},
+  abstract={Robust semantic segmentation under adverse conditions is of great importance in real-world applications. To address this challenging task in practical scenarios where labeled normal condition images are not accessible in training, we propose FREST, a novel feature restoration framework for source-free domain adaptation (SFDA) of semantic segmentation to adverse conditions. FREST alternates two steps: (1) learning the condition embedding space that only separates the condition information from the features and (2) restoring features of adverse condition images on the learned condition embedding space. By alternating these two steps, FREST gradually restores features where the effect of adverse conditions is reduced. FREST achieved a state of the art on two public benchmarks (\ie, ACDC and RobotCar) for SFDA to adverse conditions. Moreover, it shows superior generalization ability on unseen datasets.},
+  booktitle=ECCV,
+  year={2024},
+  abbr={ECCV},
+  selected={true},
+  arxiv={2312.07315},
+  website={https://postech-cvlab.github.io/nvsadapter/},
+  code={https://github.com/POSTECH-CVLab/nvsadapter}, 
+  img_path={assets/img/publication_preview/eccv_2024_nvsadapter.png}
+}
+
+@inproceedings{kim2023choir,
+  title={Stable and Consistent Prediction of 3D Characteristic Orientation via Invariant Residual Learning},
+  author={Seungwook Kim and Chunghyun Park and Yoonwoo Jeong and Jaesik Park and Minsu Cho},
+  abstract={Learning to predict reliable characteristic orientations of 3D point clouds is an important yet challenging problem, as different point clouds of the same class may have largely varying appearances. In this work, we introduce a novel method to decouple the shape geometry and semantics of the input point cloud to achieve both stability and consistency. The proposed method integrates shape-geometry-based SO(3)-equivariant learning and shape-semantics-based SO(3)-invariant residual learning, where a final characteristic orientation is obtained by calibrating an SO(3)-equivariant orientation hypothesis using an SO(3)-invariant residual rotation. In experiments, the proposed method not only demonstrates superior stability and consistency but also exhibits state-of-the-art performances when applied to point cloud part segmentation, given randomly rotated inputs.},
+  booktitle=ICML,
+  year={2023},
+  abbr={ICML},
+  arxiv={2306.11406},
+  selected={true},
+  code={https://github.com/POSTECH-CVLab/CHOIR},
+  img_path={assets/img/publication_preview/icml_2023_choir.png}
+}
+
+@inproceedings{kim2022selca,
+  title={SeLCA: Self-Supervised Learning of Canonical Axis},
+  author={Seungwook Kim and Yoonwoo Jeong and Chunghyun Park and Jaesik Park and Minsu Cho},
+  abstract={Robustness to rotation is critical for point cloud understanding tasks as point cloud features can be affected dramatically with respect to prevalent rotation changes. In this work, we introduce a novel self-supervised learning framework, dubbed SeLCA, that predicts a canonical axis of point clouds in a probabilistic manner. In essence, we propose to learn rotational-equivariance by predicting the canonical axis of point clouds, and achieve rotational-invariance by aligning the point clouds using their predicted canonical axis. When integrated into a rotation-sensitive pipeline, SeLCA achieves competitive performances on the ModelNet40 classification task under unseen rotations. Our proposed method also shows high robustness to various real-world point cloud corruptions presented by the ModelNet40-C dataset, compared to the state-of-the-art rotation-invariant method.},
+  booktitle=NeurIPS-W,
+  year={2022},
+  abbr={NeurIPS-W},
+  selected={true},
+  website={https://openreview.net/forum?id=Lwp_CgpFuA0},
+  img_path={assets/img/publication_preview/neurips_w_2022_selca.png},
+}
+
+
+@misc{jeong2022nerffac,
+  author       = {Yoonwoo Jeong and Seungjoo Shin and Kibaek Park},
+  title        = {NeRF-Factory: An awesome PyTorch NeRF collection},
+  year         = {2022},
+  url          = {https://github.com/kakaobrain/nerf-factory},
+  note         = {Version 1.0},
+  howpublished = {\url{https://github.com/kakaobrain/nerf-factory}},
+  img_path     = {assets/img/publication_preview/proj_nerf_factory.png},
+  code={https://github.com/kakaobrain/nerf-factory},
+  selected={true},
+}
+
+@inproceedings{jeong2022perf,
+  title={PeRFception: Perception using Radiance Fieldsn},
+  author={Yoonwoo Jeong* and Seungjoo Shin* and Junha Lee* and Christopher Choy and Animashree Anandkumar and Minsu Cho and Jaesik Park},
+  abstract={The recent progress in implicit 3D representation, i.e., Neural Radiance Fields (NeRFs), has made accurate and photorealistic 3D reconstruction possible in a differentiable manner. This new representation can effectively convey the information of hundreds of high-resolution images in one compact format and allows photorealistic synthesis of novel views. In this work, using the variant of NeRF called Plenoxels, we create the first large-scale implicit representation datasets for perception tasks, called the PeRFception, which consists of two parts that incorporate both object-centric and scene-centric scans for classification and segmentation. It shows a significant memory compression rate (96.4\%) from the original dataset, while containing both 2D and 3D information in a unified form. We construct the classification and segmentation models that directly take as input this implicit format and also propose a novel augmentation technique to avoid overfitting on backgrounds of images.},
+  booktitle=NeurIPS-D,
+  year={2022},
+  abbr={NeurIPS-D},
+  arxiv={2208.11537},
+  equal_contrib={true},
+  selected={true},
+  website={https://postech-cvlab.github.io/PeRFception},
+  code={https://github.com/POSTECH-CVLab/PeRFception},
+  img_path={assets/img/publication_preview/neurips_2022_perf.png}
+}
+
+
+@inproceedings{park2022fpt,
+  title={Fast Point Transformer},
+  author={Chunghyun Park and Yoonwoo Jeong and Minsu Cho and Jaesik Park},
+  abstract={The recent success of neural networks enables a better interpretation of 3D point clouds, but processing a large-scale 3D scene remains a challenging problem. Most current approaches divide a large-scale scene into small regions and combine the local predictions together. However, this scheme inevitably involves additional stages for pre- and post-processing and may also degrade the final output due to predictions in a local perspective. This paper introduces Fast Point Transformer that consists of a new lightweight self-attention layer. Our approach encodes continuous 3D coordinates, and the voxel hashing-based architecture boosts computational efficiency. The proposed method is demonstrated with 3D semantic segmentation and 3D detection. The accuracy of our approach is competitive to the best voxel-based method, and our network achieves 129 times faster inference time than the state-of-the-art, Point Transformer, with a reasonable accuracy trade-off in 3D semantic segmentation on S3DIS dataset.},
+  booktitle=CVPR,
+  year={2022},
+  abbr={CVPR},
+  arxiv={2112.04702},
+  selected={true},
+  code={https://github.com/southflame/restr},
+  website={https://cvlab.postech.ac.kr/research/FPT/},
+  img_path={assets/img/publication_preview/cvpr_2022_fpt.png}
+}
+
+
+@inproceedings{lee2022sslso,
+  title={Self-supervised Learning of Image Scale and Orientation},
+  author={Jongmin Lee and Yoonwoo Jeong and Minsu Cho},
+  abstract={We study the problem of learning to assign a characteristic pose, i.e., scale and orien- tation, for an image region of interest. Despite its apparent simplicity, the problem is non- trivial; it is hard to obtain a large-scale set of image regions with explicit pose annotations that a model directly learns from. To tackle the issue, we propose a self-supervised learn- ing framework with a histogram alignment technique. It generates pairs of image patches by random rescaling/rotating and then train an estimator to predict their scale/orientation values so that their relative difference is consistent with the rescaling/rotating used. The estimator learns to predict a non-parametric histogram distribution of scale/orientation without any supervision. Experiments show that it significantly outperforms previous methods in scale/orientation estimation and also improves image matching and 6 DoF camera pose estimation by incorporating our patch poses into a matching process.}, 
+  booktitle=BMVC,
+  year={2022},
+  abbr={BMVC},
+  selected={true},
+  website={https://www.bmvc2021-virtualconference.com/assets/papers/0836.pdf},
+  img_path={assets/img/publication_preview/bmvc_2022_sslso.png}
+}
+
+
+@article{jeong2022scnerf,
+  title={Self-calibrating Neural Radiance Fields},
+  author={Yoonwoo Jeong and Seokjun Ahn and Christopher Choy and Animashree Anandkumar and Minsu Cho and Jaesik Park},
+  abstract={In this work, we propose a camera self-calibration algorithm for generic cameras with arbitrary non-linear distortions. We jointly learn the geometry of the scene and the accurate camera parameters without any calibration objects. Our camera model consists of a pinhole model, a fourth order radial distortion, and a generic noise model that can learn arbitrary non-linear camera distortions. While traditional self-calibration algorithms mostly rely on geometric constraints, we additionally incorporate photometric consistency. This requires learning the geometry of the scene, and we use Neural Radiance Fields (NeRF). We also propose a new geometric loss function, viz., projected ray distance loss, to incorporate geometric consistency for complex non-linear camera models. We validate our approach on standard real image datasets and demonstrate that our model can learn the camera intrinsics and extrinsics (pose) from scratch without COLMAP initialization. Also, we show that learning accurate camera models in a differentiable manner allows us to improve PSNR over baselines. Our module is an easy-to-use plugin that can be applied to NeRF variants to improve performance.}, 
+  journal=ICCV,
+  year={2021},
+  abbr={ICCV},
+  selected={true},
+  arxiv={2108.13826},
+  img_path={assets/img/publication_preview/iccv_2021_scnerf.png},
+  website={https://postech-cvlab.github.io/SCNeRF/},
+  code={https://github.com/POSTECH-CVLab/SCNeRF}, 
+}
+
+
+@inproceedings{lee2021learning,
+  title={Learning to Distill Convolutional Features into Compact Local Descriptors},
+  author={Jongmin Lee and Yoonwoo Jeong and Seungwook Kim and Juhong Min and Minsu Cho},
+  abstract={
+    Extracting local descriptors or features is an essential step in solving image matching problems. 
+    Recent methods in the literature mainly focus on extracting effective descriptors, without much attention to the size of the descriptors. 
+    In this work, we study how to learn a compact yet effective local descriptor. 
+    The proposed method distills multiple intermediate features of a pretrained convolutional neural network to encode different levels of visual information from local textures to non-local semantics, resulting in local descriptors with a designated dimension. 
+    Experiments on standard benchmarks for semantic correspondence show that it achieves significantly improved performance over existing models, with up to a 100 times smaller size of descriptors. 
+    Furthermore, while trained on a small-sized dataset for semantic correspondence, the proposed method also generalizes well to other image matching tasks, performing comparable result to the state of the art on wide-baseline matching and visual localization benchmarks.
+  },
+  booktitle=WACV,
+  year={2021},
+  abbr={WACV},
+  selected={true},
+  website={https://openaccess.thecvf.com/content/WACV2021/papers/Lee_Learning_to_Distill_Convolutional_Features_Into_Compact_Local_Descriptors_WACV_2021_paper.pdf},
+  img_path={assets/img/publication_preview/wacv_2021.png}
+}
+

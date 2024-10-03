@@ -1,0 +1,9 @@
+- title: General Information
+  type: map
+  contents:
+    - name: Full Name
+      value: Yoonwoo Jeong
+    - name: Date of Birth
+      value: 13th August 1998
+    - name: Languages
+      value: Korean, English, Chinese
