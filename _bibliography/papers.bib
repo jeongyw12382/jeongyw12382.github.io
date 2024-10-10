@@ -13,7 +13,20 @@
 @string{NeurIPS-W = {Conference on Neural Information Processing Systems Workshop (<b>NeurIPS-W</b>),}}
 @string{NeurIPS-D = {Conference on Neural Information Processing Systems Dataset and Benchmark (<b>NeurIPS-D</b>),}}
 @string{arXiv = {arXiv preprint,}}
+@string{OpenReview = {OpenReview preprint,}}
 
+
+@inproceedings{jeong2024sc4dgs,
+  title={Towards Pose-Free Dynamic Neural Fields: Leveraging Geometric Foundation Models},
+  author={Yoonwoo Jeong and Junmyeong Lee and Hoseung Choi and Minsu Cho},
+  abstract={Dynamic view synthesis (DVS) from monocular videos has remarkably advanced in recent years, achieving high-fidelity rendering with reduced computational costs. Despite these advancements, the optimization of dynamic neural fields still relies on traditional structure from motion (SfM), requiring that all objects remain stationary during scene capture. To address this limitation, we present \textbf{SC-4DGS}, a pose-free optimization pipeline for dynamic Gaussian Splatting (GS) from monocular videos, which eliminates the need for SfM through self-calibration. Specifically, we jointly optimize dynamic Gaussian representations and camera poses by utilizing DUSt3R, enabling accurate calibration and rendering. Furthermore, we introduce a comprehensive benchmark, \textbf{Kubric-MRig}, that includes extensive camera and object motions along with simultaneous multi-view captures. Unlike previous benchmarks for DVS, where ground truths for camera information are absent due to the difficulty of capturing multiple viewpoints simultaneously, it facilitates evaluating both calibration and rendering quality in dynamic scenes. Experimental results demonstrate that the proposed method outperforms previous pose-free dynamic neural fields and achieves competitive performance compared to existing pose-free 3D neural fields.},
+  booktitle=OpenReview,
+  year={2024},
+  website={https://openreview.net/forum?id=zFfZEQHUiv},
+  abbr={OpenReview preprint},
+  selected={true},
+  img_path={assets/img/publication_preview/iclr_2025_sc4dgs.png}
+}
 
 @inproceedings{jeong2024nvsadapter,
   title={NVS-Adapter: Plug-and-Play Novel View Synthesis from a Single Image},
