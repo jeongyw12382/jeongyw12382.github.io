@@ -6,5 +6,5 @@ inline: true
 
 [KakaoBrain](https://www.kakaobrain.com/) (on-site), Pangyo, Korea \
 *Research Intern*
-- Research topic: on domain generalization and referring image segmentation.
+- Research topic: 3D generative models and novel view synthesis.
 - Mentor: [Doyup Lee](https://github.com/LeeDoYup)
