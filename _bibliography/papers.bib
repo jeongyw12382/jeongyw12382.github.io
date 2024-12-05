@@ -16,16 +16,16 @@
 @string{OpenReview = {OpenReview preprint,}}
 
 
-@inproceedings{jeong2024sc4dgs,
-  title={Towards Pose-Free Dynamic Neural Fields: Leveraging Geometric Foundation Models},
+@inproceedings{jeong2024rodygs,
+  title={RoDyGS: Robust Dynamic Gaussian Splatting for Casual Videos},
   author={Yoonwoo Jeong and Junmyeong Lee and Hoseung Choi and Minsu Cho},
-  abstract={Dynamic view synthesis (DVS) from monocular videos has remarkably advanced in recent years, achieving high-fidelity rendering with reduced computational costs. Despite these advancements, the optimization of dynamic neural fields still relies on traditional structure from motion (SfM), requiring that all objects remain stationary during scene capture. To address this limitation, we present \textbf{SC-4DGS}, a pose-free optimization pipeline for dynamic Gaussian Splatting (GS) from monocular videos, which eliminates the need for SfM through self-calibration. Specifically, we jointly optimize dynamic Gaussian representations and camera poses by utilizing DUSt3R, enabling accurate calibration and rendering. Furthermore, we introduce a comprehensive benchmark, \textbf{Kubric-MRig}, that includes extensive camera and object motions along with simultaneous multi-view captures. Unlike previous benchmarks for DVS, where ground truths for camera information are absent due to the difficulty of capturing multiple viewpoints simultaneously, it facilitates evaluating both calibration and rendering quality in dynamic scenes. Experimental results demonstrate that the proposed method outperforms previous pose-free dynamic neural fields and achieves competitive performance compared to existing pose-free 3D neural fields.},
-  booktitle=OpenReview,
+  abstract={Dynamic view synthesis (DVS) has advanced remarkably in recent years, achieving high-fidelity rendering while reducing computational costs. Despite the progress, optimizing dynamic neural fields from casual videos remains challenging, as these videos do not provide direct 3D information, such as camera trajectories or the underlying scene geometry. In this work, we present RoDyGS, an optimization pipeline for dynamic Gaussian Splatting from casual videos. It effectively learns motion and underlying geometry of scenes by separating dynamic and static primitives, and ensures that the learned motion and geometry are physically plausible by incorporating motion and geometric regularization terms. We also introduce a comprehensive benchmark, Kubric-MRig, that provides extensive camera and object motion along with simultaneous multi-view captures, features that are absent in previous benchmarks. Experimental results demonstrate that the proposed method significantly outperforms previous pose-free dynamic neural fields and achieves competitive rendering quality compared to existing pose-free static neural fields.},
+  booktitle=arXiv,
   year={2024},
-  website={https://openreview.net/forum?id=zFfZEQHUiv},
-  abbr={OpenReview preprint},
+  website={https://rodygs.github.io/},
+  abbr={arXiv},
   selected={true},
-  img_path={assets/img/publication_preview/iclr_2025_sc4dgs.png}
+  img_path={assets/img/publication_preview/arxiv_2024_rodygs.png}
 }
 
 @inproceedings{jeong2024nvsadapter,
