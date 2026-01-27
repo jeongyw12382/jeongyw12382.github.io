@@ -13,7 +13,37 @@
 @string{NeurIPS-W = {Conference on Neural Information Processing Systems Workshop (<b>NeurIPS-W</b>),}}
 @string{NeurIPS-D = {Conference on Neural Information Processing Systems Dataset and Benchmark (<b>NeurIPS-D</b>),}}
 @string{arXiv = {arXiv preprint,}}
+@string{NVIDIA = {NVIDIA tech report,}}
 @string{OpenReview = {OpenReview preprint,}}
+
+
+
+@inproceedings{jeong2026mvsam,
+  title={MV-SAM: Multi-view Promptable Segmentation using Pointmap Guidance},
+  author={Yoonwoo Jeong and Cheng Sun and Yu-Chiang Frank Wang and Minsu Cho and Jaesung Choe},
+  abstract={Promptable segmentation has emerged as a powerful paradigm in computer vision, enabling users to guide models in parsing complex scenes with prompts such as clicks, boxes, or textual cues. Recent advances, exemplified by the Segment Anything Model (SAM), have extended this paradigm to videos and multi-view images. However, the lack of 3D awareness often leads to inconsistent results, necessitating costly per-scene optimization to enforce 3D consistency. In this work, we introduce MV-SAM, a framework for multi-view segmentation that achieves 3D consistency using pointmaps--3D points reconstructed from unposed images by recent visual geometry models. Leveraging the pixel–point one-to-one correspondence of pointmaps, MV-SAM lifts images and prompts into 3D space, eliminating the need for explicit 3D networks or annotated 3D data. Specifically, MV-SAM extends SAM by lifting image embeddings from its pretrained encoder into 3D point embeddings, which are decoded by a transformer using cross-attention with 3D prompt embeddings. This design aligns 2D interactions with 3D geometry, enabling the model to implicitly learn consistent masks across views through 3D positional embeddings. Trained on the SA-1B dataset, our method generalizes well across domains, outperforming SAM2-Video and achieving comparable performance with per-scene optimization baselines on NVOS, SPIn-NeRF, ScanNet++, uCo3D, and DL3DV benchmarks. Code will be released.},
+  booktitle=NVIDIA,
+  year={2026},
+  arxiv={2601.17866},
+  selected={true},
+  abbr={NVIDIA tech report},
+  website={https://jaesung-choe.github.io/mv_sam},
+  img_path={assets/img/publication_preview/nvidia_2026_mvsam.png}
+}
+
+@inproceedings{jeong2025quantile,
+  title={Quantile Rendering: Efficiently Embedding High-dimensional Feature on 3D Gaussian Splatting},
+  author={Yoonwoo Jeong and Cheng Sun and Yu-Chiang Frank Wang and Minsu Cho and Jaesung Choe},
+  abstract={We present Quantile Rendering (Q-Render), an efficient rendering algorithm for 3D Gaussians that involve high-dimensional feature vectors. Unlike conventional volume rendering, which densely samples all 3D Gaussians intersecting each ray, Q-Render sparsely samples 3D Gaussians that have dominant influence along ray. The dominance is determined by transmittance change analysis, and the only sampled Gaussians will participate in subsequent rendering steps such as alpha blending. In our framework, Q-Render is integrated with a conventional 3D neural network that operates on 3D Gaussians, named Gaussian Splatting Network (GS-Net), to predict Gaussian features. We evaluate GS-Net on open-vocabulary 3D semantic segmentation using two benchmarks: (1) ScanNet and (2) LeRF-OVS, where 3D Gaussians are enriched with CLIP-based language features. Extensive experiments show that Q-Render under GS-Net consistently outperforms existing methods, achieving superior results and highlighting its potential as an effective bridge between 2D foundation models and 3D Gaussian representations. Furthermore, our Q-render achieves ~43.7× speed gains against previous methods when rendering 512-D feature maps.},
+  booktitle=NVIDIA,
+  year={2025},
+  arxiv={2512.20927},
+  selected={true},
+  abbr={NVIDIA tech report},
+  website={https://jaesung-choe.github.io/qrender},
+  img_path={assets/img/publication_preview/nvidia_2025_qrender.png}
+}
+
 
 
 @inproceedings{jeong2024rodygs,
@@ -22,9 +52,11 @@
   abstract={Dynamic view synthesis (DVS) has advanced remarkably in recent years, achieving high-fidelity rendering while reducing computational costs. Despite the progress, optimizing dynamic neural fields from casual videos remains challenging, as these videos do not provide direct 3D information, such as camera trajectories or the underlying scene geometry. In this work, we present RoDyGS, an optimization pipeline for dynamic Gaussian Splatting from casual videos. It effectively learns motion and underlying geometry of scenes by separating dynamic and static primitives, and ensures that the learned motion and geometry are physically plausible by incorporating motion and geometric regularization terms. We also introduce a comprehensive benchmark, Kubric-MRig, that provides extensive camera and object motion along with simultaneous multi-view captures, features that are absent in previous benchmarks. Experimental results demonstrate that the proposed method significantly outperforms previous pose-free dynamic neural fields and achieves competitive rendering quality compared to existing pose-free static neural fields.},
   booktitle=arXiv,
   year={2024},
-  website={https://rodygs.github.io/},
-  abbr={arXiv},
+  arxiv={2412.03077},
   selected={true},
+  abbr={arXiv},
+  website={https://rodygs.github.io/},
+  code={https://github.com/POSTECH-CVLab/RoDyGS},
   img_path={assets/img/publication_preview/arxiv_2024_rodygs.png}
 }
 
