@@ -6,5 +6,5 @@ inline: true
 
 [NVIDIA](https://www.kakaobrain.com/) (on-site), Taipei, Taiwan \
 *Research Intern*
-- Research topic: 3D-LLM.
+- Research topic: 3D foundation models.
 - Mentor: [Jaesung Choe](https://jaesung-choe.github.io/)
