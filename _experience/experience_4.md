@@ -4,6 +4,6 @@ start_end: "May, 2026 - Sep, 2026"
 inline: true
 ---
 
-Meta (on-site) \
+Meta FAIR, DINO team (on-site), Paris, France \
 *Research Intern*
 - Mentor: Maxime Oquab
