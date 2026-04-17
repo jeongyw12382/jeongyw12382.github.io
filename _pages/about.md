@@ -21,4 +21,4 @@ projects: true
 
 I am a Ph.D. student in [Graduate School of Artificial Intelligence](https://cse.postech.ac.kr/) at [POSTECH](https://postech.ac.kr/eng/), working as a member of the [Computer Vision Lab](http://cvlab.postech.ac.kr/lab/), advised by Prof. [Minsu Cho](https://cvlab.postech.ac.kr/~mcho/).
 
-My research focuses on neural rendering and generative models, with a broader interest in 3D perception and 3D-LLM. I am particularly interested in neural rendering techniques that minimize optimization and data costs. If you're interested in my work, feel free to reach out to me.
+My research centers on \textbf{integrating 3D geometric understanding into vision foundation models} — spanning neural radiance fields, multi-view reasoning, and visual perception in large multimodal models. I am broadly interested in building spatially-aware foundation models that can perceive, reason about, and interact with the 3D world.
