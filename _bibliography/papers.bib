@@ -92,8 +92,6 @@
   problem={Unified multimodal models reason in discrete text tokens but draw images in a continuous space, so spending more on reasoning does not buy better images.},
   idea={LARC moves the reasoning into continuous space: the model interleaves short text spans with latent steps built from its own hidden states. Curriculum fine-tuning teaches latent reasoning, then self-evolving RL rewards each trace by how much it helps predict the target image.},
   result={Beats its base model BAGEL and the token-reasoning Uni-CoT on text-to-image generation, image editing and visual reasoning, and shows clear test-time scaling: more latent steps, better images.},
-  result_num={1.2 s},
-  result_label={added per sample to scale from 1 to 10 latent steps},
   my_role={Second author, on continuous latent reasoning that improves image generation in unified models.}
 }
 
@@ -272,7 +270,7 @@
   idea={Reimplement NeRF, NeRF++, DVGO, Plenoxels, Mip-NeRF, Mip-NeRF 360 and Ref-NeRF in a single extensible PyTorch library with shared data loaders and visualizers.},
   result={An open-source library used by the NeRF community.},
   result_num={1.3K},
-  result_label={GitHub stars (as of April 2026)},
+  result_label={GitHub stars (as of 2026)},
   my_role={Project leader: a PyTorch reimplementation of state-of-the-art NeRF models, released by Kakao Brain with Seungjoo Shin and Kibaek Park.},
   abbr={GitHub}
 }

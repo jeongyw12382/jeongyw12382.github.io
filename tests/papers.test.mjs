@@ -6,7 +6,7 @@ import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadSite, count } from './helpers.mjs';
 
-const { pickPlaying, filterKeys, truncateAuthors } = createRequire(import.meta.url)('../assets/js/papers.js');
+const { pickPlaying, filterKeys, truncateAuthors, createPlayer } = createRequire(import.meta.url)('../assets/js/papers.js');
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // ---------- pure functions ----------
@@ -14,6 +14,31 @@ test('pickPlaying pauses the current card and plays the entering one', () => {
   assert.deepEqual(pickPlaying('a', 'b'), { pause: 'a', play: 'b' });
   assert.deepEqual(pickPlaying(null, 'b'), { pause: null, play: 'b' });
   assert.deepEqual(pickPlaying('b', 'b'), { pause: null, play: 'b' });
+});
+
+test('createPlayer: one shared slot, starting B pauses A (card hover and extra clips alike)', () => {
+  const fake = (name, log) => ({ name, paused: true,
+    play() { this.paused = false; log.push(`play ${name}`); },
+    pause() { this.paused = true; log.push(`pause ${name}`); } });
+  const log = [];
+  const slot = createPlayer();
+  const cardHover = fake('card', log), extraA = fake('extraA', log), extraB = fake('extraB', log), other = fake('other', log);
+  slot.start(cardHover);
+  slot.start(extraA);            // hovering an extra clip in the expanded card
+  assert.equal(cardHover.paused, true);
+  assert.equal(extraA.paused, false);
+  slot.start(extraB);            // tapping an extra clip in another card
+  slot.start(other);             // hovering another card
+  const playing = [cardHover, extraA, extraB, other].filter((v) => !v.paused).map((v) => v.name);
+  assert.deepEqual(playing, ['other']);
+  assert.equal(slot.current(), other);
+  slot.claim(extraA);            // a clip started by native controls
+  assert.equal(other.paused, true);
+  slot.stop(extraA);
+  assert.equal(slot.current(), null);
+  slot.start(other); slot.start(other); // re-entering the same item never pauses it
+  assert.equal(other.paused, false);
+  assert.deepEqual(log.slice(0, 3), ['play card', 'pause card', 'play extraA']);
 });
 
 test('filterKeys filters by topic/category and All returns everything', () => {
@@ -104,6 +129,12 @@ test('companion contract and author marks', () => {
   assert.match(ro, /<span class="role-badge">Third author<\/span>/);
   assert.match(card('jeong2022nerffac').body, /<span class="role-badge">Project lead<\/span>/);
   assert.match(card('jeong2025quantile').body, /class="result-num">43.7×</);
+  assert.doesNotMatch(card('jeon2026larc').body, /result-num/);
+  assert.doesNotMatch(card('jeong2022nerffac').body, /April/);
+  // "and" lives inside the last author's span, so it hides with truncated authors
+  const perfAuthors = card('jeong2022perf').body.match(/<p class="paper-authors">([\s\S]*?)<\/p>/)[1];
+  assert.doesNotMatch(perfAuthors.replace(/<span class="author">[\s\S]*?<\/span>(?=\s*(<span class="author">|$))/g, ''), /and/);
+  assert.match(perfAuthors, /<span class="author">and <a[^>]*>Jaesik Park<\/a><\/span>/);
 });
 
 test('bibtex copy text hides internal fields but keeps authors', () => {

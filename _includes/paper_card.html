@@ -49,6 +49,7 @@
           {%- endfor -%}
         {%- endif -%}
         <span class="author">
+          {%- if forloop.last and n_authors > 1 -%}and {% endif -%}
           {%- if author.first == site.scholar.first_name and author.last == site.scholar.last_name -%}
             <b class="me">{{ full }}</b>
           {%- elsif coauthor_url -%}
@@ -60,7 +61,7 @@
           {%- if adv contains full -%}<sup title="Equal advising">†</sup>{%- endif -%}
           {%- unless forloop.last -%}{%- if n_authors > 2 -%},{%- endif -%}{%- endunless -%}
         </span>
-        {%- unless forloop.last %} {% if forloop.rindex == 2 %}and {% endif %}{% endunless -%}
+        {%- unless forloop.last %} {% endunless -%}
       {%- endfor -%}
     </p>
     {%- if entry.equal_contrib_authors or entry.equal_advising_authors %}

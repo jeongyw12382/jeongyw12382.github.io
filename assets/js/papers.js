@@ -5,6 +5,27 @@ function pickPlaying(current, entering) {
   return { pause: current && current !== entering ? current : null, play: entering };
 }
 
+/**
+ * One shared playback slot for every video/animation on the page (card hover
+ * media and expanded-detail clips alike). Items expose play() and pause();
+ * starting one pauses whichever was playing. claim() is for media that
+ * started itself (native controls).
+ */
+function createPlayer() {
+  var cur = null;
+  function take(item) {
+    var r = pickPlaying(cur, item);
+    if (r.pause) r.pause.pause();
+    cur = item;
+  }
+  return {
+    start: function (item) { take(item); item.play(); },
+    claim: function (item) { take(item); },
+    stop: function (item) { if (cur === item) cur = null; item.pause(); },
+    current: function () { return cur; }
+  };
+}
+
 /** Keys of cards whose topics include `topic` ('All' keeps every card). */
 function filterKeys(cards, topic) {
   return cards
@@ -24,8 +45,8 @@ function truncateAuthors(n, limit) {
 
   var mq = function (q) { return !!(window.matchMedia && window.matchMedia(q).matches); };
   var reduced = mq('(prefers-reduced-motion: reduce)');
-  var players = {};
-  var current = null;
+  var slot = createPlayer();
+  var items = {}; // card key -> slot item
 
   function emit(name, card) {
     document.dispatchEvent(new CustomEvent(name, {
@@ -86,32 +107,23 @@ function truncateAuthors(n, limit) {
     return p;
   }
 
-  function stopKey(key) {
-    var p = key && players[key];
-    if (!p) return;
-    p.stop();
-    p.playing = false;
-    var c = document.getElementById(key);
-    if (c) c.classList.remove('is-playing');
+  function cardItem(card, p) {
+    return {
+      play: function () { p.start(); card.classList.add('is-playing'); },
+      pause: function () { p.stop(); card.classList.remove('is-playing'); }
+    };
   }
+  function isPlaying(card) { var it = items[card.dataset.key]; return !!it && slot.current() === it; }
 
   function play(card) {
     if (reduced) return;
-    var key = card.dataset.key;
-    var p = players[key];
-    if (!p) return;
-    var r = pickPlaying(current, key);
-    stopKey(r.pause);
-    p.start();
-    p.playing = true;
-    card.classList.add('is-playing');
-    current = key;
+    var it = items[card.dataset.key];
+    if (it) slot.start(it);
   }
 
   function stop(card) {
-    var key = card.dataset.key;
-    stopKey(key);
-    if (current === key) current = null;
+    var it = items[card.dataset.key];
+    if (it && slot.current() === it) slot.stop(it);
   }
 
   /* ---------- authors "+N" ---------- */
@@ -154,6 +166,9 @@ function truncateAuthors(n, limit) {
       void d.offsetHeight; // commit the 0fr state so the row height animates
       d.classList.add('is-open');
     } else {
+      // Don't strand keyboard focus inside a collapsing panel.
+      if (d.contains(document.activeElement) || card._focusWasInDetail) btn.focus();
+      card._focusWasInDetail = false;
       d.classList.remove('is-open');
       pauseExtras(d);
       if (reduced) { d.hidden = true; return; }
@@ -178,28 +193,38 @@ function truncateAuthors(n, limit) {
       v.setAttribute('src', v.dataset.src);
     });
   }
-  function startExtra(v) {
-    loadExtras(v.parentNode);
-    var pr = v.play();
-    if (pr && pr.catch) pr.catch(function () {});
-    v.parentNode.classList.add('is-playing');
+  function extraItem(v) {
+    if (!v._slotItem) {
+      v._slotItem = {
+        play: function () {
+          loadExtras(v.parentNode);
+          var pr = v.play();
+          if (pr && pr.catch) pr.catch(function () {});
+          v.parentNode.classList.add('is-playing');
+        },
+        pause: function () { v.pause(); v.parentNode.classList.remove('is-playing'); }
+      };
+    }
+    return v._slotItem;
   }
-  function pauseExtra(v) { v.pause(); v.parentNode.classList.remove('is-playing'); }
   function pauseExtras(root) {
-    Array.prototype.forEach.call(root.querySelectorAll('video.extra-video'), pauseExtra);
+    Array.prototype.forEach.call(root.querySelectorAll('video.extra-video'), function (v) { slot.stop(extraItem(v)); });
   }
   function wireExtras(card) {
     Array.prototype.forEach.call(card.querySelectorAll('video.extra-video'), function (v) {
+      var it = extraItem(v);
       // Fit the box to the clip once known, so very wide clips are not letterboxed.
       v.addEventListener('loadedmetadata', function () {
         if (v.videoWidth && v.videoHeight) v.style.aspectRatio = v.videoWidth + ' / ' + v.videoHeight;
       });
+      // Whatever starts this clip (incl. native controls), it takes the single slot.
+      v.addEventListener('play', function () { if (slot.current() !== it) slot.claim(it); });
       if (reduced) { v.controls = true; v.parentNode.classList.add('has-controls'); return; }
-      v.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') startExtra(v); });
-      v.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') pauseExtra(v); });
+      v.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') slot.start(it); });
+      v.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') slot.stop(it); });
       v.addEventListener('click', function (e) {
         e.stopPropagation();
-        if (v.paused) startExtra(v); else pauseExtra(v);
+        if (slot.current() === it && !v.paused) slot.stop(it); else slot.start(it);
       });
     });
   }
@@ -233,7 +258,7 @@ function truncateAuthors(n, limit) {
   function wire(card) {
     var key = card.dataset.key;
     var p = makePlayer(card);
-    if (p) players[key] = p;
+    if (p) items[key] = cardItem(card, p);
     truncate(card);
     wireExtras(card);
 
@@ -243,7 +268,11 @@ function truncateAuthors(n, limit) {
     if (md && window.PaperAnim && typeof window.PaperAnim[md.dataset.anim] === 'function') md.classList.add('anim-ready');
 
     var lastPointer = 'mouse';
-    card.addEventListener('pointerdown', function (e) { lastPointer = e.pointerType; });
+    card.addEventListener('pointerdown', function (e) {
+      lastPointer = e.pointerType;
+      // Focus moves away on mousedown; remember if it was inside the detail.
+      card._focusWasInDetail = !!(d && d.contains(document.activeElement));
+    });
     card.addEventListener('pointerenter', function (e) {
       if (e.pointerType !== 'mouse') return;
       emit('paper:hover', card);
@@ -273,7 +302,7 @@ function truncateAuthors(n, limit) {
       media.addEventListener('click', function (e) {
         if (lastPointer === 'mouse') return; // desktop hover already plays
         e.stopPropagation();
-        if (current === key) { stop(card); emit('paper:leave', card); } else { emit('paper:hover', card); play(card); }
+        if (isPlaying(card)) { stop(card); emit('paper:leave', card); } else { emit('paper:hover', card); play(card); }
       });
     }
 
@@ -353,4 +382,4 @@ function truncateAuthors(n, limit) {
   else init();
 })();
 
-if (typeof module !== 'undefined') module.exports = { pickPlaying: pickPlaying, filterKeys: filterKeys, truncateAuthors: truncateAuthors };
+if (typeof module !== 'undefined') module.exports = { pickPlaying: pickPlaying, createPlayer: createPlayer, filterKeys: filterKeys, truncateAuthors: truncateAuthors };
