@@ -27,6 +27,7 @@ function shouldShowBanner(latestISO, dismissedISO) {
 
     if (reduce) {
       banner.classList.add('is-static');
+      track.setAttribute('aria-live', 'polite');
       var idx = 0;
       var show = function (i) {
         idx = (i + items.length) % items.length;

@@ -55,8 +55,6 @@
 
   &.is-animated {
     .news-track { animation: news-scroll 40s linear infinite; }
-    .news-viewport:hover .news-track,
-    .news-viewport:focus-within .news-track,
     &:hover .news-track,
     &:focus-within .news-track { animation-play-state: paused; }
   }
