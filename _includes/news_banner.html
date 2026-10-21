@@ -1,0 +1,23 @@
+{%- assign banner_news = site.news | sort: 'date' | reverse -%}
+{%- if banner_news.size > 0 -%}
+{%- assign latest = banner_news.first -%}
+<section class="news-banner" aria-label="News" data-latest="{{ latest.date | date: '%Y-%m-%d' }}">
+  <span class="news-label">News</span>
+  <div class="news-viewport">
+    <ul class="news-track">
+      {%- for item in banner_news limit: 5 -%}
+      <li class="news-item">
+        <time datetime="{{ item.date | date: '%Y-%m-%d' }}">{{ item.date | date: "%b %-d, %Y" }}</time>
+        {%- capture text -%}{{ item.content | remove: '<p>' | remove: '</p>' | strip | emojify }}{%- endcapture -%}
+        {%- if item.link %} <a href="{{ item.link }}">{{ text }}</a>{% else %} <span>{{ text }}</span>{% endif -%}
+      </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+  <div class="news-controls">
+    <button type="button" class="news-prev" aria-label="Previous news">&lsaquo;</button>
+    <button type="button" class="news-next" aria-label="Next news">&rsaquo;</button>
+  </div>
+  <button type="button" class="news-close" aria-label="Dismiss news">&times;</button>
+</section>
+{%- endif -%}
