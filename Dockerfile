@@ -1,13 +1,9 @@
-FROM jekyll/jekyll
-Label MAINTAINER Amir Pourmand
-#install imagemagick tool for convert command
-RUN apk add --no-cache --virtual .build-deps \
-        libxml2-dev \
-        shadow \
-        autoconf \
-        g++ \
-        make \
-    && apk add --no-cache imagemagick-dev imagemagick
+FROM ruby:3.2-bookworm
+LABEL maintainer="Amir Pourmand"
+# imagemagick for convert, nodejs for JS runtimes, build tools for native gems
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential imagemagick libmagickwand-dev nodejs git \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /srv/jekyll
 ADD Gemfile /srv/jekyll/
 RUN bundle install
