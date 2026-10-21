@@ -92,3 +92,23 @@ test('a drag swallows the following click; a plain tap does not', () => {
     assert.equal((listeners.click || []).length, 0);
   }
 });
+
+test('setColors: a theme change re-colors the scene (and redraws a still frame)', () => {
+  for (const id of IDS) {
+    const { canvas, calls } = fakeCanvas();
+    const ctx = canvas.getContext();
+    const styles = new Set();
+    const track = () => { styles.add(ctx.strokeStyle); styles.add(ctx.fillStyle); };
+    const a = PaperAnim[id](canvas, { accent: '#4a7cbc', ink: '#222222', reduced: true });
+    assert.equal(typeof a.setColors, 'function', id);
+    a.start(); track();
+    const before = frames(calls);
+    a.setColors({ accent: '#ff0000', ink: '#eeeeee' });
+    assert.equal(frames(calls), before + 1, `${id}: redraws once`);
+    styles.clear(); track();
+    assert.ok(styles.has('#eeeeee') || styles.has('#ff0000'), `${id}: ${[...styles]}`);
+    a.setColors({ accent: '#ff0000', ink: '#eeeeee' });
+    assert.equal(frames(calls), before + 1, `${id}: unchanged colors -> no redraw`);
+    a.destroy();
+  }
+});

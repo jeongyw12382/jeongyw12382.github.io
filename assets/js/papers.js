@@ -71,7 +71,11 @@ function truncateAuthors(n, limit) {
       if (!v) return null;
       v.addEventListener('error', function () { media.dataset.kind = 'static'; card.classList.remove('is-playing'); });
       p.start = function () {
-        if (!v.getAttribute('src')) v.setAttribute('src', v.dataset.src);
+        // poster and clip are fetched on the first hover only; the static thumbnail shows until then
+        if (!v.getAttribute('src')) {
+          if (v.dataset.poster) v.setAttribute('poster', v.dataset.poster);
+          v.setAttribute('src', v.dataset.src);
+        }
         var pr = v.play();
         if (pr && pr.catch) pr.catch(function () {});
       };
@@ -82,6 +86,10 @@ function truncateAuthors(n, limit) {
       p.start = function () { if (!alt.getAttribute('src')) alt.setAttribute('src', alt.dataset.src); };
     } else if (kind === 'canvas') {
       var anim = null;
+      var colors = function () {
+        var cs = getComputedStyle(card);
+        return { accent: cs.getPropertyValue('--accent').trim(), ink: cs.color };
+      };
       p.start = function () {
         if (!anim) {
           var id = media.dataset.anim;
@@ -90,15 +98,20 @@ function truncateAuthors(n, limit) {
           canvas.className = 'paper-canvas';
           canvas.setAttribute('aria-hidden', 'true');
           media.appendChild(canvas);
-          var cs = getComputedStyle(card);
-          anim = window.PaperAnim[id](canvas, {
-            accent: cs.getPropertyValue('--accent').trim(),
-            ink: cs.color,
-            reduced: reduced
-          });
+          var c = colors();
+          anim = window.PaperAnim[id](canvas, { accent: c.accent, ink: c.ink, reduced: reduced });
           media.classList.add('has-canvas');
+          // the theme toggle changes ink/accent: re-color the (possibly still visible) canvas, again once
+          // al-folio's 750 ms theme cross-fade (html.transition) has settled the computed colors
+          if (anim.setColors && typeof MutationObserver !== 'undefined') {
+            var recolor = function () { anim.setColors(colors()); };
+            new MutationObserver(function () { recolor(); setTimeout(recolor, 800); })
+              .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+          }
+        } else if (anim.setColors) {
+          anim.setColors(colors());
         }
-        if (anim && anim.start) anim.start();
+        if (anim.start) anim.start();
       };
       p.stop = function () { if (anim && anim.stop) anim.stop(); };
     } else {

@@ -1,5 +1,5 @@
 /* Procedural concept animations for paper cards (no libraries).
- * PaperAnim[id](canvas, {accent, ink, reduced, raf, caf}) -> {start, stop, destroy}
+ * PaperAnim[id](canvas, {accent, ink, reduced, raf, caf}) -> {start, stop, setColors, destroy}
  * Each scene is draw(g, t) with g = {ctx, w, h, u, accent, ink, ctl, st}; t in seconds. */
 (function () {
   'use strict';
@@ -113,6 +113,13 @@
           if (opts.reduced) { if (!drawn) { drawn = true; t = 1.2; frame(); } return; }   // one still frame
           if (running) return;
           running = true; last = null; id = raf(tick);
+        },
+        // theme toggles change ink/accent: re-color, and redraw now unless the loop will anyway
+        setColors: function (c) {
+          var accent = (c && c.accent) || g.accent, ink = (c && c.ink) || g.ink;
+          if (accent === g.accent && ink === g.ink) return;
+          g.accent = accent; g.ink = ink;
+          if (!running && (drawn || t > 0)) frame();
         },
         stop: function () {
           running = false; g.ctl.dragging = false;

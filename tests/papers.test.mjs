@@ -171,3 +171,28 @@ test('every bib entry has a category and the coauthor template is gone', () => {
   const co = readFileSync(resolve(root, '_data/coauthors.yml'), 'utf8');
   assert.doesNotMatch(co, /Einstein|Planck|Bach|Schr/);
 });
+
+test('bibtex copy text keeps the arXiv id as eprint (arxiv itself is an internal field)', () => {
+  const bibOf = (k) => card(k).body.match(/<pre class="bibtex-text"[^>]*>([\s\S]*?)<\/pre>/)[1];
+  const cog = bibOf('gwak2026cog3dmap');
+  assert.match(cog, /^\s*eprint = \{2603\.23023\},?$/m);
+  assert.equal(count(cog, /archiveprefix = \{arXiv\}/i), 1);
+  assert.doesNotMatch(cog, /^\s*arxiv\s*=/m);
+  // entries with an arxiv id but no archivePrefix get one, so the eprint resolves
+  const mv = bibOf('jeong2026mvsam');
+  assert.match(mv, /^\s*eprint = \{2601\.17866\},?$/m);
+  assert.equal(count(mv, /archiveprefix = \{arXiv\}/i), 1);
+  // entries without an arxiv id are untouched
+  for (const k of ['kim2023choir', 'jeong2022scnerf', 'lee2021learning']) {
+    const raw = readFileSync(resolve(root, '_bibliography/papers.bib'), 'utf8');
+    const entry = raw.slice(raw.indexOf(`{${k},`), raw.indexOf('\n}', raw.indexOf(`{${k},`)));
+    if (!/\barxiv\s*=/.test(entry)) assert.doesNotMatch(bibOf(k), /eprint/, k);
+  }
+});
+
+test('hover videos carry no poster= (it would download every poster on load)', () => {
+  for (const m of pub().match(/<video[^>]*>/g)) {
+    assert.doesNotMatch(m, /\sposter=/);
+  }
+  assert.match(card('jeong2026mvsam').body, /<video[^>]*data-poster="[^"]+\.jpg"/);
+});

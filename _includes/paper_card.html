@@ -23,7 +23,7 @@
     <img class="paper-thumb" src="{{ entry.img_path | relative_url }}" alt="{{ title_text | escape }}: teaser figure" loading="lazy" decoding="async">
     {%- endif %}
     {%- if kind == "video" %}
-    <video class="paper-video" data-src="{{ m.hover | relative_url }}"{% if m.poster %} poster="{{ m.poster | relative_url }}"{% endif %} muted loop playsinline preload="none" aria-hidden="true"></video>
+    <video class="paper-video" data-src="{{ m.hover | relative_url }}"{% if m.poster %} data-poster="{{ m.poster | relative_url }}"{% endif %} muted loop playsinline preload="none" aria-hidden="true"></video>
     {%- elsif kind == "crossfade" %}
     <img class="paper-alt" data-src="{% if m.kind == 'image' %}{{ m.poster | relative_url }}{% else %}{{ m.hover | relative_url }}{% endif %}" alt="" aria-hidden="true" decoding="async">
     {%- endif %}

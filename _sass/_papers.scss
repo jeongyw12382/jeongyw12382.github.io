@@ -164,6 +164,7 @@ html[data-theme='dark'] .paper-card {
   line-height: 1.45;
   color: var(--global-text-color);
   overflow-wrap: anywhere;
+  .author { white-space: nowrap; }  // break only between authors (the <wbr> after each comma), never mid-name
   .author + .author { margin-left: .28em; }
   .me { font-weight: 700; }
   a { color: inherit; text-decoration: underline dotted; text-underline-offset: 2px; }
