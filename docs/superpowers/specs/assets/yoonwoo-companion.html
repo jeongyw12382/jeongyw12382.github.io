@@ -1,0 +1,407 @@
+<title>Yoonwoo Companion</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: one calm column — character stage on top, three mock paper cards to poke at below. */
+:root {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --fg: #1f2433;
+  --muted: #646b80;
+  --line: #dfe2ec;
+  --accent: #3b5bdb;
+  --display: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Source Sans 3", system-ui, -apple-system, sans-serif;
+  /* character: pen on paper (fixed, it's a drawing) */
+  --ink: #2b2530;
+  --paper: #fbfaf6;
+  --blush: #d9777a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141722; --surface: #1c2030; --fg: #e8eaf2; --muted: #9aa1b8; --line: #2c3248; --accent: #8ea2ff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141722; --surface: #1c2030; --fg: #e8eaf2; --muted: #9aa1b8; --line: #2c3248; --accent: #8ea2ff;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 80px;
+  overflow-x: hidden;
+}
+main { max-width: 760px; margin: 0 auto; display: grid; gap: 36px; }
+h1 { font-family: var(--display); font-weight: 600; font-size: 2rem; margin: 0; text-wrap: balance; }
+.eyebrow { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+.lede { color: var(--muted); margin: 6px 0 0; max-width: 60ch; }
+.stage {
+  display: grid; grid-template-columns: 200px 1fr; gap: 28px; align-items: center;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 24px;
+}
+.stage svg { width: 100%; height: auto; max-width: 200px; }
+.notes { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.notes li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 10px; }
+.notes b { font-weight: 600; }
+.notes span { color: var(--muted); }
+.cards { display: grid; gap: 14px; }
+.cards h2 { font-family: var(--display); font-weight: 500; font-size: 1.15rem; margin: 0; }
+.paper {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px;
+  display: grid; gap: 2px; transition: border-color .2s, transform .2s;
+}
+.paper:hover { border-color: var(--accent); transform: translateY(-2px); }
+.paper .venue { font-size: .8rem; color: var(--accent); font-weight: 600; letter-spacing: .04em; }
+.paper .t { font-weight: 600; }
+.paper .d { color: var(--muted); font-size: .92rem; }
+.toggle {
+  justify-self: start; font: inherit; font-size: .9rem; color: var(--fg); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer;
+}
+.toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* the companion */
+#buddy {
+  position: fixed; left: 0; top: 0; width: 84px; pointer-events: none; z-index: 50;
+  will-change: transform; filter: drop-shadow(0 3px 5px rgba(20, 24, 40, .16));
+}
+#buddy svg { width: 100%; height: auto; display: block; overflow: visible; }
+.bubble {
+  position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, -2px) scale(.6); transform-origin: 50% 100%;
+  background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: 10px;
+  font-family: var(--display); font-weight: 500; font-size: 13px; white-space: nowrap; padding: 3px 10px;
+  opacity: 0; transition: opacity .18s, transform .18s;
+}
+.bubble.on { opacity: 1; transform: translate(-50%, -2px) scale(1); }
+.ink { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.glasses { transition: transform .22s cubic-bezier(.3, 1.6, .5, 1); }
+.push .glasses { transform: translateY(-3.5px); }
+.sparkle { transform-box: fill-box; transform-origin: center; animation: twinkle 2.8s ease-in-out infinite; }
+.push .sparkle { animation: pop .5s ease-out infinite alternate; }
+@keyframes twinkle { 0%, 70%, 100% { transform: scale(1) rotate(0); } 80% { transform: scale(1.35) rotate(20deg); } }
+@keyframes pop { from { transform: scale(1); } to { transform: scale(1.6) rotate(30deg); } }
+/* per-paper reactions */
+#buddy { --react: var(--line); }
+.bubble { border-color: var(--react); }
+.rig { position: relative; }
+.ghost { position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .2s; }
+.fx > svg { position: absolute; opacity: 0; transition: opacity .2s; overflow: visible; }
+.fx .fxs { fill: none; stroke: var(--react); stroke-linecap: round; }
+/* RoDyGS: shaky cam + dynamic ghosts */
+.react-rodygs .ghost { opacity: .3; }
+.react-rodygs .g2 { opacity: .15; }
+.react-rodygs .g1 { animation: trail1 .45s ease-in-out infinite alternate; }
+.react-rodygs .g2 { animation: trail2 .45s ease-in-out infinite alternate; }
+@keyframes trail1 { from { transform: translate(-9px, 2px); } to { transform: translate(-14px, -3px); } }
+@keyframes trail2 { from { transform: translate(-20px, 4px); } to { transform: translate(-26px, -4px); } }
+/* MV-SAM: marching mask outline + click point */
+.ring { inset: -9px; width: calc(100% + 18px); height: calc(100% + 18px); }
+.react-mvsam .ring { opacity: 1; }
+.ring circle.fxs { stroke-dasharray: 6 5; animation: march 1s linear infinite; }
+@keyframes march { to { stroke-dashoffset: -22; } }
+/* SCNeRF: viewfinder + calibrating squash */
+.brackets { inset: -8px; width: calc(100% + 16px); height: calc(100% + 16px); }
+.react-scnerf .brackets { opacity: 1; }
+.react-scnerf .rig { animation: calib 1.4s cubic-bezier(.2, .8, .3, 1) infinite; }
+@keyframes calib { 0% { transform: scale(1.28, .82) skewX(10deg); } 55%, 100% { transform: none; } }
+/* Q-Render: speed lines */
+.speed { left: -30px; top: 18%; width: 28px; height: 64%; }
+.react-qrender .speed { opacity: 1; }
+.speed line { animation: zoom .35s linear infinite; }
+.speed line:nth-child(2) { animation-delay: -.12s; } .speed line:nth-child(3) { animation-delay: -.24s; }
+@keyframes zoom { from { transform: translateX(8px); opacity: 1; } to { transform: translateX(-10px); opacity: 0; } }
+/* LARC: latent thought cloud */
+.thought { left: -34px; top: -26px; width: 40px; height: 34px; }
+.react-larc .thought { opacity: 1; }
+.thought .dot { fill: var(--react); animation: think 1.2s ease-in-out infinite; }
+.thought .dot:nth-of-type(2) { animation-delay: .2s; } .thought .dot:nth-of-type(3) { animation-delay: .4s; }
+@keyframes think { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+/* CHOIR: spin, then snap to canonical */
+.react-choir .rig { animation: canon 1.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes canon { 0% { transform: rotate(0); } 30% { transform: rotate(-150deg); } 52% { transform: rotate(80deg); } 70% { transform: rotate(-10deg); } 80%, 100% { transform: rotate(0); } }
+/* resting: clickable; hit: wince */
+#buddy.resting { pointer-events: auto; cursor: pointer; }
+.ouch-face { opacity: 0; }
+.ouch .ouch-face { opacity: 1; }
+.ouch .pupils, .ouch .mouth { opacity: 0; }
+.pow { left: -14px; top: -10px; width: 26px; height: 26px; }
+.ouch .pow { opacity: 1; animation: pow .35s cubic-bezier(.3, 1.8, .5, 1); }
+@keyframes pow { from { transform: scale(.2); } to { transform: scale(1); } }
+.ouch .rig { animation: wince .38s ease-out; }
+@keyframes wince { 0% { transform: scale(1.15, .8); } 20% { transform: translateX(-4px) rotate(-6deg); } 40% { transform: translateX(4px) rotate(5deg); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } 100% { transform: none; } }
+@media (max-width: 560px) {
+  .stage { grid-template-columns: 1fr; justify-items: center; }
+  .notes li { grid-template-columns: 1fr; gap: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glasses, .paper { transition: none; }
+  .sparkle, .push .sparkle { animation: none; }
+  .rig, .ghost, .fx * { animation: none !important; }
+}
+</style>
+
+<!-- shared hand-drawn wobble filter -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence id="wobble-noise" type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<template id="yw-art">
+<svg viewBox="0 0 120 120" aria-hidden="true">
+  <g filter="url(#wobble)">
+    <!-- sparkle -->
+    <path class="sparkle ink" d="M107 22 Q108 30 114 31 Q108 32 107 40 Q106 32 100 31 Q106 30 107 22 Z" stroke-width="2"/>
+    <g class="head" transform="rotate(-9 60 66)">
+      <!-- headphone cups (behind face) -->
+      <ellipse class="ink" cx="21" cy="78" rx="10" ry="15" fill="var(--paper)"/>
+      <ellipse class="ink" cx="99" cy="78" rx="10" ry="15" fill="var(--paper)"/>
+      <!-- headphone band -->
+      <path class="ink" d="M16 66 C10 12 110 12 104 66"/>
+      <path class="ink" d="M23 65 C19 22 101 22 97 65"/>
+      <!-- face -->
+      <circle cx="60" cy="72" r="36" fill="var(--paper)"/>
+      <circle class="ink" cx="60" cy="72" r="36" stroke-dasharray="214 12" stroke-dashoffset="192"/>
+      <!-- brows -->
+      <path class="ink" d="M44 47 L47 49 M62 40 L62 44" stroke-width="2"/>
+      <!-- blush -->
+      <g fill="var(--blush)" fill-opacity=".28" stroke="var(--blush)" stroke-width="1.4" stroke-opacity=".75">
+        <circle cx="40" cy="88" r="6.5"/>
+        <circle cx="83" cy="86" r="6.5"/>
+      </g>
+      <!-- glasses + dot eyes -->
+      <g class="glasses">
+        <circle class="ink" cx="45" cy="71" r="14" fill="var(--paper)" fill-opacity=".001"/>
+        <circle class="ink" cx="77" cy="69" r="14"/>
+        <path class="ink" d="M59 69 L63 68"/>
+        <g class="pupils" fill="var(--ink)">
+          <ellipse class="eye" cx="45" cy="71" rx="1.9" ry="1.9"/>
+          <ellipse class="eye" cx="77" cy="69" rx="1.9" ry="1.9"/>
+        </g>
+      </g>
+      <!-- smug smile with curled corners -->
+      <path class="ink mouth" d="M55 90 Q65 96 73 87"/>
+      <path class="ink mouth" d="M53 86 Q51.5 89 54 92 M73 84 Q76 87 74 90" stroke-width="2"/>
+      <!-- wince: > < eyes and a wobbly mouth -->
+      <g class="ouch-face">
+        <path class="ink" d="M40 66 L47 71 L40 76 M82 64 L75 69 L82 74" stroke-width="2.2"/>
+        <path class="ink" d="M53 91 Q56 87 59.5 91 Q63 95 66.5 90 Q69.5 86 72.5 89" stroke-width="2.2"/>
+      </g>
+    </g>
+  </g>
+</svg>
+</template>
+
+<main>
+  <header>
+    <div class="eyebrow">Prototype · throwaway</div>
+    <h1>Yoonwoo Companion</h1>
+    <p class="lede">Move your mouse around this page. The little head bounces after the cursor, looks at it with dot eyes, and blinks. Hover a paper card and he reacts to that paper. Stop moving for a second and he settles down; then try poking him. Click empty space to make him hop.</p>
+  </header>
+
+  <section class="stage" aria-label="Character portrait">
+    <div id="portrait"></div>
+    <ul class="notes">
+      <li><b>Style</b><span>Pen line on paper, with a slight hand-drawn wobble</span></li>
+      <li><b>Face</b><span>Big round glasses, dot eyes, pencil blush, smug little smile</span></li>
+      <li><b>Extras</b><span>Headphones and a sparkle that twinkles</span></li>
+      <li><b>Size on site</b><span>About 84px; poke his face to bug him</span></li>
+    </ul>
+  </section>
+
+  <section class="cards" aria-label="Sample paper cards">
+    <h2>Hover a paper — each one gets its own reaction</h2>
+    <article class="paper" data-react="larc" data-accent="#7b61ff" data-say="thinking in latents…"><span class="venue">NeurIPS · 2026</span><span class="t">LARC: Latent Reasoning in Continuous Space for Unified Multimodal Models</span><span class="d">Continuous latent reasoning that improves image generation in unified models.</span></article>
+    <article class="paper" data-react="mvsam" data-accent="#e8590c" data-say="Segment me!"><span class="venue">NVIDIA Tech · 2026</span><span class="t">MV-SAM: Multi-view Promptable Segmentation using Pointmap Guidance</span><span class="d">An extension of SAM to multi-view inputs, trained without 3D or video datasets.</span></article>
+    <article class="paper" data-react="qrender" data-accent="#2f9e44" data-say="43.7× faster!"><span class="venue">NVIDIA Tech · 2025</span><span class="t">Quantile Rendering: Efficiently Embedding High-dimensional Features on 3D Gaussian Splatting</span><span class="d">A generalizable 3D-GS network for open-vocabulary segmentation.</span></article>
+    <article class="paper" data-react="rodygs" data-accent="#1c7ed6" data-say="Hold the camera still!"><span class="venue">arXiv · 2025</span><span class="t">RoDyGS: Robust Dynamic Gaussian Splatting for Casual Videos</span><span class="d">Pose-free dynamic neural fields leveraging geometric foundation models.</span></article>
+    <article class="paper" data-react="choir" data-accent="#c2255c" data-say="Canonical pose!"><span class="venue">ICML · 2023</span><span class="t">Stable and Consistent Prediction of 3D Characteristic Orientation via Invariant Residual Learning</span><span class="d">A 3D canonicalization framework for robust part-level segmentation.</span></article>
+    <article class="paper" data-react="scnerf" data-accent="#f08c00" data-say="Calibrating…"><span class="venue">ICCV · 2021</span><span class="t">Self-Calibrating Neural Radiance Fields</span><span class="d">The first pose-free NeRF optimization pipeline.</span></article>
+  </section>
+
+  <button class="toggle" id="toggle-buddy" type="button">Hide companion</button>
+</main>
+
+<div id="buddy" aria-hidden="true">
+  <div class="fx">
+    <svg class="pow" viewBox="0 0 26 26"><g fill="none" stroke="#e03131" stroke-width="2.4" stroke-linecap="round"><path d="M4 10 Q10 10 10 4"/><path d="M16 4 Q16 10 22 10"/><path d="M22 16 Q16 16 16 22"/><path d="M10 22 Q10 16 4 16"/></g></svg>
+    <svg class="ring" viewBox="0 0 100 100"><circle class="fxs" cx="50" cy="54" r="44" stroke-width="2.6"/><circle cx="72" cy="30" r="3.4" fill="var(--react)"/></svg>
+    <svg class="brackets" viewBox="0 0 100 100"><path class="fxs" stroke-width="3" d="M4 20 V4 H20 M80 4 H96 V20 M96 80 V96 H80 M20 96 H4 V80"/></svg>
+    <svg class="speed" viewBox="0 0 28 40"><line class="fxs" x1="4" y1="8" x2="24" y2="8" stroke-width="2.4"/><line class="fxs" x1="0" y1="20" x2="22" y2="20" stroke-width="2.4"/><line class="fxs" x1="6" y1="32" x2="24" y2="32" stroke-width="2.4"/></svg>
+    <svg class="thought" viewBox="0 0 40 34"><circle cx="34" cy="31" r="2" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.2"/><circle cx="29" cy="25" r="3" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.2"/><rect x="2" y="2" width="30" height="17" rx="8.5" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.4"/><circle class="dot" cx="10" cy="10.5" r="2"/><circle class="dot" cx="17" cy="10.5" r="2"/><circle class="dot" cx="24" cy="10.5" r="2"/></svg>
+  </div>
+  <div class="rig" id="rig"><div class="ghost g2"></div><div class="ghost g1"></div></div>
+  <div class="bubble" id="bubble"></div>
+</div>
+
+<script>
+(() => {
+  const art = document.getElementById('yw-art');
+  const portrait = document.getElementById('portrait');
+  const buddy = document.getElementById('buddy');
+  const bubble = document.getElementById('bubble');
+  const rig = document.getElementById('rig');
+  portrait.appendChild(art.content.cloneNode(true));
+  rig.prepend(art.content.cloneNode(true));
+  rig.querySelectorAll('.ghost').forEach(g => g.appendChild(art.content.cloneNode(true)));
+  let react = null;
+
+  const rigs = [portrait, rig].map(root => ({
+    svg: root.querySelector('svg'),
+    pupils: root.querySelector('.pupils'),
+    eyes: root.querySelectorAll('.eye'),
+  }));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  const mouse = { x: innerWidth * 0.7, y: innerHeight * 0.6, seen: false };
+  const pos = { x: innerWidth - 90, y: innerHeight - 110 };
+  let hop = 0, enabled = true, phase = 0;
+  let lastMove = 0, resting = false, hits = 0, lastHit = 0, sulkUntil = 0, kick = { x: 0, y: 0 };
+  const LINES = ['Ouch!', 'Hey, that hurts!', 'Why me?!', 'I\'m telling my advisor.'];
+
+  addEventListener('pointermove', e => { mouse.x = e.clientX; mouse.y = e.clientY; mouse.seen = true; lastMove = performance.now(); });
+  // a hit is decided by where you click (inside his face), not by whether he is resting
+  function onFace(x, y) {
+    const b = buddy.getBoundingClientRect();
+    return Math.hypot(x - (b.left + b.width * 0.5), y - (b.top + b.width * 0.6)) < b.width * 0.42;
+  }
+  let swallowClick = false;
+  addEventListener('pointerdown', e => {
+    if (enabled && onFace(e.clientX, e.clientY)) { swallowClick = true; hit(e); return; }
+    if (hop <= 0) hop = 1;
+  }, true);
+  // don't let a hit also follow a link underneath him
+  addEventListener('click', e => {
+    if (swallowClick) { swallowClick = false; e.preventDefault(); e.stopPropagation(); }
+  }, true);
+
+  // poke him while he's resting
+  let ouchTimer, sayTimer;
+  function say(text, ms) {
+    bubble.textContent = text;
+    bubble.classList.add('on');
+    clearTimeout(sayTimer);
+    sayTimer = setTimeout(() => bubble.classList.remove('on'), ms);
+  }
+  function hit(e) {
+    const now = performance.now();
+    resting = true; // stay put so you can hit him again
+    if (now - lastHit > 5000) hits = 0;
+    lastHit = now;
+    const b = buddy.getBoundingClientRect();
+    const dx = b.left + b.width / 2 - e.clientX, dy = b.top + b.height / 2 - e.clientY, d = Math.hypot(dx, dy) || 1;
+    kick = { x: dx / d * 14, y: dy / d * 10 };
+    buddy.style.setProperty('--react', '#e03131');
+    buddy.classList.remove('ouch'); void buddy.offsetWidth; buddy.classList.add('ouch');
+    clearTimeout(ouchTimer);
+    ouchTimer = setTimeout(() => buddy.classList.remove('ouch'), 900);
+    if (hits < LINES.length) {
+      say(LINES[hits], 1300);
+    } else {
+      // had enough: run off to the far corner and sulk
+      say('Hmph.', 3000);
+      sulkUntil = now + 3500;
+      hits = -1;
+    }
+    hits++;
+  }
+
+  // blink: dot eyes squash into little dashes
+  function setEyes(rx, ry) { rigs.forEach(r => r.eyes.forEach(e => { e.setAttribute('rx', rx); e.setAttribute('ry', ry); })); }
+  function blink() {
+    setEyes(3, 0.6);
+    setTimeout(() => setEyes(1.9, 1.9), 140);
+    setTimeout(blink, 2200 + Math.random() * 3200);
+  }
+  setTimeout(blink, 1500);
+
+  // hand-drawn line boil
+  const noise = document.getElementById('wobble-noise');
+  if (!reduce) { let s = 2; setInterval(() => { s = (s % 4) + 1; noise.setAttribute('seed', s); }, 180); }
+
+  // paper hover reaction
+  let bubbleTimer;
+  document.querySelectorAll('.paper').forEach(card => {
+    card.addEventListener('pointerenter', () => {
+      react = card.dataset.react;
+      buddy.classList.add('push', 'react-' + react);
+      buddy.style.setProperty('--react', card.dataset.accent);
+      bubble.textContent = card.dataset.say;
+      bubble.classList.add('on');
+      clearTimeout(bubbleTimer);
+    });
+    card.addEventListener('pointerleave', () => {
+      buddy.classList.remove('push', 'react-' + react);
+      react = null;
+      bubbleTimer = setTimeout(() => bubble.classList.remove('on'), 300);
+    });
+  });
+
+  const toggle = document.getElementById('toggle-buddy');
+  toggle.addEventListener('click', () => {
+    enabled = !enabled;
+    buddy.hidden = !enabled;
+    toggle.textContent = enabled ? 'Hide companion' : 'Show companion';
+  });
+
+  function look(r, tx, ty) {
+    const b = r.svg.getBoundingClientRect();
+    const cx = b.left + b.width / 2, cy = b.top + b.height * 0.58;
+    const dx = tx - cx, dy = ty - cy, d = Math.hypot(dx, dy) || 1;
+    const k = Math.min(1, d / 100);
+    r.pupils.setAttribute('transform', `translate(${(dx / d * 5 * k).toFixed(2)} ${(dy / d * 5 * k).toFixed(2)})`);
+  }
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(50, now - last) / 16.67; last = now;
+    const W = 84, H = W;
+    // sit just below-right of the cursor, never underneath it
+    let tx = mouse.x + 20, ty = mouse.y + 16;
+    if (!finePointer || !mouse.seen) { tx = innerWidth - W - 24; ty = innerHeight - H - 24; }
+
+    // rest once the cursor has been still a moment; stay put until it wanders off
+    const near = Math.hypot(mouse.x - (pos.x + W / 2), mouse.y - (pos.y + H / 2)) < 160;
+    if (!resting && now - lastMove > 1100 && Math.hypot(tx - pos.x, ty - pos.y) < 6) resting = true;
+    else if (resting && !near) resting = false;
+    if (resting) { tx = pos.x; ty = pos.y; }
+    if (now < sulkUntil) {
+      tx = mouse.x < innerWidth / 2 ? innerWidth - W - 24 : 24;
+      ty = mouse.y < innerHeight / 2 ? innerHeight - H - 24 : 24;
+      resting = false;
+    }
+    buddy.classList.toggle('resting', resting && finePointer);
+    tx = Math.min(Math.max(tx + kick.x, 4), innerWidth - W - 4);
+    ty = Math.min(Math.max(ty + kick.y, 4), innerHeight - H - 4);
+    kick.x *= 0.85; kick.y *= 0.85;
+
+    const ease = reduce ? 1 : (react === 'qrender' ? 0.22 : 0.075) * dt;
+    const vx = (tx - pos.x) * ease, vy = (ty - pos.y) * ease;
+    pos.x += vx; pos.y += vy;
+    const speed = Math.hypot(vx, vy);
+    const moving = speed > 0.35 && !reduce;
+
+    phase += moving ? Math.min(0.4, speed * 0.05) * dt : 0;
+    const bounce = moving ? Math.abs(Math.sin(phase)) * -7 : Math.sin(now / 800) * 1;
+    if (hop > 0) hop = Math.max(0, hop - 0.04 * dt);
+    const jump = reduce ? 0 : -Math.sin(hop * Math.PI) * 18;
+    const tilt = moving ? Math.max(-12, Math.min(12, vx * 1.5)) : Math.sin(now / 1300) * 3;
+    // squash a little on each landing
+    const squash = moving ? 1 - (1 - Math.abs(Math.sin(phase))) * 0.06 : 1;
+
+    // RoDyGS: casual handheld shake
+    const shake = react === 'rodygs' && !reduce ? 2.6 : 0;
+    const sx = (Math.random() - .5) * shake, sy = (Math.random() - .5) * shake;
+
+    buddy.style.transform = `translate(${(pos.x + sx).toFixed(1)}px, ${(pos.y + bounce + jump + sy).toFixed(1)}px) rotate(${tilt.toFixed(2)}deg) scale(${(2 - squash).toFixed(3)}, ${squash.toFixed(3)})`;
+    rigs.forEach(r => look(r, mouse.x, mouse.y));
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
