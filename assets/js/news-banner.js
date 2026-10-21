@@ -46,6 +46,16 @@ function shouldShowBanner(latestISO, dismissedISO) {
         track.appendChild(c);
       });
       banner.classList.add('is-animated');
+      // a visible pause control, so touch users (no hover/focus pause) can stop the motion (WCAG 2.2.2)
+      var pause = banner.querySelector('.news-pause');
+      if (pause) {
+        pause.hidden = false;
+        pause.addEventListener('click', function () {
+          var on = pause.getAttribute('aria-pressed') !== 'true';
+          pause.setAttribute('aria-pressed', on ? 'true' : 'false');
+          banner.classList.toggle('is-paused', on);
+        });
+      }
       // Speed scales with content width (~60px/s).
       var w = track.scrollWidth / 2;
       track.style.animationDuration = Math.max(20, Math.round(w / 60)) + 's';

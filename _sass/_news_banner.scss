@@ -56,7 +56,19 @@
   &.is-animated {
     .news-track { animation: news-scroll 40s linear infinite; }
     &:hover .news-track,
-    &:focus-within .news-track { animation-play-state: paused; }
+    &:focus-within .news-track,
+    &.is-paused .news-track { animation-play-state: paused; }
+  }
+
+  .news-pause {
+    font-size: .8rem;
+    letter-spacing: -.1em;
+    &[hidden] { display: none; }
+    .icon-play { display: none; }
+    &[aria-pressed="true"] {
+      .icon-pause { display: none; }
+      .icon-play { display: inline; }
+    }
   }
 
   &.is-static {

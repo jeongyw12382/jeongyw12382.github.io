@@ -1,5 +1,5 @@
 """E2E smoke for the interactive site. Run: see tests/e2e/README.md"""
-import os, subprocess, sys, time
+import os, subprocess, sys, time, urllib.request
 from playwright.sync_api import sync_playwright
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -29,7 +29,11 @@ def go(pg, path, theme):
 
 srv = subprocess.Popen([sys.executable, '-m', 'http.server', str(PORT), '-d', os.path.join(ROOT, '_site')],
                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-time.sleep(1)
+for _ in range(100):  # wait until the static server answers (startup can take > 1 s under load)
+    try:
+        urllib.request.urlopen(BASE + '/', timeout=1); break
+    except OSError:
+        time.sleep(0.1)
 try:
     with sync_playwright() as p:
         b = p.chromium.launch()
@@ -136,6 +140,17 @@ try:
         card.scroll_into_view_if_needed(); bx = card.bounding_box()
         pg.touchscreen.tap(bx['x'] + bx['width'] / 2, bx['y'] + bx['height'] / 2); pg.wait_for_timeout(300)
         check('(f) mobile tap no errors', not errs, errs[:3])
+        # (j) news ticker can be paused by touch (WCAG 2.2.2)
+        pg.evaluate("scrollTo(0,0)"); pg.wait_for_timeout(200)
+        pz = pg.locator('.news-banner .news-pause')
+        if pz.count() and pz.is_visible():
+            pz.tap(); pg.wait_for_timeout(200)
+            st = pg.evaluate("[document.querySelector('.news-pause').getAttribute('aria-pressed'), getComputedStyle(document.querySelector('.news-track')).animationPlayState]")
+            pg.touchscreen.tap(10, 700); pg.wait_for_timeout(200)  # focus leaves the banner; stays paused
+            st2 = pg.evaluate("getComputedStyle(document.querySelector('.news-track')).animationPlayState")
+            check('(j) news pause toggle pauses on touch', st == ['true', 'paused'] and st2 == 'paused', [st, st2])
+        else:
+            check('(j) news pause toggle pauses on touch', False, 'no visible .news-pause')
         pg.context.close()
         # (g) screenshots
         for dev, vp, kw in (('desktop', {'width': 1280, 'height': 900}, {}), ('mobile', {'width': 375, 'height': 800}, {'has_touch': True, 'is_mobile': True})):

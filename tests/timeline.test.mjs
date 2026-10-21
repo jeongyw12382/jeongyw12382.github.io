@@ -31,3 +31,24 @@ test('careerDetail reads greeting and accent from data attributes', () => {
 });
 
 function count(s, re) { return (s.match(re) || []).length; }
+
+test('every focusable timeline card is named by its role and org', async () => {
+  const { loadSite } = await import('./helpers.mjs');
+  const html = loadSite('index.html');
+  const items = html.match(/<li class="tl-item"[^>]*>/g) || [];
+  assert.ok(items.length >= 8, `found ${items.length}`);
+  const seen = new Set();
+  for (const li of items) {
+    assert.match(li, /tabindex="0"/);
+    const ids = (li.match(/aria-labelledby="([^"]+)"/) || [])[1];
+    assert.ok(ids, li);
+    const [role, org] = ids.split(' ');
+    assert.ok(role && org, ids);
+    for (const id of [role, org]) {
+      assert.ok(!seen.has(id), `duplicate id ${id}`); seen.add(id);
+      assert.equal((html.match(new RegExp(`id="${id}"`, 'g')) || []).length, 1, id);
+    }
+    assert.match(html, new RegExp(`<h3 class="tl-role" id="${role}">`));
+    assert.match(html, new RegExp(`<p class="tl-org" id="${org}">`));
+  }
+});
