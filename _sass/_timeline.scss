@@ -26,9 +26,17 @@ html[data-theme='dark'] .tl-item { --tl-muted: #b4b8bd; }
 
 .tl-section { margin-bottom: 2.5rem; }
 
+// Geometry is computed by Sass rather than with custom properties inside calc(),
+// because jekyll-minifier corrupts `--` there in production builds.
+$tl-card-border: 5px;  // .tl-item border-left; the node is positioned from inside it
+@mixin tl-geometry($gutter, $rail) {
+  --tl-gutter: #{$gutter};
+  --tl-rail: #{$rail};                        // x of the journey rail inside the gutter
+  --tl-node-x: #{$rail - $gutter - $tl-card-border - 8px};  // node centred on the rail
+}
+
 ol.timeline {
-  --tl-gutter: 46px;
-  --tl-rail: 18px;          // x of the journey rail inside the gutter
+  @include tl-geometry(46px, 18px);
   position: relative;
   list-style: none;
   margin: 1rem 0 0;
@@ -38,7 +46,8 @@ ol.timeline {
   &::before {
     content: "";
     position: absolute;
-    left: calc(var(--tl-rail) - 1.5px);
+    left: var(--tl-rail);
+    margin-left: -1.5px;
     top: 2.5rem;
     bottom: 2.5rem;
     border-left: 3px dotted var(--global-divider-color);
@@ -73,7 +82,7 @@ ol.timeline {
     linear-gradient(105deg, var(--tl-soft) 0%, transparent 75%),
     var(--global-card-bg-color);
   border: 1px solid var(--tl-line);
-  border-left: 5px solid var(--accent);
+  border-left: $tl-card-border solid var(--accent);
   border-radius: 14px;
   outline: none;
   transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
@@ -93,7 +102,7 @@ ol.timeline {
 // dot on the journey rail, level with the landmark
 .tl-node {
   position: absolute;
-  left: calc(var(--tl-rail) - var(--tl-gutter) - 8px);
+  left: var(--tl-node-x);
   top: 50%;
   width: 16px;
   height: 16px;
@@ -198,7 +207,7 @@ ol.timeline {
 }
 
 @media (max-width: 576px) {
-  ol.timeline { --tl-gutter: 30px; --tl-rail: 11px; }
+  ol.timeline { @include tl-geometry(30px, 11px); }
   .tl-item {
     grid-template-columns: 60px minmax(0, 1fr);
     column-gap: .8rem;

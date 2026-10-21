@@ -71,6 +71,13 @@ try:
                 has = any(', Yoonwoo Jeong' in x[1] or x[1].startswith('Yoonwoo Jeong') for x in r) and any(', Yoonwoo Jeong' in x[1] for x in r)
                 check(f'(h) authors no overflow/spacing {path} {dev}', not bad and has and len(r) > 0, bad[:2])
                 pg.context.close()
+        # (i) timeline nodes sit on the journey rail (catches minifier-broken calc(var()) geometry)
+        for dev, vp, rail in (('desktop', {'width': 1200, 'height': 900}, 18), ('mobile', {'width': 375, 'height': 800}, 11)):
+            pg, _ = new_page(b, 'light', viewport=vp)
+            go(pg, '/', 'light')
+            r = pg.evaluate("(()=>{const ol=document.querySelector('ol.timeline');if(!ol)return null;const l=ol.getBoundingClientRect().left;return [...ol.querySelectorAll('.tl-node')].map(n=>{const r=n.getBoundingClientRect();return r.left+r.width/2-l})})()")
+            check(f'(i) timeline nodes on rail {dev}', bool(r) and all(abs(x - rail) <= 2 for x in r), r)
+            pg.context.close()
         # (b)-(e) desktop
         pg, errs = new_page(b, 'light', viewport={'width': 1200, 'height': 900})
         go(pg, '/publications/', 'light')

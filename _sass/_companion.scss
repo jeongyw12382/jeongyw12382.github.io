@@ -19,14 +19,14 @@
 html[data-theme="dark"] #buddy .rig, html[data-theme="dark"] #buddy .fx { filter: drop-shadow(0 0 1px rgba(251, 250, 246, .85)); }
 #buddy svg { width: 100%; height: auto; display: block; overflow: visible; }
 #buddy .bubble {
-  position: absolute; left: 50%; bottom: 100%; transform: translate(calc(-50% + var(--bshift, 0px)), -8px) scale(.6); transform-origin: 50% 100%;
+  position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, -8px) translateX(var(--bshift, 0px)) scale(.6); transform-origin: 50% 100%;
   background: var(--global-card-bg-color); color: var(--global-text-color);
   border: 1px solid var(--react); border-radius: 10px;
   font-family: "Fredoka", "Trebuchet MS", system-ui, sans-serif; font-weight: 500; font-size: 13px; line-height: 1.5;
   white-space: nowrap; padding: 3px 10px;
   opacity: 0; transition: opacity .18s, transform .18s;
 }
-#buddy .bubble.on { opacity: 1; transform: translate(calc(-50% + var(--bshift, 0px)), -8px) scale(1); }
+#buddy .bubble.on { opacity: 1; transform: translate(-50%, -8px) translateX(var(--bshift, 0px)) scale(1); }
 #buddy .ink { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 #buddy .glasses { transition: transform .22s cubic-bezier(.3, 1.6, .5, 1); }
 #buddy.push .glasses { transform: translateY(-3.5px); }

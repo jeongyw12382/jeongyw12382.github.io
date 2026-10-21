@@ -1,1 +1,1 @@
-Run (needs Python Playwright + chromium, `bash tests/build.sh` first): `python3 tests/e2e/smoke_test.py` — screenshots go to tests/e2e/shots/ (gitignored).
+Run (needs Python Playwright + chromium, `bash tests/build.sh` first; use `bash tests/build.sh --prod` to test the minified production build that is deployed): `python3 tests/e2e/smoke_test.py` — screenshots go to tests/e2e/shots/ (gitignored).
