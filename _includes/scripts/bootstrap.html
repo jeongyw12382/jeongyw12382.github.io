@@ -1,3 +1,11 @@
 <!-- Bootsrap & MDB scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@{{ site.bootstrap.version }}/dist/js/bootstrap.bundle.min.js" integrity="{{ site.bootstrap.integrity.js }}" crossorigin="anonymous"></script>
+  <!-- mdb's ripple handler treats target.className as a string (indexOf, +=), which throws for SVG targets; make SVG className string-like -->
+  <script>(function () {
+    if (!window.SVGAnimatedString) return;
+    var A = SVGAnimatedString.prototype;
+    if (!A.indexOf) A.indexOf = function (s) { return this.baseVal.indexOf(s); };
+    var d = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'className');
+    if (d && d.get && !d.set) Object.defineProperty(SVGElement.prototype, 'className', { configurable: true, get: d.get, set: function (v) { this.setAttribute('class', v); } });
+  })();</script>
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@{{ site.mdb.version }}/js/mdb.min.js" integrity="{{ site.mdb.integrity.js }}" crossorigin="anonymous"></script>

@@ -427,6 +427,15 @@ if (typeof module !== 'undefined' && module.exports) {
         bubble.classList.toggle('on', !!text);
         shown.text = text;
       }
+      if (text) {
+        // keep the bubble inside the viewport (16px margin) while he is near an edge
+        var br = buddy.getBoundingClientRect(), bw = bubble.offsetWidth, vw = document.documentElement.clientWidth;
+        var half = bw / 2, c = br.left + br.width / 2;
+        var shift = 0;
+        if (c - half < 16) shift = 16 - (c - half); else if (c + half > vw - 16) shift = vw - 16 - (c + half);
+        shift = Math.round(shift);
+        if (shift !== shown.shift) { bubble.style.setProperty('--bshift', shift + 'px'); shown.shift = shift; }
+      }
       var bAccent = b && b.accent ? b.accent : '';
       if (bAccent !== shown.bAccent) { bubble.style.borderColor = bAccent; shown.bAccent = bAccent; }
       var fromHover = !!(b && b.hover);
