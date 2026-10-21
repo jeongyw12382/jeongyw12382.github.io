@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 
 const C = createRequire(import.meta.url)('../assets/js/companion.js');
-const { reduce, onFace, isShake, isNightOwl, HIT_LINES, initState, bubbleOf } = C;
+const { reduce, onFace, isShake, isNightOwl, HIT_LINES, initState, bubbleOf, track, initGesture } = C;
 
 // his box: 84px wide at (200, 200); face center (242, 250.4), box center (242, 242)
 const box = { left: 200, top: 200, width: 84 };
@@ -47,6 +47,8 @@ test('cursor more than 160 px away returns him to follow', () => {
   ]);
   assert.equal(s.mode, 'rest');
   s = reduce(s, { type: 'move', now: 30, x: 380, y: 250, box }); // 138 px from box center: still near
+  assert.equal(s.mode, 'rest');
+  s = reduce(s, { type: 'move', now: 35, x: 402, y: 242, box }); // exactly 160 px: still near (> 160 leaves)
   assert.equal(s.mode, 'rest');
   s = reduce(s, { type: 'move', now: 40, x: 420, y: 250, box }); // 178 px
   assert.equal(s.mode, 'follow');
@@ -216,4 +218,68 @@ test('built pages include the companion once, its script, and the footer toggle'
     assert.match(html, /assets\/js\/companion\.js/);
     assert.equal(count(html, /id="companion-toggle"/), 1, page);
   }
+});
+
+// ---- face-hit gesture tracker: decides hits and which click to swallow ----
+const down = (o) => Object.assign({ type: 'down', now: 0, x: 0, y: 0, pointerType: 'mouse', button: 0, isPrimary: true, face: true }, o);
+
+test('gesture: primary left mouse press on his face is a hit and swallows the following click', () => {
+  let r = track(initGesture(), down({ now: 0 }));
+  assert.equal(r.hit, true);
+  r = track(r.g, { type: 'click', now: 80 });
+  assert.equal(r.swallow, true);
+  r = track(r.g, { type: 'click', now: 120 });
+  assert.equal(r.swallow, false, 'only one click is swallowed');
+});
+
+test('gesture: right/middle click or a non-primary pointer does not arm', () => {
+  for (const o of [{ button: 2 }, { button: 1 }, { isPrimary: false }]) {
+    let r = track(initGesture(), down(o));
+    assert.equal(r.hit, false, JSON.stringify(o));
+    r = track(r.g, { type: 'click', now: 50 });
+    assert.equal(r.swallow, false, JSON.stringify(o));
+  }
+});
+
+test('gesture: pointercancel disarms', () => {
+  let r = track(initGesture(), down({ now: 0 }));
+  r = track(r.g, { type: 'cancel', now: 30 });
+  r = track(r.g, { type: 'click', now: 60 });
+  assert.equal(r.swallow, false);
+});
+
+test('gesture: a stale flag cannot swallow a click more than 600 ms later', () => {
+  let r = track(initGesture(), down({ now: 0 }));
+  r = track(r.g, { type: 'click', now: 601 });
+  assert.equal(r.swallow, false);
+});
+
+test('gesture: every new press resets the flag', () => {
+  let r = track(initGesture(), down({ now: 0 }));
+  r = track(r.g, down({ now: 100, face: false }));
+  assert.equal(r.hit, false);
+  r = track(r.g, { type: 'click', now: 150 });
+  assert.equal(r.swallow, false);
+});
+
+test('gesture: touch scroll starting on his face is not a hit; a still tap is', () => {
+  let r = track(initGesture(), down({ now: 0, x: 100, y: 100, pointerType: 'touch' }));
+  assert.equal(r.hit, false, 'touch hits are decided on release');
+  r = track(r.g, { type: 'move', now: 30, x: 100, y: 130 });
+  r = track(r.g, { type: 'up', now: 60, x: 100, y: 160 });
+  assert.equal(r.hit, false);
+  r = track(r.g, { type: 'click', now: 80 });
+  assert.equal(r.swallow, false);
+  // browser takes over the scroll -> pointercancel, no hit
+  r = track(r.g, down({ now: 200, x: 100, y: 100, pointerType: 'touch' }));
+  r = track(r.g, { type: 'cancel', now: 230 });
+  r = track(r.g, { type: 'up', now: 260, x: 100, y: 100 });
+  assert.equal(r.hit, false);
+  // still tap
+  r = track(r.g, down({ now: 400, x: 100, y: 100, pointerType: 'touch' }));
+  r = track(r.g, { type: 'move', now: 420, x: 104, y: 103 });
+  r = track(r.g, { type: 'up', now: 450, x: 104, y: 103 });
+  assert.equal(r.hit, true);
+  r = track(r.g, { type: 'click', now: 470 });
+  assert.equal(r.swallow, true);
 });

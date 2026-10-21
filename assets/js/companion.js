@@ -103,7 +103,7 @@ function input(s, now) {
 function far(s, box) {
   if (!box || !s.mouse) return false;
   var w = box.width;
-  return Math.hypot(s.mouse.x - (box.left + w / 2), s.mouse.y - (box.top + w / 2)) >= T.leave;
+  return Math.hypot(s.mouse.x - (box.left + w / 2), s.mouse.y - (box.top + w / 2)) > T.leave;
 }
 
 function maybeSleep(s, now) {
@@ -184,6 +184,41 @@ function reduce(s, e) {
   }
 }
 
+/* ---- face-hit gesture tracker (pure) ----
+ * Decides which press is a hit and which click to swallow, so a stale flag can never eat
+ * an unrelated click. Mouse/pen: a primary left press on his face is a hit right away.
+ * Touch: the hit is decided on release, and only if the finger moved <= 10 px (a scroll
+ * that starts on him is not a hit). The click that follows a hit is swallowed if it comes
+ * within 600 ms; every new press, pointercancel or click clears the flag. */
+var SWALLOW_MS = 600, TAP_SLOP = 10;
+function initGesture() { return { armedUntil: -Infinity, tap: null }; }
+function track(g, e) {
+  var now = e.now || 0;
+  switch (e.type) {
+    case 'down': {
+      g = { armedUntil: -Infinity, tap: null };
+      var ok = e.face && e.isPrimary !== false && (e.button === 0 || e.button === undefined);
+      if (!ok) return { g: g, hit: false, swallow: false };
+      if (e.pointerType === 'touch') return { g: { armedUntil: -Infinity, tap: { x: e.x, y: e.y } }, hit: false, swallow: false };
+      return { g: { armedUntil: now + SWALLOW_MS, tap: null }, hit: true, swallow: false };
+    }
+    case 'move':
+      if (g.tap && Math.hypot(e.x - g.tap.x, e.y - g.tap.y) > TAP_SLOP) g = { armedUntil: g.armedUntil, tap: null };
+      return { g: g, hit: false, swallow: false };
+    case 'up':
+      if (g.tap && Math.hypot(e.x - g.tap.x, e.y - g.tap.y) <= TAP_SLOP) {
+        return { g: { armedUntil: now + SWALLOW_MS, tap: null }, hit: true, swallow: false };
+      }
+      return { g: { armedUntil: g.armedUntil, tap: null }, hit: false, swallow: false };
+    case 'cancel':
+      return { g: initGesture(), hit: false, swallow: false };
+    case 'click':
+      return { g: initGesture(), hit: false, swallow: now <= g.armedUntil };
+    default:
+      return { g: g, hit: false, swallow: false };
+  }
+}
+
 /** What the speech bubble shows right now: a live transient line wins over a hover line. */
 function bubbleOf(s, now) {
   if (s.say && now < s.say.until) return { text: s.say.text, accent: s.say.accent, hover: false };
@@ -193,7 +228,7 @@ function bubbleOf(s, now) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { reduce: reduce, onFace: onFace, isShake: isShake, isNightOwl: isNightOwl,
-    HIT_LINES: HIT_LINES, initState: initState, bubbleOf: bubbleOf, T: T };
+    HIT_LINES: HIT_LINES, initState: initState, bubbleOf: bubbleOf, T: T, track: track, initGesture: initGesture };
 }
 
 /* ------------------------------------------------------------------ browser glue */
@@ -224,7 +259,8 @@ if (typeof module !== 'undefined' && module.exports) {
 
     var t0 = performance.now();
     var state = initState(t0);
-    function dispatch(e) { state = reduce(state, e); }
+    // while hidden nothing reaches reduce, so once-per-view moments (page end, night) are not used up
+    function dispatch(e) { if (enabled) state = reduce(state, e); }
 
     var W = 84;
     var mouse = { x: innerWidth * 0.7, y: innerHeight * 0.6, seen: false };
@@ -249,25 +285,41 @@ if (typeof module !== 'undefined' && module.exports) {
       addEventListener(n, function () { dispatch({ type: 'input', now: performance.now() }); }, { passive: true });
     });
 
-    // a hit is decided by where you click (inside his face), not by whether he is resting
-    var swallowClick = false;
+    // a hit is decided by where you press (inside his face), not by whether he is resting.
+    // The gesture tracker (pure, tested) decides hits and which single click to swallow.
+    var gesture = initGesture();
+    function hitAt(x, y, now) {
+      var b = buddy.getBoundingClientRect();
+      var dx = b.left + b.width / 2 - x, dy = b.top + b.height / 2 - y, d = Math.hypot(dx, dy) || 1;
+      if (!reduced && !parked) kick = { x: dx / d * 14, y: dy / d * 10 };
+      dispatch({ type: 'hit', now: now });
+      buddy.classList.remove('ouch'); void buddy.offsetWidth; buddy.classList.add('ouch');
+    }
+    function feed(ev, x, y) {
+      var r = track(gesture, ev);
+      gesture = r.g;
+      if (r.hit) hitAt(x, y, ev.now);
+      return r;
+    }
     addEventListener('pointerdown', function (e) {
       var now = performance.now();
-      if (enabled && onFace(e.clientX, e.clientY, buddy.getBoundingClientRect())) {
-        swallowClick = true;
-        var b = buddy.getBoundingClientRect();
-        var dx = b.left + b.width / 2 - e.clientX, dy = b.top + b.height / 2 - e.clientY, d = Math.hypot(dx, dy) || 1;
-        if (!reduced && !parked) kick = { x: dx / d * 14, y: dy / d * 10 };
-        dispatch({ type: 'hit', now: now });
-        buddy.classList.remove('ouch'); void buddy.offsetWidth; buddy.classList.add('ouch');
-        return;
-      }
+      var face = enabled && onFace(e.clientX, e.clientY, buddy.getBoundingClientRect());
+      var r = feed({ type: 'down', now: now, x: e.clientX, y: e.clientY, pointerType: e.pointerType,
+        button: e.button, isPrimary: e.isPrimary, face: face }, e.clientX, e.clientY);
+      if (face) return; // on his face: a hit (now, or on release for touch), never a hop
       dispatch({ type: 'input', now: now });
-      if (hop <= 0) hop = 1;
+      if (!r.hit && hop <= 0) hop = 1;
     }, true);
+    addEventListener('pointermove', function (e) {
+      if (gesture.tap) feed({ type: 'move', now: performance.now(), x: e.clientX, y: e.clientY });
+    }, { capture: true, passive: true });
+    addEventListener('pointerup', function (e) {
+      feed({ type: 'up', now: performance.now(), x: e.clientX, y: e.clientY }, e.clientX, e.clientY);
+    }, true);
+    addEventListener('pointercancel', function () { feed({ type: 'cancel', now: performance.now() }); }, true);
     // don't let a hit also follow a link underneath him
     addEventListener('click', function (e) {
-      if (swallowClick) { swallowClick = false; e.preventDefault(); e.stopPropagation(); }
+      if (feed({ type: 'click', now: performance.now() }).swallow) { e.preventDefault(); e.stopPropagation(); }
     }, true);
 
     /* ---- page events ---- */
@@ -297,16 +349,47 @@ if (typeof module !== 'undefined' && module.exports) {
     }, { passive: true });
 
     function night() { dispatch({ type: 'night', now: performance.now(), date: new Date() }); }
-    setTimeout(night, 4000);
-    setInterval(night, 61000);
 
-    /* ---- toggle ---- */
+    /* ---- blink: dot eyes squash into little dashes ---- */
+    function setEyes(rx, ry) { eyes.forEach(function (el) { el.setAttribute('rx', rx); el.setAttribute('ry', ry); }); }
+    var timers = { blink: 0, open: 0, night0: 0, night: 0, boil: 0 };
+    function blink() {
+      setEyes(3, 0.6);
+      timers.open = setTimeout(function () { setEyes(1.9, 1.9); }, 140);
+      timers.blink = setTimeout(blink, 2200 + Math.random() * 3200);
+    }
+
+    /* ---- hand-drawn line boil ---- */
+    var noise = document.getElementById('wobble-noise');
+    var seed = 2;
+    function boil() { if (document.hidden) return; seed = (seed % 4) + 1; noise.setAttribute('seed', seed); }
+
+    /* ---- show / hide: hidden means no loop, no timers, no state changes ---- */
+    var rafId = 0;
+    function startAll() {
+      if (!reduced) timers.blink = setTimeout(blink, 1500);
+      if (!reduced && noise) timers.boil = setInterval(boil, 180);
+      timers.night0 = setTimeout(night, 4000);
+      timers.night = setInterval(night, 61000);
+      last = performance.now();
+      dispatch({ type: 'input', now: last }); // fresh activity clock, so he doesn't wake up asleep
+      if (!rafId) rafId = requestAnimationFrame(frame);
+    }
+    function stopAll() {
+      clearTimeout(timers.blink); clearTimeout(timers.open); clearTimeout(timers.night0);
+      clearInterval(timers.night); clearInterval(timers.boil);
+      setEyes(1.9, 1.9);
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+      gesture = initGesture();
+    }
     function applyEnabled() {
       buddy.hidden = !enabled;
       if (toggle) {
         toggle.textContent = enabled ? 'Hide companion' : 'Show companion';
         toggle.setAttribute('aria-pressed', enabled ? 'false' : 'true');
       }
+      if (enabled) startAll(); else stopAll();
     }
     if (toggle) {
       toggle.hidden = false;
@@ -315,23 +398,6 @@ if (typeof module !== 'undefined' && module.exports) {
         try { localStorage.setItem('companionHidden', enabled ? '0' : '1'); } catch (err) { /* ignore */ }
         applyEnabled();
       });
-    }
-    applyEnabled();
-
-    /* ---- blink: dot eyes squash into little dashes ---- */
-    function setEyes(rx, ry) { eyes.forEach(function (el) { el.setAttribute('rx', rx); el.setAttribute('ry', ry); }); }
-    function blink() {
-      setEyes(3, 0.6);
-      setTimeout(function () { setEyes(1.9, 1.9); }, 140);
-      setTimeout(blink, 2200 + Math.random() * 3200);
-    }
-    if (!reduced) setTimeout(blink, 1500);
-
-    /* ---- hand-drawn line boil ---- */
-    var noise = document.getElementById('wobble-noise');
-    if (!reduced && noise) {
-      var seed = 2;
-      setInterval(function () { if (!enabled || document.hidden) return; seed = (seed % 4) + 1; noise.setAttribute('seed', seed); }, 180);
     }
 
     /* ---- render ---- */
@@ -378,8 +444,8 @@ if (typeof module !== 'undefined' && module.exports) {
     var last = performance.now();
     var wasStartled = false;
     function frame(now) {
-      requestAnimationFrame(frame);
-      if (!enabled) { last = now; return; }
+      if (!enabled) { rafId = 0; return; }
+      rafId = requestAnimationFrame(frame);
       var dt = Math.min(50, now - last) / 16.67; last = now;
       var H = W;
 
@@ -422,10 +488,10 @@ if (typeof module !== 'undefined' && module.exports) {
 
       buddy.style.transform = 'translate(' + (pos.x + sx).toFixed(1) + 'px, ' + (pos.y + bounce + jump + sy).toFixed(1) + 'px) rotate(' +
         tilt.toFixed(2) + 'deg) scale(' + (2 - squash).toFixed(3) + ', ' + squash.toFixed(3) + ')';
-      if (mouse.seen) look(mouse.x, mouse.y);
+      if (mouse.seen && !reduced) look(mouse.x, mouse.y);
       render(now);
     }
-    requestAnimationFrame(frame);
+    applyEnabled();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
