@@ -5,5 +5,5 @@ title: CV
 nav: false
 # nav_order: 4
 # nav: false
-cv_pdf: cv_yoonwoojeong.pdf
+cv_pdf: CV_of_YoonWooJeong.pdf
 ---

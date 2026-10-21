@@ -60,8 +60,13 @@ layout: default
           {%- include education.html %}
           {%- endif %}
 
+          {% if page.academic -%}
+          <!-- Academic services -->
+          {%- include academic.html %}
+          {%- endif %}
+
           {% if page.honors -%}
-          <!-- Experience -->
+          <!-- Honors -->
           {%- include honors.html %}
           {%- endif %}
           

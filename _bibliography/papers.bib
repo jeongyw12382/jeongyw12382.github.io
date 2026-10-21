@@ -7,7 +7,7 @@
 @string{IJCV = {International Journal of Computer Vision (<b>IJCV</b>),}}
 @string{ICRA = {IEEE International Conference on Robotics and Automation (<b>ICRA</b>),}}
 @string{ICML = {International Conference on Machine Learning (<b>ICML</b>),}}
-@string{WACV = {IEEE/CVF Winter Conference on Applications of Computer Vision(<b>IJCV</b>),}}
+@string{WACV = {IEEE/CVF Winter Conference on Applications of Computer Vision (<b>WACV</b>),}}
 @string{BMVC = {British Machine Vision Conference (<b>BMVC</b>),}}
 @string{NeurIPS = {Conference on Neural Information Processing Systems (<b>NeurIPS</b>),}}
 @string{NeurIPS-W = {Conference on Neural Information Processing Systems Workshop (<b>NeurIPS-W</b>),}}
@@ -30,17 +30,29 @@
   img_path={assets/img/publication_preview/arxiv_cog3dmap_2026.png}
 }
 
-@misc{jeon2026valr,
+@inproceedings{jeon2026valr,
   title={Vision-aligned Latent Reasoning for Multi-modal Large Language Model}, 
   author={Byungwoo Jeon and Yoonwoo Jeong and Hyunseok Lee and Minsu Cho and Jinwoo Shin},
   year={2026},
   arxiv={2602.04476},
-  booktitle=arXiv,
+  booktitle=ICML,
   archivePrefix={arXiv},
   selected={true},
-  abbr={arXiv},
+  abbr={ICML},
   website={https://rootyjeon.github.io/valr/}, 
   img_path={assets/img/publication_preview/arxiv_2026_valr.png}
+}
+
+@inproceedings{jeon2026larc,
+  title={LARC: Latent Reasoning in Continuous Space for Unified Multimodal Models},
+  author={Byungwoo Jeon and Yoonwoo Jeong and Hyunseok Lee and Minsu Cho and Jinwoo Shin},
+  booktitle=NeurIPS,
+  year={2026},
+  selected={true},
+  abbr={NeurIPS},
+  website={https://rootyjeon.github.io/latent-reasoning-umm/},
+  pdf={https://rootyjeon.github.io/latent-reasoning-umm/assets/larc.pdf},
+  img_path={assets/img/publication_preview/neurips_2026_larc.jpg}
 }
 
 @inproceedings{jeong2026mvsam,
@@ -57,7 +69,7 @@
 }
 
 @inproceedings{jeong2025quantile,
-  title={Quantile Rendering: Efficiently Embedding High-dimensional Feature on 3D Gaussian Splatting},
+  title={Quantile Rendering: Efficiently Embedding High-dimensional Features on 3D Gaussian Splatting},
   author={Yoonwoo Jeong and Cheng Sun and Yu-Chiang Frank Wang and Minsu Cho and Jaesung Choe},
   abstract={We present Quantile Rendering (Q-Render), an efficient rendering algorithm for 3D Gaussians that involve high-dimensional feature vectors. Unlike conventional volume rendering, which densely samples all 3D Gaussians intersecting each ray, Q-Render sparsely samples 3D Gaussians that have dominant influence along ray. The dominance is determined by transmittance change analysis, and the only sampled Gaussians will participate in subsequent rendering steps such as alpha blending. In our framework, Q-Render is integrated with a conventional 3D neural network that operates on 3D Gaussians, named Gaussian Splatting Network (GS-Net), to predict Gaussian features. We evaluate GS-Net on open-vocabulary 3D semantic segmentation using two benchmarks: (1) ScanNet and (2) LeRF-OVS, where 3D Gaussians are enriched with CLIP-based language features. Extensive experiments show that Q-Render under GS-Net consistently outperforms existing methods, achieving superior results and highlighting its potential as an effective bridge between 2D foundation models and 3D Gaussian representations. Furthermore, our Q-render achieves ~43.7× speed gains against previous methods when rendering 512-D feature maps.},
   booktitle=NVIDIA,
@@ -73,10 +85,10 @@
 
 @inproceedings{jeong2024rodygs,
   title={RoDyGS: Robust Dynamic Gaussian Splatting for Casual Videos},
-  author={Yoonwoo Jeong* and Junmyeong Lee* and Hoseung Choi* and Minsu Cho},
+  author={Junmyeong Lee and Hoseung Choi and Yoonwoo Jeong and Minsu Cho},
   abstract={Dynamic view synthesis (DVS) has advanced remarkably in recent years, achieving high-fidelity rendering while reducing computational costs. Despite the progress, optimizing dynamic neural fields from casual videos remains challenging, as these videos do not provide direct 3D information, such as camera trajectories or the underlying scene geometry. In this work, we present RoDyGS, an optimization pipeline for dynamic Gaussian Splatting from casual videos. It effectively learns motion and underlying geometry of scenes by separating dynamic and static primitives, and ensures that the learned motion and geometry are physically plausible by incorporating motion and geometric regularization terms. We also introduce a comprehensive benchmark, Kubric-MRig, that provides extensive camera and object motion along with simultaneous multi-view captures, features that are absent in previous benchmarks. Experimental results demonstrate that the proposed method significantly outperforms previous pose-free dynamic neural fields and achieves competitive rendering quality compared to existing pose-free static neural fields.},
   booktitle=arXiv,
-  year={2024},
+  year={2025},
   arxiv={2412.03077},
   selected={true},
   abbr={arXiv},
@@ -88,7 +100,7 @@
 @inproceedings{jeong2024nvsadapter,
   title={NVS-Adapter: Plug-and-Play Novel View Synthesis from a Single Image},
   author={Yoonwoo Jeong and Jinwoo Lee and Chiheon Kim and Minsu Cho and Doyup Lee},
-  abstract={Robust semantic segmentation under adverse conditions is of great importance in real-world applications. To address this challenging task in practical scenarios where labeled normal condition images are not accessible in training, we propose FREST, a novel feature restoration framework for source-free domain adaptation (SFDA) of semantic segmentation to adverse conditions. FREST alternates two steps: (1) learning the condition embedding space that only separates the condition information from the features and (2) restoring features of adverse condition images on the learned condition embedding space. By alternating these two steps, FREST gradually restores features where the effect of adverse conditions is reduced. FREST achieved a state of the art on two public benchmarks (\ie, ACDC and RobotCar) for SFDA to adverse conditions. Moreover, it shows superior generalization ability on unseen datasets.},
+  abstract={Transfer learning of large-scale Text-to-Image (T2I) models has recently shown impressive potential for Novel View Synthesis (NVS) of diverse objects from a single image. While previous methods typically train large models on multi-view datasets for NVS, fine-tuning the whole parameters of T2I models not only demands a high cost but also reduces the generalization capacity of T2I models in generating diverse images in a new domain. In this study, we propose an effective method, dubbed NVS-Adapter, which is a plug-and-play module for a T2I model, to synthesize novel multi-views of visual objects while fully exploiting the generalization capacity of T2I models. NVS-Adapter consists of two main components; view-consistency cross-attention learns the visual correspondences to align the local details of view features, and global semantic conditioning aligns the semantic structure of generated views with the reference view. Experimental results demonstrate that the NVS-Adapter can effectively synthesize geometrically consistent multi-views and also achieve high performance on benchmarks without full fine-tuning of T2I models. The code and data are publicly available in \href{https://postech-cvlab.github.io/nvsadapter/}{https://postech-cvlab.github.io/nvsadapter/}.},
   booktitle=ECCV,
   year={2024},
   abbr={ECCV},
@@ -113,7 +125,7 @@
 }
 
 @inproceedings{kim2022selca,
-  title={SeLCA: Self-Supervised Learning of Canonical Axis},
+  title={SeLCA: Self-Supervised Learning of Canonical Axes},
   author={Seungwook Kim and Yoonwoo Jeong and Chunghyun Park and Jaesik Park and Minsu Cho},
   abstract={Robustness to rotation is critical for point cloud understanding tasks as point cloud features can be affected dramatically with respect to prevalent rotation changes. In this work, we introduce a novel self-supervised learning framework, dubbed SeLCA, that predicts a canonical axis of point clouds in a probabilistic manner. In essence, we propose to learn rotational-equivariance by predicting the canonical axis of point clouds, and achieve rotational-invariance by aligning the point clouds using their predicted canonical axis. When integrated into a rotation-sensitive pipeline, SeLCA achieves competitive performances on the ModelNet40 classification task under unseen rotations. Our proposed method also shows high robustness to various real-world point cloud corruptions presented by the ModelNet40-C dataset, compared to the state-of-the-art rotation-invariant method.},
   booktitle=NeurIPS-W,
@@ -138,7 +150,7 @@
 }
 
 @inproceedings{jeong2022perf,
-  title={PeRFception: Perception using Radiance Fieldsn},
+  title={PeRFception: Perception using Radiance Fields},
   author={Yoonwoo Jeong* and Seungjoo Shin* and Junha Lee* and Christopher Choy and Animashree Anandkumar and Minsu Cho and Jaesik Park},
   abstract={The recent progress in implicit 3D representation, i.e., Neural Radiance Fields (NeRFs), has made accurate and photorealistic 3D reconstruction possible in a differentiable manner. This new representation can effectively convey the information of hundreds of high-resolution images in one compact format and allows photorealistic synthesis of novel views. In this work, using the variant of NeRF called Plenoxels, we create the first large-scale implicit representation datasets for perception tasks, called the PeRFception, which consists of two parts that incorporate both object-centric and scene-centric scans for classification and segmentation. It shows a significant memory compression rate (96.4\%) from the original dataset, while containing both 2D and 3D information in a unified form. We construct the classification and segmentation models that directly take as input this implicit format and also propose a novel augmentation technique to avoid overfitting on backgrounds of images.},
   booktitle=NeurIPS-D,
@@ -169,11 +181,11 @@
 
 
 @inproceedings{lee2022sslso,
-  title={Self-supervised Learning of Image Scale and Orientation},
+  title={Self-supervised Learning of Image Scale and Orientation Estimation},
   author={Jongmin Lee and Yoonwoo Jeong and Minsu Cho},
   abstract={We study the problem of learning to assign a characteristic pose, i.e., scale and orien- tation, for an image region of interest. Despite its apparent simplicity, the problem is non- trivial; it is hard to obtain a large-scale set of image regions with explicit pose annotations that a model directly learns from. To tackle the issue, we propose a self-supervised learn- ing framework with a histogram alignment technique. It generates pairs of image patches by random rescaling/rotating and then train an estimator to predict their scale/orientation values so that their relative difference is consistent with the rescaling/rotating used. The estimator learns to predict a non-parametric histogram distribution of scale/orientation without any supervision. Experiments show that it significantly outperforms previous methods in scale/orientation estimation and also improves image matching and 6 DoF camera pose estimation by incorporating our patch poses into a matching process.}, 
   booktitle=BMVC,
-  year={2022},
+  year={2021},
   abbr={BMVC},
   selected={true},
   website={https://www.bmvc2021-virtualconference.com/assets/papers/0836.pdf},

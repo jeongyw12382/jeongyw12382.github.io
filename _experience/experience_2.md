@@ -1,10 +1,10 @@
 ---
 layout: post
-start_end: "Jul, 2022 - Dec, 2023"
+start_end: "2018 - 2020"
 inline: true
 ---
 
-[KakaoBrain](https://www.kakaobrain.com/) (on-site), Pangyo, Korea \
-*Research Intern*
-- Research topic: 3D generative models and novel view synthesis.
-- Mentor: [Doyup Lee](https://github.com/LeeDoYup)
+[Computer Vision Lab](http://cvlab.postech.ac.kr/lab/), [POSTECH](https://postech.ac.kr/), Pohang, Korea \
+*Undergraduate Research Intern*
+- Developed robust visual correspondence models.
+- Mentor: Jongmin Lee

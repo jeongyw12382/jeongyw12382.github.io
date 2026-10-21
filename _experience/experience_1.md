@@ -1,8 +1,9 @@
 ---
 layout: post
-start_end: "Mar, 2018 - Present"
+start_end: "2017 - 2018"
 inline: true
 ---
 
-[Computer Vision Lab](http://cvlab.postech.ac.kr/lab/), [POSTECH](https://postech.ac.kr/), Pohang, South Korea \
-*Research and Teaching Assistant*
+Data Intelligence Lab, [POSTECH](https://postech.ac.kr/), Pohang, Korea \
+*Undergraduate Research Intern*
+- Worked on neural image style transfer.

@@ -183,6 +183,9 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor
+  - docs
+  - tests
+  - .superpowers
 keep_files:
   - CNAME
   - .nojekyll

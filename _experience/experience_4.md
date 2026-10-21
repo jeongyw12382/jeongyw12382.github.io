@@ -1,9 +1,10 @@
 ---
 layout: post
-start_end: "May, 2026 - Sep, 2026"
+start_end: "2025"
 inline: true
 ---
 
-Meta FAIR, DINO team (on-site), Paris, France \
+[NVIDIA Research](https://www.nvidia.com/en-us/research/) (on-site), Taipei, Taiwan \
 *Research Intern*
-- Mentor: Maxime Oquab
+- Developed 3D foundation models.
+- Mentor: [Jaesung Choe](https://jaesung-choe.github.io/)

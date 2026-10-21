@@ -1,9 +1,8 @@
 ---
 layout: post
-start_end: "Mar, 2021 - Present"
+start_end: "2017 - 2020"
 inline: true
 ---
 
-[Pohang University of Science and Technology (POSTECH)](https://postech.ac.kr/eng/), Pohang, South Korea \
-Integrated M.S./Ph.D. student in [Graduate School of Artificial Intelligence](https://ai.postech.ac.kr/)  \
-Advisor: Prof. [Minsu Cho](https://cvlab.postech.ac.kr/~mcho/)
+[Pohang University of Science and Technology (POSTECH)](https://postech.ac.kr/eng/), Pohang, Korea \
+B.S. in [Computer Science and Engineering](https://ecse.postech.ac.kr/)

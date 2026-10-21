@@ -1,10 +1,10 @@
 ---
 layout: post
-start_end: "Jan, 2025 - Mar, 2025"
+start_end: "2022 - 2023"
 inline: true
 ---
 
-[NVIDIA](https://www.kakaobrain.com/) (on-site), Taipei, Taiwan \
+[Kakao Brain](https://www.kakaobrain.com/) (on-site), Pangyo, Korea \
 *Research Intern*
-- Research topic: 3D foundation models.
-- Mentor: [Jaesung Choe](https://jaesung-choe.github.io/)
+- Developed text-to-3D diffusion models.
+- Mentor: [Doyup Lee](https://github.com/LeeDoYup)
