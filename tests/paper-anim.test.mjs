@@ -76,3 +76,19 @@ test('choir and scnerf handle pointer drag only while dragging', () => {
     assert.equal((listeners.pointerdown || []).length, 0);
   }
 });
+
+test('a drag swallows the following click; a plain tap does not', () => {
+  for (const id of ['choir', 'scnerf']) {
+    const { canvas, listeners } = fakeCanvas();
+    const a = PaperAnim[id](canvas, { accent: '#4a7cbc', ink: '#222', raf: () => 1, caf() {} });
+    a.start();
+    const ev = (x) => ({ clientX: x, pointerId: 1, preventDefault() {}, stopPropagation() { this.stopped = true; } });
+    const click = () => { const c = { stopped: false, preventDefault() {}, stopPropagation() { this.stopped = true; } }; listeners.click[0](c); return c.stopped; };
+    listeners.pointerdown[0](ev(40)); listeners.pointermove[0](ev(60)); listeners.pointerup[0](ev(60));
+    assert.equal(click(), true, id + ' drag click swallowed');
+    listeners.pointerdown[0](ev(40)); listeners.pointerup[0](ev(40));
+    assert.equal(click(), false, id + ' tap passes through');
+    a.destroy();
+    assert.equal((listeners.click || []).length, 0);
+  }
+});

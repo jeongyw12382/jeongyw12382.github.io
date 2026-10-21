@@ -78,13 +78,19 @@
         id = raf(tick);
       }
       function px(e) { var r = canvas.getBoundingClientRect(); return r.width ? (e.clientX - r.left) / r.width : 0.5; }
+      var startX = 0, moved = false;
+      var onClick = function (e) {            // a drag must not toggle the card's tap-to-play
+        if (!moved) return;
+        moved = false; e.stopPropagation(); e.preventDefault();
+      };
       var onDown = function (e) {
-        g.ctl.dragging = true; g.ctl.x = px(e); g.ctl.lastX = e.clientX;
+        g.ctl.dragging = true; g.ctl.x = px(e); g.ctl.lastX = e.clientX; startX = e.clientX; moved = false;
         try { canvas.setPointerCapture(e.pointerId); } catch (x) {}
       };
       var onMove = function (e) {
         if (!g.ctl.dragging) return;
         e.preventDefault();
+        if (Math.abs(e.clientX - startX) > 4) moved = true;
         g.ctl.dx += e.clientX - g.ctl.lastX; g.ctl.lastX = e.clientX; g.ctl.x = px(e);
       };
       var onUp = function (e) {
@@ -94,6 +100,7 @@
       if (drag) {
         canvas.addEventListener('pointerdown', onDown); canvas.addEventListener('pointermove', onMove);
         canvas.addEventListener('pointerup', onUp); canvas.addEventListener('pointercancel', onUp);
+        canvas.addEventListener('click', onClick);
       }
       resize();
       if (typeof ResizeObserver !== 'undefined' && canvas.parentNode) {
@@ -115,7 +122,7 @@
           this.stop(); if (ro) ro.disconnect();
           if (drag) {
             canvas.removeEventListener('pointerdown', onDown); canvas.removeEventListener('pointermove', onMove);
-            canvas.removeEventListener('pointerup', onUp); canvas.removeEventListener('pointercancel', onUp);
+            canvas.removeEventListener('pointerup', onUp); canvas.removeEventListener('pointercancel', onUp); canvas.removeEventListener('click', onClick);
           }
         }
       };
@@ -235,7 +242,7 @@
   function nerffactory(g, t) {
     var cx = g.w / 2, cy = g.h * 0.52, rx = g.w * 0.38, ry = g.h * 0.2, c = g.ctx, i, a;
     c.strokeStyle = g.ink; c.globalAlpha = 0.25; c.lineWidth = 1.2; c.setLineDash([4, 5]);
-    c.beginPath(); c.arc(cx, cy, 1, 0, 0); c.moveTo(cx + rx, cy);
+    c.beginPath(); c.moveTo(cx + rx, cy);
     for (i = 1; i <= 48; i++) { a = i / 48 * 6.2832; c.lineTo(cx + rx * Math.cos(a), cy + ry * Math.sin(a)); }
     c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
     var blobs = [[0, 0, 0.1], [-0.3, 0.1, 0.07], [0.28, -0.06, 0.08], [0.05, -0.25, 0.06], [-0.1, 0.28, 0.06]];
