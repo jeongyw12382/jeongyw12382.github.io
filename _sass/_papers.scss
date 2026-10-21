@@ -1,0 +1,442 @@
+/*******************************************************************************
+ * Interactive paper cards (_includes/paper_card.html, assets/js/papers.js)
+ ******************************************************************************/
+
+// Per-card accent (--accent, set inline) drives: left edge, hover glow,
+// category eyebrow, role badge, chip highlight and the detail header.
+// --accent-ink is a contrast-safe text version of the accent for each theme.
+.paper-card {
+  --accent-ink: var(--global-text-color);
+  --accent-soft: transparent;
+  --accent-line: var(--global-divider-color);
+  --accent-on: #fff;
+  --media-bg: #fff;
+  --clip-bg: #101114;
+}
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  .paper-card {
+    --accent-ink: color-mix(in srgb, var(--accent) 68%, #000);
+    --accent-soft: color-mix(in srgb, var(--accent) 11%, transparent);
+    --accent-line: color-mix(in srgb, var(--accent) 38%, transparent);
+  }
+  html[data-theme='dark'] .paper-card {
+    --accent-ink: color-mix(in srgb, var(--accent) 45%, #fff);
+    --accent-soft: color-mix(in srgb, var(--accent) 22%, transparent);
+    --accent-line: color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+}
+html[data-theme='dark'] .paper-card {
+  --accent-on: #1c1c1d;
+}
+
+.publications ol.bibliography li { margin-bottom: 1.25rem; }
+.publications .pub-year h2.year { margin-bottom: 1rem; }
+.publications .pub-year[hidden] { display: none; }
+
+.paper-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40% minmax(0, 1fr);
+  grid-template-areas: "media body" "detail detail";
+  column-gap: 1.25rem;
+  padding: 1rem 1.1rem 1rem 1.15rem;
+  background: var(--global-card-bg-color);
+  color: var(--global-text-color);
+  border: 1px solid var(--global-divider-color);
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+
+  &:hover, &:focus-within, &.is-open {
+    border-color: var(--accent-line);
+    border-left-color: var(--accent);
+    box-shadow: 0 10px 28px -14px var(--accent), 0 0 0 1px var(--accent-line);
+  }
+  &:hover { transform: translateY(-2px); }
+  &[hidden] { display: none; }
+}
+
+/* ---------- media ---------- */
+.paper-media {
+  grid-area: media;
+  position: relative;
+  align-self: start;
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--media-bg); // teaser figures are drawn on white
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06);
+
+  > img, > video, > canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+  }
+  .paper-thumb { object-fit: contain; padding: 6px; }
+  .paper-video, .paper-alt, .paper-canvas {
+    opacity: 0;
+    transition: opacity .3s ease;
+    pointer-events: none;
+  }
+  // Clips: letterbox (never crop) on a neutral backdrop - MV-SAM clips are ~4.5:1.
+  .paper-video { object-fit: contain; background: var(--clip-bg); }
+  .paper-alt { object-fit: contain; padding: 6px; background: var(--media-bg); }
+  .paper-canvas { background: var(--global-card-bg-color); }
+}
+.paper-card.is-playing .paper-media {
+  .paper-video, .paper-alt, .paper-canvas { opacity: 1; }
+  .media-hint { opacity: 0; }
+}
+.media-hint {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: .1rem .5rem;
+  font-size: .68rem;
+  line-height: 1.5;
+  border-radius: 999px;
+  color: #fff;
+  background: rgba(16, 17, 20, .72);
+  pointer-events: none;
+  transition: opacity .2s ease;
+  .hint-tap { display: none; }
+}
+@media (hover: none) {
+  .media-hint .hint-hover { display: none; }
+  .media-hint .hint-tap { display: inline; }
+}
+// Canvas hint only when the Task-5 animation for this card is loaded.
+.paper-media[data-kind="canvas"]:not(.anim-ready) .media-hint { display: none; }
+
+/* ---------- body ---------- */
+.paper-body {
+  grid-area: body;
+  min-width: 0;
+  cursor: pointer;
+  > p { margin: 0; }
+}
+.paper-category {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .45rem !important;
+  padding: .12rem .6rem .12rem .45rem;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 999px;
+  .cat-dot {
+    width: .55rem;
+    height: .55rem;
+    border-radius: 50%;
+    background: var(--accent);
+    flex: none;
+  }
+}
+.paper-hook {
+  font-size: 1.12rem;
+  line-height: 1.38;
+  font-weight: 600;
+  color: var(--global-text-color);
+  margin-bottom: .35rem !important;
+}
+.paper-card h3.paper-title {
+  font-size: .92rem;
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--global-theme-color);
+  margin: 0 0 .3rem;
+}
+.paper-authors {
+  font-size: .84rem;
+  line-height: 1.45;
+  color: var(--global-text-color);
+  .me { font-weight: 700; }
+  a { color: inherit; text-decoration: underline dotted; text-underline-offset: 2px; }
+  a:hover { color: var(--accent-ink); }
+  sup { margin-left: 1px; cursor: help; }
+  &.is-truncated .author.is-extra { display: none; }
+}
+.authors-more {
+  margin-left: .3rem;
+  padding: 0 .4rem;
+  font-size: .75rem;
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.paper-marks {
+  font-size: .7rem;
+  color: var(--global-text-color-light);
+  span + span { margin-left: .75rem; }
+}
+.paper-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem;
+  margin: .4rem 0 .5rem !important;
+  font-size: .8rem;
+  .venue { font-weight: 700; }
+  .role-badge, .award {
+    padding: .05rem .5rem;
+    font-size: .7rem;
+    font-weight: 600;
+    border-radius: 4px;
+    color: var(--accent-ink);
+    border: 1px solid var(--accent-line);
+    background: var(--accent-soft);
+  }
+}
+.paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .35rem;
+  .paper-link, .paper-more {
+    padding: .12rem .65rem;
+    font-size: .76rem;
+    line-height: 1.5;
+    border-radius: 999px;
+    border: 1px solid var(--global-divider-color);
+    color: var(--global-text-color);
+    background: transparent;
+    text-decoration: none;
+    transition: border-color .15s ease, color .15s ease, background .15s ease;
+    &:hover, &:focus-visible { border-color: var(--accent); color: var(--accent-ink); }
+  }
+  .paper-more {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--accent-on);
+    background: var(--accent-ink);
+    border-color: var(--accent-ink);
+    &:hover, &:focus-visible { color: var(--accent-on); filter: brightness(1.08); }
+  }
+}
+.paper-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  list-style: none;
+  padding: 0;
+  margin: .55rem 0 0;
+  li {
+    padding: 0 .45rem;
+    font-size: .68rem;
+    line-height: 1.6;
+    color: var(--global-text-color-light);
+    border: 1px solid var(--global-divider-color);
+    border-radius: 4px;
+    transition: border-color .2s ease, color .2s ease;
+  }
+}
+.paper-card:hover .paper-topics li, .paper-card.is-open .paper-topics li {
+  border-color: var(--accent-line);
+  color: var(--accent-ink);
+}
+
+/* ---------- detail ---------- */
+.paper-detail {
+  grid-area: detail;
+  min-width: 0;
+  &[hidden] { display: none !important; }
+  &.is-collapsible {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows .35s ease, opacity .3s ease;
+    &.is-open { grid-template-rows: 1fr; opacity: 1; }
+  }
+}
+.paper-detail-inner {
+  overflow: hidden;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1.5rem;
+  > .paper-result, > .paper-bibtex { grid-column: 1 / -1; }
+  > .paper-problem {
+    margin-top: 1rem;
+    padding-top: .9rem;
+    border-top: 2px solid var(--accent);
+  }
+  > .paper-idea {
+    margin-top: 1rem;
+    padding-top: .9rem;
+    border-top: 2px solid var(--accent);
+  }
+}
+.detail-block {
+  margin-bottom: .9rem;
+  h4 {
+    margin: 0 0 .3rem;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+  }
+  p { margin: 0 0 .4rem; font-size: .88rem; line-height: 1.5; }
+}
+.detail-figure {
+  display: block;
+  max-width: 100%;
+  margin-top: .5rem;
+  border-radius: 6px;
+  background: #fff;
+}
+.result-big {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .5rem;
+  .result-num {
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--accent-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .result-label { font-size: .85rem; color: var(--global-text-color-light); }
+}
+.paper-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: start;
+  gap: .6rem;
+  margin-top: .5rem;
+  > img, > video {
+    display: block;
+    width: 100%;
+    max-height: 22rem;
+    object-fit: contain;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06);
+  }
+}
+.extra-clip {
+  position: relative;
+  // Clips have no intrinsic size until loaded; wide clips letterbox inside.
+  video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    border-radius: 6px;
+    background: var(--clip-bg);
+    cursor: pointer;
+  }
+  .clip-hint {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin: -1.3rem 0 0 -1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: .2rem;
+    font-size: 1rem;
+    color: #fff;
+    background: rgba(16, 17, 20, .65);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  &.is-playing .clip-hint, &.has-controls .clip-hint { opacity: 0; }
+}
+.bibtex-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  h4 { margin: 0; }
+}
+.copy-bib {
+  padding: .1rem .65rem;
+  font-size: .74rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent-line);
+  color: var(--accent-ink);
+  background: var(--accent-soft);
+  cursor: pointer;
+  &.is-copied { color: var(--accent-on); background: var(--accent-ink); }
+}
+.paper-card pre.bibtex-text {
+  margin: .4rem 0 0;
+  padding: .7rem .8rem;
+  max-height: 16rem;
+  overflow: auto;
+  font-size: .72rem;
+  line-height: 1.45;
+  white-space: pre;
+  color: var(--global-text-color);
+  background: var(--global-code-bg-color);
+  border-radius: 6px;
+}
+
+/* ---------- filter chips (publications page) ---------- */
+.paper-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  margin: 1rem 0 .5rem;
+}
+.filter-chip {
+  padding: .25rem .8rem;
+  font-size: .8rem;
+  border-radius: 999px;
+  border: 1px solid var(--global-divider-color);
+  color: var(--global-text-color);
+  background: transparent;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, border-color .2s ease;
+  .chip-count { opacity: .65; }
+  &:hover { border-color: var(--global-theme-color); }
+  &[aria-pressed="true"] {
+    color: var(--global-bg-color);
+    background: var(--global-theme-color);
+    border-color: var(--global-theme-color);
+    .chip-count { opacity: .85; }
+  }
+}
+
+/* ---------- small screens ---------- */
+@media (max-width: 575.98px) {
+  .paper-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "media" "body" "detail";
+    padding: .8rem .8rem .8rem .9rem;
+  }
+  .paper-media { margin-bottom: .75rem; }
+  // One swipeable row of chips instead of six stacked lines.
+  .paper-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: .35rem;
+    scrollbar-width: thin;
+  }
+  .filter-chip { flex: none; }
+  .paper-hook { font-size: 1.04rem; }
+  .paper-detail-inner { grid-template-columns: minmax(0, 1fr); }
+  .paper-detail-inner > .paper-idea { margin-top: 0; padding-top: 0; border-top: 0; }
+}
+
+/* ---------- reduced motion: static thumbnails, no transitions ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .paper-card, .paper-card:hover { transition: none; transform: none; }
+  .paper-detail.is-collapsible { transition: none; }
+  .paper-media .paper-video, .paper-media .paper-alt, .paper-media .paper-canvas { transition: none; }
+  .media-hint { display: none !important; }
+}

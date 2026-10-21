@@ -1,0 +1,128 @@
+{%- comment -%}
+  Interactive paper card (publications page + about-page selected papers).
+  Expects `entry` (jekyll-scholar). Media comes from _data/paper_media.yml,
+  categories from _data/paper_categories.yml. Behavior: assets/js/papers.js.
+{%- endcomment -%}
+{%- assign m = site.data.paper_media[entry.key] -%}
+{%- assign cat = site.data.paper_categories | where: "id", entry.category | first -%}
+{%- assign topics = entry.topics | split: ", " -%}
+{%- assign eq = entry.equal_contrib_authors | split: ", " -%}
+{%- assign adv = entry.equal_advising_authors | split: ", " -%}
+{%- assign kind = "static" -%}
+{%- if m.kind == "video" -%}{%- assign kind = "video" -%}
+{%- elsif m.kind == "crossfade" or m.kind == "image" -%}{%- assign kind = "crossfade" -%}
+{%- elsif entry.anim -%}{%- assign kind = "canvas" -%}
+{%- endif -%}
+{%- assign title_text = entry.title | strip_html -%}
+{%- assign venue_full = entry.booktitle | default: entry.journal | strip_html | strip -%}
+{%- assign venue_last = venue_full | slice: -1, 1 -%}
+{%- if venue_last == "," -%}{%- assign venue_len = venue_full.size | minus: 1 -%}{%- assign venue_full = venue_full | slice: 0, venue_len -%}{%- endif -%}
+<article class="paper-card" id="{{ entry.key }}" data-key="{{ entry.key }}" data-category="{{ entry.category }}" data-topics="{{ topics | join: '|' }}" data-react="{{ entry.react }}" data-say="{{ entry.say | escape }}" style="--accent:{{ entry.accent | default: '#4a7cbc' }}">
+  <div class="paper-media" data-kind="{{ kind }}"{% if kind == "video" %} data-src="{{ m.hover | relative_url }}"{% elsif kind == "crossfade" %} data-src="{% if m.kind == 'image' %}{{ m.poster | relative_url }}{% else %}{{ m.hover | relative_url }}{% endif %}"{% elsif kind == "canvas" %} data-anim="{{ entry.anim }}"{% endif %}>
+    {%- if entry.img_path %}
+    <img class="paper-thumb" src="{{ entry.img_path | relative_url }}" alt="{{ title_text | escape }}: teaser figure" loading="lazy" decoding="async">
+    {%- endif %}
+    {%- if kind == "video" %}
+    <video class="paper-video" data-src="{{ m.hover | relative_url }}"{% if m.poster %} poster="{{ m.poster | relative_url }}"{% endif %} muted loop playsinline preload="none" aria-hidden="true"></video>
+    {%- elsif kind == "crossfade" %}
+    <img class="paper-alt" data-src="{% if m.kind == 'image' %}{{ m.poster | relative_url }}{% else %}{{ m.hover | relative_url }}{% endif %}" alt="" aria-hidden="true" decoding="async">
+    {%- endif %}
+    {%- if kind != "static" %}
+    <span class="media-hint" aria-hidden="true"><span class="hint-hover">{% if kind == "video" %}&#9654; Hover to play{% elsif kind == "canvas" %}&#10022; Hover to animate{% else %}&#8644; Hover for results{% endif %}</span><span class="hint-tap">{% if kind == "video" %}&#9654; Tap to play{% else %}&#10022; Tap{% endif %}</span></span>
+    {%- endif %}
+  </div>
+
+  <div class="paper-body">
+    {%- if cat %}
+    <p class="paper-category"><span class="cat-dot" aria-hidden="true"></span>{{ cat.label | escape }}</p>
+    {%- endif %}
+    <p class="paper-hook">{{ entry.hook }}</p>
+    <h3 class="paper-title">{{ entry.title }}</h3>
+    <p class="paper-authors">
+      {%- assign n_authors = entry.author_array | size -%}
+      {%- for author in entry.author_array -%}
+        {%- assign full = author.first | append: " " | append: author.last -%}
+        {%- assign coauthor_url = nil -%}
+        {%- if site.data.coauthors[author.last] -%}
+          {%- for coauthor in site.data.coauthors[author.last] -%}
+            {%- if coauthor.firstname contains author.first -%}{%- assign coauthor_url = coauthor.url -%}{%- break -%}{%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+        <span class="author">
+          {%- if author.first == site.scholar.first_name and author.last == site.scholar.last_name -%}
+            <b class="me">{{ full }}</b>
+          {%- elsif coauthor_url -%}
+            <a href="{{ coauthor_url }}">{{ full }}</a>
+          {%- else -%}
+            {{ full }}
+          {%- endif -%}
+          {%- if eq contains full -%}<sup title="Equal contribution">*</sup>{%- endif -%}
+          {%- if adv contains full -%}<sup title="Equal advising">†</sup>{%- endif -%}
+          {%- unless forloop.last -%}{%- if n_authors > 2 -%},{%- endif -%}{%- endunless -%}
+        </span>
+        {%- unless forloop.last %} {% if forloop.rindex == 2 %}and {% endif %}{% endunless -%}
+      {%- endfor -%}
+    </p>
+    {%- if entry.equal_contrib_authors or entry.equal_advising_authors %}
+    <p class="paper-marks">{% if entry.equal_contrib_authors %}<span>* Equal contribution</span>{% endif %}{% if entry.equal_advising_authors %}<span>† Equal advising</span>{% endif %}</p>
+    {%- endif %}
+    <p class="paper-meta"><span class="venue"{% if venue_full != "" %} title="{{ venue_full | escape }}"{% endif %}>{{ entry.abbr | default: "Project" }} {{ entry.year }}</span> <span class="role-badge">{{ entry.role }}</span>{% if entry.award %} <span class="award">{{ entry.award }}</span>{% endif %}</p>
+    <div class="paper-links">
+      {%- if entry.website %}<a class="paper-link" href="{{ entry.website }}">Project</a>{% endif %}
+      {%- if entry.arxiv %}<a class="paper-link" href="https://arxiv.org/abs/{{ entry.arxiv }}">arXiv</a>{% endif %}
+      {%- if entry.pdf %}<a class="paper-link" href="{% if entry.pdf contains '://' %}{{ entry.pdf }}{% else %}{{ entry.pdf | prepend: '/assets/pdf/' | relative_url }}{% endif %}">PDF</a>{% endif %}
+      {%- if entry.html %}<a class="paper-link" href="{{ entry.html }}">Paper</a>{% endif %}
+      {%- if entry.code %}<a class="paper-link" href="{{ entry.code }}">Code</a>{% endif %}
+      {%- if entry.slides %}<a class="paper-link" href="{% if entry.slides contains '://' %}{{ entry.slides }}{% else %}{{ entry.slides | prepend: '/assets/pdf/' | relative_url }}{% endif %}">Slides</a>{% endif %}
+      {%- if entry.poster %}<a class="paper-link" href="{% if entry.poster contains '://' %}{{ entry.poster }}{% else %}{{ entry.poster | prepend: '/assets/pdf/' | relative_url }}{% endif %}">Poster</a>{% endif %}
+      <button class="paper-more" aria-expanded="false" aria-controls="{{ entry.key }}-detail" type="button">More</button>
+    </div>
+    {%- if topics.size > 0 %}
+    <ul class="paper-topics" aria-label="Topics">
+      {%- for t in topics %}<li>{{ t }}</li>{% endfor -%}
+    </ul>
+    {%- endif %}
+  </div>
+
+  <section class="paper-detail" id="{{ entry.key }}-detail" hidden aria-label="Details: {{ title_text | escape }}">
+    <div class="paper-detail-inner">
+      {%- assign figs = "" | split: "" -%}
+      {%- assign gallery = "" | split: "" -%}
+      {%- for x in m.extras -%}
+        {%- if x contains "method" or x contains "architecture" or x contains "framework" or x contains "main-figure" or x contains "overview" -%}
+          {%- assign figs = figs | push: x -%}
+        {%- else -%}
+          {%- assign gallery = gallery | push: x -%}
+        {%- endif -%}
+      {%- endfor %}
+      <div class="detail-block paper-problem"><h4>Problem</h4><p>{{ entry.problem }}</p></div>
+      <div class="detail-block paper-idea"><h4>Key idea</h4><p>{{ entry.idea }}</p>
+        {%- for f in figs %}
+        <img class="detail-figure" src="{{ f | relative_url }}" alt="{{ title_text | escape }}: method figure" loading="lazy" decoding="async">
+        {%- endfor %}
+      </div>
+      <div class="detail-block paper-result"><h4>Result</h4>
+        {%- if entry.result_num %}
+        <p class="result-big"><span class="result-num">{{ entry.result_num }}</span> <span class="result-label">{{ entry.result_label }}</span></p>
+        {%- endif %}
+        <p>{{ entry.result }}</p>
+        {%- if gallery.size > 0 %}
+        <div class="paper-gallery">
+          {%- for g in gallery %}
+            {%- if g contains ".mp4" %}
+          <div class="extra-clip"><video class="extra-video" data-src="{{ g | relative_url }}" muted loop playsinline preload="none" aria-label="Result clip"></video><span class="clip-hint" aria-hidden="true">&#9654;</span></div>
+            {%- else %}
+          <img class="extra-image" src="{{ g | relative_url }}" alt="{{ title_text | escape }}: result" loading="lazy" decoding="async">
+            {%- endif %}
+          {%- endfor %}
+        </div>
+        {%- endif %}
+      </div>
+      <div class="detail-block paper-myrole"><h4>My role</h4><p>{{ entry.my_role }}</p></div>
+      <div class="detail-block paper-bibtex">
+        <div class="bibtex-head"><h4>BibTeX</h4><button class="copy-bib" type="button"><span class="copy-label">Copy BibTeX</span></button></div>
+        <pre class="bibtex-text" tabindex="0">{{ entry.bibtex | hideCustomBibtex | strip | escape }}</pre>
+      </div>
+    </div>
+  </section>
+</article>

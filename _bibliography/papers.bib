@@ -19,7 +19,7 @@
 
 @misc{gwak2026cog3dmap,
   title={Cog3DMap: Multi-View Vision-Language Reasoning with 3D Cognitive Maps},
-  author={Chanyoung Gwak* and Yoonwoo Jeong* and Byungwoo Jeon and Hyunseok Lee and Jinwoo Shin and Minsu Cho},
+  author={Chanyoung Gwak and Yoonwoo Jeong and Byungwoo Jeon and Hyunseok Lee and Jinwoo Shin and Minsu Cho},
   year={2026},
   booktitle=arXiv,
   arxiv={2603.23023},
@@ -27,7 +27,21 @@
   selected={true},
   abbr={arXiv},
   website={https://cog3dmap.github.io/},
-  img_path={assets/img/publication_preview/arxiv_cog3dmap_2026.png}
+  img_path={assets/img/publication_preview/arxiv_cog3dmap_2026.png},
+  category={multimodal},
+  topics={Multimodal LLM, 3D Understanding},
+  role={Co-first author},
+  accent={#c0614d},
+  react={cogmap},
+  say={I remember where the couch is!},
+  equal_contrib_authors={Chanyoung Gwak, Yoonwoo Jeong},
+  hook={Gives multimodal LLMs an explicit 3D map of the scene, so they reason about space instead of guessing it.},
+  problem={Multimodal LLMs read multi-view images as mostly semantic tokens, so they must infer the 3D layout of a scene implicitly, and spatial questions suffer.},
+  idea={Cog3DMap recurrently builds an explicit 3D memory from the images: one token per spatial location, carrying both semantic and geometric features. The LLM then reasons directly over this compact map.},
+  result={New state of the art on VSTI-Bench (+8.7\%p over the previous best) and VSI-Bench (+3.9\%p), while using up to 90.2\% fewer visual tokens on long sequences.},
+  result_num={+8.7\%p},
+  result_label={on VSTI-Bench over the previous best},
+  my_role={Co-first author (equal contribution) of this work on 3D cognitive maps that strengthen the 3D reasoning of VLMs.}
 }
 
 @inproceedings{jeon2026valr,
@@ -40,7 +54,21 @@
   selected={true},
   abbr={ICML},
   website={https://rootyjeon.github.io/valr/}, 
-  img_path={assets/img/publication_preview/arxiv_2026_valr.png}
+  img_path={assets/img/publication_preview/arxiv_2026_valr.png},
+  category={multimodal},
+  topics={Multimodal LLM},
+  role={Second author},
+  accent={#2a9d8f},
+  react={valr},
+  say={Eyes on the image!},
+  equal_advising_authors={Minsu Cho, Jinwoo Shin},
+  hook={Keeps multimodal LLMs looking at the image while they think, so long reasoning stops washing out what they saw.},
+  problem={During long chains of thought, visual information gets progressively diluted, so multimodal LLMs struggle with multi-step reasoning and gain little from thinking longer.},
+  idea={Before each reasoning step, VaLR generates latent tokens aligned with features from vision encoders such as DINOv3, keeping the reasoning grounded in perceptual cues.},
+  result={Raises VSI-Bench accuracy from 33.0\% to 52.9\% over Qwen2.5-VL, and keeps improving as reasoning gets longer.},
+  result_num={+19.9\%p},
+  result_label={on VSI-Bench over Qwen2.5-VL (33.0\% to 52.9\%)},
+  my_role={Second author, on injecting knowledge from vision foundation models into multi-view VLMs.}
 }
 
 @inproceedings{jeon2026larc,
@@ -52,7 +80,21 @@
   abbr={NeurIPS},
   website={https://rootyjeon.github.io/latent-reasoning-umm/},
   pdf={https://rootyjeon.github.io/latent-reasoning-umm/assets/larc.pdf},
-  img_path={assets/img/publication_preview/neurips_2026_larc.jpg}
+  img_path={assets/img/publication_preview/neurips_2026_larc.jpg},
+  category={multimodal},
+  topics={Multimodal LLM, Generation},
+  role={Second author},
+  accent={#2b7755},
+  react={larc},
+  say={},
+  equal_advising_authors={Minsu Cho, Jinwoo Shin},
+  hook={Lets image-generating multimodal models think in continuous latents, so more thinking gives better images.},
+  problem={Unified multimodal models reason in discrete text tokens but draw images in a continuous space, so spending more on reasoning does not buy better images.},
+  idea={LARC moves the reasoning into continuous space: the model interleaves short text spans with latent steps built from its own hidden states. Curriculum fine-tuning teaches latent reasoning, then self-evolving RL rewards each trace by how much it helps predict the target image.},
+  result={Beats its base model BAGEL and the token-reasoning Uni-CoT on text-to-image generation, image editing and visual reasoning, and shows clear test-time scaling: more latent steps, better images.},
+  result_num={1.2 s},
+  result_label={added per sample to scale from 1 to 10 latent steps},
+  my_role={Second author, on continuous latent reasoning that improves image generation in unified models.}
 }
 
 @inproceedings{jeong2026mvsam,
@@ -65,7 +107,18 @@
   selected={true},
   abbr={NVIDIA tech report},
   website={https://jaesung-choe.github.io/mv_sam},
-  img_path={assets/img/publication_preview/nvidia_2026_mvsam.png}
+  img_path={assets/img/publication_preview/nvidia_2026_mvsam.png},
+  category={understanding},
+  topics={Segmentation, 3D Understanding},
+  role={First author},
+  accent={#e07a2e},
+  react={mvsam},
+  say={Segment me!},
+  hook={Click one object in one photo — get it segmented consistently in every view.},
+  problem={SAM-style segmenters lack 3D awareness, so masks drift between views of the same scene unless you run costly per-scene optimization.},
+  idea={MV-SAM lifts SAM image embeddings and your prompts into 3D with pointmaps reconstructed from unposed images, so a transformer decodes masks that agree across views. No 3D network or 3D labels: it trains on SA-1B alone.},
+  result={Outperforms SAM2-Video and matches per-scene optimization baselines on NVOS, SPIn-NeRF, ScanNet++, uCo3D and DL3DV.},
+  my_role={First author: an extension of SAM to multi-view inputs, trained without 3D or video datasets.}
 }
 
 @inproceedings{jeong2025quantile,
@@ -78,7 +131,20 @@
   selected={true},
   abbr={NVIDIA tech report},
   website={https://jaesung-choe.github.io/qrender},
-  img_path={assets/img/publication_preview/nvidia_2025_qrender.png}
+  img_path={assets/img/publication_preview/nvidia_2025_qrender.png},
+  category={gaussians},
+  topics={Gaussian Splatting, Segmentation, 3D Understanding},
+  role={First author},
+  accent={#7b5cc4},
+  react={qrender},
+  say={43.7× faster!},
+  hook={Render 512-D feature maps from 3D Gaussians {\textasciitilde}44× faster by sampling only the Gaussians that matter.},
+  problem={Attaching high-dimensional features such as CLIP embeddings to 3D Gaussians makes rendering slow, because every Gaussian along each ray is blended, so prior work compresses the features.},
+  idea={Q-Render samples only the Gaussians with dominant influence along each ray, found by analyzing transmittance changes. A Gaussian Splatting Network (GS-Net) predicts the features, so it generalizes across scenes.},
+  result={State-of-the-art open-vocabulary 3D segmentation on ScanNet and LeRF-OVS, with real-time rendering of full 512-D features.},
+  result_num={43.7×},
+  result_label={faster 512-D feature rendering},
+  my_role={First author: a generalizable 3D-GS network for open-vocabulary segmentation.}
 }
 
 
@@ -94,7 +160,18 @@
   abbr={arXiv},
   website={https://rodygs.github.io/},
   code={https://github.com/POSTECH-CVLab/RoDyGS},
-  img_path={assets/img/publication_preview/arxiv_2024_rodygs.png}
+  img_path={assets/img/publication_preview/arxiv_2024_rodygs.png},
+  category={gaussians},
+  topics={Gaussian Splatting, Neural Fields},
+  role={Third author},
+  accent={#2f8fc9},
+  react={rodygs},
+  say={Hold the camera still!},
+  hook={Rebuild moving scenes in 3D from a casual phone video — no camera poses needed.},
+  problem={Casual videos come without camera poses or scene geometry, which makes optimizing dynamic 3D scenes from them fragile.},
+  idea={RoDyGS separates static and dynamic Gaussians and adds motion and geometry regularizers so the learned motion stays physically plausible. It also introduces Kubric-MRig, a benchmark with rich camera and object motion plus multi-view captures.},
+  result={Significantly outperforms previous pose-free dynamic neural fields and is competitive with pose-free static methods in rendering quality.},
+  my_role={Third author on this pose-free dynamic neural field pipeline that leverages geometric foundation models.}
 }
 
 @inproceedings{jeong2024nvsadapter,
@@ -108,7 +185,19 @@
   arxiv={2312.07315},
   website={https://postech-cvlab.github.io/nvsadapter/},
   code={https://github.com/POSTECH-CVLab/nvsadapter}, 
-  img_path={assets/img/publication_preview/eccv_2024_nvsadapter.png}
+  img_path={assets/img/publication_preview/eccv_2024_nvsadapter.png},
+  category={multimodal},
+  topics={Generation, Neural Fields},
+  role={First author},
+  accent={#b8962a},
+  react={nvsadapter},
+  say={Let me see the other side!},
+  equal_contrib_authors={Yoonwoo Jeong, Jinwoo Lee},
+  hook={Turns a text-to-image model into a novel-view generator with a small plug-in, without full fine-tuning.},
+  problem={Novel view synthesis from one image usually fine-tunes a whole text-to-image model, which is expensive and erodes its ability to generate diverse images.},
+  idea={A plug-and-play adapter: view-consistency cross-attention aligns local details across views, and global semantic conditioning keeps generated views faithful to the reference image.},
+  result={Synthesizes geometrically consistent multi-views with strong benchmark results without full fine-tuning, and works with ControlNet and LoRA out of the box.},
+  my_role={First author (equal contribution): a parameter-efficient adapter for text-to-3D generative models.}
 }
 
 @inproceedings{kim2023choir,
@@ -121,7 +210,19 @@
   arxiv={2306.11406},
   selected={true},
   code={https://github.com/POSTECH-CVLab/CHOIR},
-  img_path={assets/img/publication_preview/icml_2023_choir.png}
+  img_path={assets/img/publication_preview/icml_2023_choir.png},
+  category={point-clouds},
+  topics={Point Cloud, Segmentation},
+  role={Third author},
+  accent={#b3548a},
+  anim={choir},
+  react={choir},
+  say={Canonical pose!},
+  hook={Finds the upright, facing-forward pose of a 3D shape: stable for each object and consistent across a class.},
+  problem={Predicting a reliable characteristic orientation for 3D point clouds is hard: shapes of the same class can look very different, and predictions jump around under rotation.},
+  idea={Decouple geometry and semantics: an SO(3)-equivariant network proposes an orientation from shape geometry, and an SO(3)-invariant residual rotation learned from semantics corrects it.},
+  result={Superior stability and consistency, and state-of-the-art part segmentation on randomly rotated point clouds.},
+  my_role={Third author: a 3D canonicalization framework for robust part-level segmentation.}
 }
 
 @inproceedings{kim2022selca,
@@ -134,6 +235,18 @@
   selected={true},
   website={https://openreview.net/forum?id=Lwp_CgpFuA0},
   img_path={assets/img/publication_preview/neurips_w_2022_selca.png},
+  category={point-clouds},
+  topics={Point Cloud},
+  role={Second author},
+  accent={#a8322f},
+  anim={selca},
+  react={selca},
+  say={Which way is up?},
+  hook={Teaches a network to find a point cloud's canonical axis on its own, making 3D recognition robust to rotation.},
+  problem={Point cloud features change dramatically when objects rotate, which hurts recognition.},
+  idea={Self-supervised: predict a probabilistic canonical axis (rotation-equivariant), then align the point cloud to it, giving rotation-invariant input to any downstream network.},
+  result={Competitive ModelNet40 classification under unseen rotations, and high robustness to real-world corruptions in ModelNet40-C.},
+  my_role={Second author on this self-supervised canonicalization framework.}
 }
 
 
@@ -147,21 +260,50 @@
   img_path     = {assets/img/publication_preview/proj_nerf_factory.png},
   code={https://github.com/kakaobrain/nerf-factory},
   selected={true},
+  category={neural-fields},
+  topics={Neural Fields},
+  role={Project lead},
+  accent={#c08a12},
+  anim={nerffactory},
+  react={nerffactory},
+  say={Seven NeRFs, one factory!},
+  hook={One clean PyTorch codebase for seven popular NeRF models and seven datasets.},
+  problem={NeRF variants each shipped in their own codebase and framework, which made fair comparison and extension painful.},
+  idea={Reimplement NeRF, NeRF++, DVGO, Plenoxels, Mip-NeRF, Mip-NeRF 360 and Ref-NeRF in a single extensible PyTorch library with shared data loaders and visualizers.},
+  result={An open-source library used by the NeRF community.},
+  result_num={1.3K},
+  result_label={GitHub stars (as of April 2026)},
+  my_role={Project leader: a PyTorch reimplementation of state-of-the-art NeRF models, released by Kakao Brain with Seungjoo Shin and Kibaek Park.},
+  abbr={GitHub}
 }
 
 @inproceedings{jeong2022perf,
   title={PeRFception: Perception using Radiance Fields},
-  author={Yoonwoo Jeong* and Seungjoo Shin* and Junha Lee* and Christopher Choy and Animashree Anandkumar and Minsu Cho and Jaesik Park},
+  author={Yoonwoo Jeong and Seungjoo Shin and Junha Lee and Christopher Choy and Animashree Anandkumar and Minsu Cho and Jaesik Park},
   abstract={The recent progress in implicit 3D representation, i.e., Neural Radiance Fields (NeRFs), has made accurate and photorealistic 3D reconstruction possible in a differentiable manner. This new representation can effectively convey the information of hundreds of high-resolution images in one compact format and allows photorealistic synthesis of novel views. In this work, using the variant of NeRF called Plenoxels, we create the first large-scale implicit representation datasets for perception tasks, called the PeRFception, which consists of two parts that incorporate both object-centric and scene-centric scans for classification and segmentation. It shows a significant memory compression rate (96.4\%) from the original dataset, while containing both 2D and 3D information in a unified form. We construct the classification and segmentation models that directly take as input this implicit format and also propose a novel augmentation technique to avoid overfitting on backgrounds of images.},
   booktitle=NeurIPS-D,
   year={2022},
   abbr={NeurIPS-D},
   arxiv={2208.11537},
-  equal_contrib={true},
   selected={true},
   website={https://postech-cvlab.github.io/PeRFception},
   code={https://github.com/POSTECH-CVLab/PeRFception},
-  img_path={assets/img/publication_preview/neurips_2022_perf.png}
+  img_path={assets/img/publication_preview/neurips_2022_perf.png},
+  category={neural-fields},
+  topics={Neural Fields, 3D Understanding},
+  role={First author},
+  accent={#c4014e},
+  anim={perf},
+  react={perf},
+  say={NeRFs, now in bulk!},
+  equal_contrib_authors={Yoonwoo Jeong, Seungjoo Shin, Junha Lee},
+  hook={The first large-scale datasets of neural radiance fields, so perception models can learn directly from NeRFs.},
+  problem={A NeRF packs hundreds of images into one compact 3D representation, but there were no large-scale NeRF datasets for training perception models.},
+  idea={Convert object-centric and scene-centric scans into Plenoxels, then build classification and segmentation models that take this implicit format as input, with an augmentation that stops them overfitting to backgrounds.},
+  result={Compresses the source datasets by 96.4\% while keeping both 2D and 3D information in one unified format.},
+  result_num={96.4\%},
+  result_label={memory compression vs. the original dataset},
+  my_role={First author (equal contribution) of this large-scale neural field dataset for perception tasks; I also led the open-source project.}
 }
 
 
@@ -176,7 +318,20 @@
   selected={true},
   code={https://github.com/POSTECH-CVLab/FastPointTransformer},
   website={https://cvlab.postech.ac.kr/research/FPT/},
-  img_path={assets/img/publication_preview/cvpr_2022_fpt.png}
+  img_path={assets/img/publication_preview/cvpr_2022_fpt.png},
+  category={understanding},
+  topics={Point Cloud, Segmentation, 3D Understanding},
+  role={Second author},
+  accent={#4a7cbc},
+  react={fpt},
+  say={129× faster!},
+  hook={A point cloud transformer that runs 129× faster than Point Transformer on large 3D scenes.},
+  problem={Large 3D scenes are usually chopped into small regions and stitched back together, adding pre- and post-processing and losing global context.},
+  idea={A lightweight self-attention layer that encodes continuous 3D coordinates, on top of a voxel-hashing architecture, so whole scenes are processed efficiently.},
+  result={Accuracy competitive with the best voxel-based methods on 3D semantic segmentation and detection, with 129× faster inference than Point Transformer on S3DIS.},
+  result_num={129×},
+  result_label={faster inference than Point Transformer (S3DIS)},
+  my_role={Second author: an efficient voxel-based architecture for 3D perception.}
 }
 
 
@@ -189,7 +344,19 @@
   abbr={BMVC},
   selected={true},
   website={https://www.bmvc2021-virtualconference.com/assets/papers/0836.pdf},
-  img_path={assets/img/publication_preview/bmvc_2022_sslso.png}
+  img_path={assets/img/publication_preview/bmvc_2022_sslso.png},
+  category={matching},
+  topics={Matching},
+  role={Second author},
+  accent={#d9824a},
+  anim={sslso},
+  react={sslso},
+  say={Spin it, scale it, got it!},
+  hook={Learns how large and which way up an image patch is, without a single pose label.},
+  problem={Assigning a characteristic scale and orientation to an image region sounds simple, but large sets of patches with pose labels do not exist.},
+  idea={Randomly rescale and rotate patches, then train an estimator to predict scale and orientation histograms whose differences match the applied transform: a histogram alignment trick that needs no labels.},
+  result={Significantly outperforms previous scale and orientation estimators, and improves image matching and 6-DoF camera pose estimation.},
+  my_role={Second author: a self-supervised framework for image canonicalization and matching.}
 }
 
 
@@ -204,7 +371,19 @@
   arxiv={2108.13826},
   img_path={assets/img/publication_preview/iccv_2021_scnerf.png},
   website={https://postech-cvlab.github.io/SCNeRF/},
-  code={https://github.com/POSTECH-CVLab/SCNeRF}, 
+  code={https://github.com/POSTECH-CVLab/SCNeRF},
+  category={neural-fields},
+  topics={Neural Fields},
+  role={First author},
+  accent={#3d8fa8},
+  anim={scnerf},
+  react={scnerf},
+  say={Calibrating…},
+  hook={Learn a NeRF and the camera itself — lens distortion included — without COLMAP.},
+  problem={NeRF needs accurate camera poses and intrinsics, usually from COLMAP, and real lenses add non-linear distortions that simple camera models miss.},
+  idea={Jointly learn the scene and a generic camera model (pinhole, fourth-order radial distortion and a learnable noise model) using photometric consistency plus a new projected ray distance loss.},
+  result={Learns intrinsics and poses from scratch without COLMAP initialization and improves PSNR over baselines; it plugs into other NeRF variants.},
+  my_role={First author of the first pose-free NeRF optimization pipeline; I also led the open-source project.}
 }
 
 
@@ -224,6 +403,20 @@
   abbr={WACV},
   selected={true},
   website={https://openaccess.thecvf.com/content/WACV2021/papers/Lee_Learning_to_Distill_Convolutional_Features_Into_Compact_Local_Descriptors_WACV_2021_paper.pdf},
-  img_path={assets/img/publication_preview/wacv_2021.png}
+  img_path={assets/img/publication_preview/wacv_2021.png},
+  category={matching},
+  topics={Matching},
+  role={Second author},
+  accent={#d61f69},
+  anim={distill},
+  react={distill},
+  say={Fits in my pocket!},
+  hook={Squeezes CNN features into local descriptors up to 100× smaller that still match well.},
+  problem={Local descriptor research focused on accuracy, not size, yet large descriptors are costly to store and match.},
+  idea={Distill several intermediate CNN features, from local textures to non-local semantics, into a compact descriptor of any chosen dimension.},
+  result={Significantly better semantic correspondence than existing models with up to 100× smaller descriptors, and it generalizes to wide-baseline matching and visual localization.},
+  result_num={100×},
+  result_label={smaller descriptors},
+  my_role={Second author: a memory-efficient feature extractor for geometric matching.}
 }
 

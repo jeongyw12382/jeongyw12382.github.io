@@ -1,0 +1,13 @@
+# Primary category per paper (bib field `category` = id). Order = filter chip order.
+- id: multimodal
+  label: Multimodal LLMs & Generation
+- id: gaussians
+  label: 3D Gaussian Splatting
+- id: understanding
+  label: 3D Understanding & Segmentation
+- id: neural-fields
+  label: Neural Fields & 3D Reconstruction
+- id: point-clouds
+  label: Point Clouds & Canonicalization
+- id: matching
+  label: Matching & Local Features

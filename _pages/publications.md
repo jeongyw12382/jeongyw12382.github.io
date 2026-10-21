@@ -10,9 +10,19 @@ nav_order: 1
 <!-- _pages/publications.md -->
 <div class="publications">
 
+<div class="paper-filters" role="group" aria-label="Filter papers by category">
+  <button type="button" class="filter-chip" data-filter="all" aria-pressed="true">All <span class="chip-count">({% bibliography_count -f papers %})</span></button>
+  {%- for c in site.data.paper_categories %}
+  <button type="button" class="filter-chip" data-filter="{{ c.id }}" aria-pressed="false">{{ c.label | escape }} <span class="chip-count">({% bibliography_count -f papers -q @*[category={{ c.id }}]* %})</span></button>
+  {%- endfor %}
+</div>
+<p class="paper-filter-status sr-only" aria-live="polite"></p>
+
 {%- for y in page.years %}
+<section class="pub-year" data-year="{{ y }}">
   <h2 class="year">{{y}}</h2>
   {% bibliography -f papers -q @*[year={{y}}]* %}
+</section>
 {% endfor %}
 
 </div>

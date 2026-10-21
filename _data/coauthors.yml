@@ -1,34 +1,59 @@
-"Adams":
-  - firstname: ["Edwin", "E.", "E. P.", "Edwin Plimpton"]
-    url: https://en.wikipedia.org/wiki/Edwin_Plimpton_Adams
+# Coauthor homepages, collected from the papers' project-page author links.
+# Keyed by last name; `firstname` lists accepted spellings of the first name.
+"Gwak":
+  - firstname: ["Chanyoung"]
+    url: https://gwakcy0.github.io
 
-"Podolsky":
-  - firstname: ["Boris", "B.", "B. Y.", "Boris Yakovlevich"]
-    url: https://en.wikipedia.org/wiki/Boris_Podolsky
+"Jeon":
+  - firstname: ["Byungwoo"]
+    url: https://rootyjeon.github.io/
 
-"Rosen":
-  - firstname: ["Nathan", "N."]
-    url: https://en.wikipedia.org/wiki/Nathan_Rosen
+"Lee":
+  - firstname: ["Hyunseok"]
+    url: https://hyunseoklee-ai.github.io/
+  - firstname: ["Junmyeong"]
+    url: https://slime0519.github.io
+  - firstname: ["Doyup"]
+    url: https://scholar.google.co.kr/citations?user=5rAj44kAAAAJ
+  - firstname: ["Junha"]
+    url: https://junha-l.github.io/
 
-"Bach": 
-  - firstname: ["Johann Sebastian", "J. S."]
-    url: https://en.wikipedia.org/wiki/Johann_Sebastian_Bach
+"Shin":
+  - firstname: ["Jinwoo"]
+    url: https://alinlab.kaist.ac.kr/shin.html
+  - firstname: ["Seungjoo"]
+    url: https://seungjooshin.github.io
 
-  - firstname: ["Carl Philipp Emanuel", "C. P. E."]
-    url: https://en.wikipedia.org/wiki/Carl_Philipp_Emanuel_Bach
+"Cho":
+  - firstname: ["Minsu"]
+    url: https://cvlab.postech.ac.kr/~mcho/
 
-"Przibram":
-  - firstname: ["Karl"]
-    url: https://link.springer.com/article/10.1007/s00016-019-00242-z
+"Choe":
+  - firstname: ["Jaesung"]
+    url: https://jaesung-choe.github.io
 
-"Schrödinger":
-  - firstname: ["Erwin"]
-    url: https://en.wikipedia.org/wiki/Erwin_Schr%C3%B6dinger
+"Sun":
+  - firstname: ["Cheng"]
+    url: https://sunset1995.github.io
 
-"Lorentz":
-  - firstname: ["Hendrik Antoon"]
-    url: https://en.wikipedia.org/wiki/Hendrik_Lorentz
+"Wang":
+  - firstname: ["Yu-Chiang Frank"]
+    url: https://research.nvidia.com/person/frank-wang
 
-"Planck":
-  - firstname: ["Max"]
-    url: https://en.wikipedia.org/wiki/Max_Planck
+"Choi":
+  - firstname: ["Hoseung"]
+    url: https://www.linkedin.com/in/hoseung-choi
+
+"Kim":
+  - firstname: ["Chiheon"]
+    url: https://scholar.google.com/citations?user=nimFSSEAAAAJ
+
+"Choy":
+  - firstname: ["Christopher"]
+    url: https://chrischoy.github.io/
+
+"Park":
+  - firstname: ["Jaesik"]
+    url: https://jaesik.info/
+  - firstname: ["Chunghyun"]
+    url: https://chrockey.github.io/

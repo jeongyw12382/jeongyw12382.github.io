@@ -38,3 +38,12 @@ test('banner dates match _news front matter calendar dates', () => {
   const got = [...html.matchAll(/<time datetime="(\d{4}-\d{2}-\d{2})"/g)].map(m => m[1]);
   assert.deepEqual(got, expected);
 });
+
+test('paper cards: stylesheet compiled and script loaded on both pages', () => {
+  const css = loadSite('assets/css/main.css');
+  assert.match(css, /\.paper-card/);
+  assert.match(css, /prefers-reduced-motion/);
+  for (const p of ['index.html', 'publications/index.html']) {
+    assert.match(loadSite(p), /<script defer src="\/assets\/js\/papers\.js"><\/script>/, p);
+  }
+});
