@@ -88,10 +88,11 @@ html[data-theme='dark'] .paper-card {
   // Clips: letterbox (never crop) on a neutral backdrop - MV-SAM clips are ~4.5:1.
   .paper-video { object-fit: contain; background: var(--clip-bg); }
   .paper-alt { object-fit: contain; padding: 6px; background: var(--media-bg); }
-  .paper-canvas { background: var(--global-card-bg-color); }
+  .paper-canvas { background: var(--global-card-bg-color); touch-action: pan-y; }
 }
 .paper-card.is-playing .paper-media {
   .paper-video, .paper-alt, .paper-canvas { opacity: 1; }
+  .paper-canvas { pointer-events: auto; }
   .media-hint { opacity: 0; }
 }
 .media-hint {
