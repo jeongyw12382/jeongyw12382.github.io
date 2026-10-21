@@ -163,6 +163,8 @@ html[data-theme='dark'] .paper-card {
   font-size: .84rem;
   line-height: 1.45;
   color: var(--global-text-color);
+  overflow-wrap: anywhere;
+  .author + .author { margin-left: .28em; }
   .me { font-weight: 700; }
   a { color: inherit; text-decoration: underline dotted; text-underline-offset: 2px; }
   a:hover { color: var(--accent-ink); }

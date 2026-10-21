@@ -47,6 +47,30 @@ try:
                 pg.wait_for_timeout(300)
                 check(f'(a) no console errors {path} {theme}', not errs, errs[:3])
                 pg.context.close()
+        # svg class integrity after clicks (mdb ripple must not corrupt class attrs)
+        pg, errs = new_page(b, 'light', viewport={'width': 1200, 'height': 900})
+        go(pg, '/', 'light')
+        sel = {'timeline landmark': '.tl-item svg', 'paper-card': '.paper-card svg'}
+        for label, q in sel.items():
+            els = pg.locator(q)
+            if not els.count():
+                check(f'(a) svg class intact: {label}', label == 'paper-card', 'no svg found'); continue
+            before = els.first.get_attribute('class') or ''
+            els.first.scroll_into_view_if_needed(); els.first.click(force=True); pg.wait_for_timeout(300)
+            after = els.first.get_attribute('class') or ''
+            check(f'(a) svg class intact: {label}', after == before and '[object' not in after, f'{before!r} -> {after!r}')
+        check('(a) no errors after svg clicks', not errs, errs[:3])
+        pg.context.close()
+        # author lines: spaces survive minification, no overflow
+        for dev, vp, kw in (('desktop', {'width': 1280, 'height': 900}, {}), ('mobile', {'width': 375, 'height': 800}, {'has_touch': True, 'is_mobile': True})):
+            for path in ('/', '/publications/'):
+                pg, _ = new_page(b, 'light', viewport=vp, **kw)
+                go(pg, path, 'light')
+                r = pg.evaluate("[...document.querySelectorAll('.paper-authors')].map(e=>[e.scrollWidth-e.clientWidth, e.innerText])")
+                bad = [x for x in r if x[0] > 0 or ',Yoonwoo' in x[1] or ',and' in x[1]]
+                has = any(', Yoonwoo Jeong' in x[1] or x[1].startswith('Yoonwoo Jeong') for x in r) and any(', Yoonwoo Jeong' in x[1] for x in r)
+                check(f'(h) authors no overflow/spacing {path} {dev}', not bad and has and len(r) > 0, bad[:2])
+                pg.context.close()
         # (b)-(e) desktop
         pg, errs = new_page(b, 'light', viewport={'width': 1200, 'height': 900})
         go(pg, '/publications/', 'light')
@@ -54,8 +78,11 @@ try:
         n = cards.count(); maxp = 0
         for i in range(n):
             c = cards.nth(i); c.scroll_into_view_if_needed(); c.locator('.paper-media').hover(); pg.wait_for_timeout(250)
-            maxp = max(maxp, pg.evaluate("[...document.querySelectorAll('video')].filter(v=>!v.paused).length"))
-        check('(b) at most 1 video playing', maxp <= 1, f'max={maxp} over {n} cards')
+            for _ in range(2):
+                maxp = max(maxp, pg.evaluate("[...document.querySelectorAll('video')].filter(v=>!v.paused).length"))
+                pg.wait_for_timeout(120)
+            maxplay = max(globals().get('maxplay', 0), maxp)
+        check('(b) exactly 1 video playing at peak, never more', maxp == 1, f'max={maxp} over {n} cards')
         mv = pg.locator('.paper-card[data-key*="mvsam"], .paper-card[data-key*="mv"]').first
         mv.scroll_into_view_if_needed(); mv.locator('.paper-more').click(); pg.wait_for_timeout(300)
         det = mv.locator('.paper-detail')
@@ -82,11 +109,11 @@ try:
         pg.mouse.click(b2['x'] + b2['width'] * .5, b2['y'] + b2['height'] * .6, button='left')
         pg.wait_for_timeout(300)
         txt = pg.locator('#buddy .bubble').inner_text()
-        check('(e) face click shows Ouch!', 'Ouch!' in txt or txt.strip() in ('Hey, that hurts!', 'Why me?!', "I'm telling my advisor.") or 'Ouch' in txt, repr(txt))
+        check('(e) face click shows Ouch!', txt.strip() == 'Ouch!' and 'on' in (pg.locator('#buddy .bubble').get_attribute('class') or '').split(), repr(txt))
         # bubble stays inside the viewport near the right edge
         pg.mouse.move(600, 450); pg.wait_for_timeout(200); pg.mouse.move(1195, 450); pg.wait_for_timeout(2500)
         b3 = buddy.bounding_box()
-        pg.mouse.click(b3['x'] + b3['width'] * .5, b3['y'] + b3['height'] * .6); pg.wait_for_timeout(300)
+        pg.mouse.click(b3['x'] + b3['width'] * .5, b3['y'] + b3['height'] * .6); pg.wait_for_timeout(700)
         r = pg.evaluate("(()=>{const r=document.querySelector('#buddy .bubble').getBoundingClientRect();return [r.left,r.right,innerWidth]})()")
         check('(e) bubble clamped inside viewport', r[0] >= 15 and r[1] <= r[2] - 15, r)
         pg.context.close()

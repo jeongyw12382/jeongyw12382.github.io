@@ -262,7 +262,7 @@ if (typeof module !== 'undefined' && module.exports) {
     // while hidden nothing reaches reduce, so once-per-view moments (page end, night) are not used up
     function dispatch(e) { if (enabled) state = reduce(state, e); }
 
-    var W = 84;
+    var W = finePointer ? 84 : 64;
     var mouse = { x: innerWidth * 0.7, y: innerHeight * 0.6, seen: false };
     var pos = { x: innerWidth - 90, y: innerHeight - 110 };
     var hop = 0, phase = 0, kick = { x: 0, y: 0 };
@@ -432,7 +432,7 @@ if (typeof module !== 'undefined' && module.exports) {
         var br = buddy.getBoundingClientRect(), bw = bubble.offsetWidth, vw = document.documentElement.clientWidth;
         var half = bw / 2, c = br.left + br.width / 2;
         var shift = 0;
-        if (c - half < 16) shift = 16 - (c - half); else if (c + half > vw - 16) shift = vw - 16 - (c + half);
+        if (c - half < 18) shift = 18 - (c - half); else if (c + half > vw - 18) shift = vw - 18 - (c + half);
         shift = Math.round(shift);
         if (shift !== shown.shift) { bubble.style.setProperty('--bshift', shift + 'px'); shown.shift = shift; }
       }

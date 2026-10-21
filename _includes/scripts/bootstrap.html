@@ -4,8 +4,9 @@
   <script>(function () {
     if (!window.SVGAnimatedString) return;
     var A = SVGAnimatedString.prototype;
+    if (A.toString === Object.prototype.toString) A.toString = function () { return this.baseVal; };
     if (!A.indexOf) A.indexOf = function (s) { return this.baseVal.indexOf(s); };
     var d = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'className');
-    if (d && d.get && !d.set) Object.defineProperty(SVGElement.prototype, 'className', { configurable: true, get: d.get, set: function (v) { this.setAttribute('class', v); } });
+    if (d && d.get && !d.set) Object.defineProperty(SVGElement.prototype, 'className', { configurable: true, get: d.get, set: function (v) { if (typeof v === 'string') this.setAttribute('class', v); } });
   })();</script>
   <script src="https://cdn.jsdelivr.net/npm/mdbootstrap@{{ site.mdb.version }}/js/mdb.min.js" integrity="{{ site.mdb.integrity.js }}" crossorigin="anonymous"></script>

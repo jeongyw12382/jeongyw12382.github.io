@@ -198,3 +198,6 @@ html[data-theme="dark"] #buddy .rig, html[data-theme="dark"] #buddy .fx { filter
   #buddy .rig, #buddy .ghost, #buddy .fx * { animation: none !important; }
   #buddy.react-fpt .voxels { opacity: 1; }
 }
+
+/* touch / coarse pointers: a smaller parked companion covers less text (matches W in companion.js) */
+@media not all and (hover: hover) and (pointer: fine) { #buddy { width: 64px; } }

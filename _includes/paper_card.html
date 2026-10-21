@@ -61,7 +61,7 @@
           {%- if adv contains full -%}<sup title="Equal advising">†</sup>{%- endif -%}
           {%- unless forloop.last -%}{%- if n_authors > 2 -%},{%- endif -%}{%- endunless -%}
         </span>
-        {%- unless forloop.last %} {% endunless -%}
+        {%- unless forloop.last %} <wbr>{% endunless -%}
       {%- endfor -%}
     </p>
     {%- if entry.equal_contrib_authors or entry.equal_advising_authors %}
