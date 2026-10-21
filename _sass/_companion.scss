@@ -1,0 +1,200 @@
+/*******************************************************************************
+ * Companion — the hand-drawn head that follows the cursor.
+ * Ported from the approved prototype (docs/superpowers/specs/assets/yoonwoo-companion.html v9).
+ * He is ink on paper in both themes; only the speech bubble follows the site theme.
+ ******************************************************************************/
+
+#buddy {
+  /* character: pen on paper (fixed, it's a drawing) */
+  --ink: #2b2530;
+  --paper: #fbfaf6;
+  --blush: #d9777a;
+  --react: var(--global-divider-color);
+  /* above content, the fixed navbar (1030) and the news banner; below Bootstrap modals (1040+) */
+  position: fixed; left: 0; top: 0; width: 84px; pointer-events: none; z-index: 1035;
+  will-change: transform; filter: drop-shadow(0 3px 5px rgba(20, 24, 40, .16));
+}
+#buddy[hidden] { display: none; }
+/* on the dark theme a thin paper halo keeps the ink lines outside his face (headphones, sparkle) legible */
+html[data-theme="dark"] #buddy .rig, html[data-theme="dark"] #buddy .fx { filter: drop-shadow(0 0 1px rgba(251, 250, 246, .85)); }
+#buddy svg { width: 100%; height: auto; display: block; overflow: visible; }
+#buddy .bubble {
+  position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, -8px) scale(.6); transform-origin: 50% 100%;
+  background: var(--global-card-bg-color); color: var(--global-text-color);
+  border: 1px solid var(--react); border-radius: 10px;
+  font-family: "Fredoka", "Trebuchet MS", system-ui, sans-serif; font-weight: 500; font-size: 13px; line-height: 1.5;
+  white-space: nowrap; padding: 3px 10px;
+  opacity: 0; transition: opacity .18s, transform .18s;
+}
+#buddy .bubble.on { opacity: 1; transform: translate(-50%, -8px) scale(1); }
+#buddy .ink { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+#buddy .glasses { transition: transform .22s cubic-bezier(.3, 1.6, .5, 1); }
+#buddy.push .glasses { transform: translateY(-3.5px); }
+#buddy .sparkle { transform-box: fill-box; transform-origin: center; animation: buddy-twinkle 2.8s ease-in-out infinite; }
+#buddy.push .sparkle { animation: buddy-pop .5s ease-out infinite alternate; }
+@keyframes buddy-twinkle { 0%, 70%, 100% { transform: scale(1) rotate(0); } 80% { transform: scale(1.35) rotate(20deg); } }
+@keyframes buddy-pop { from { transform: scale(1); } to { transform: scale(1.6) rotate(30deg); } }
+
+/* ---------- per-paper reactions ---------- */
+#buddy .rig { position: relative; }
+#buddy .ghost { position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .2s; }
+#buddy .fx > svg { position: absolute; opacity: 0; transition: opacity .2s; overflow: visible; }
+#buddy .fx .fxs { fill: none; stroke: var(--react); stroke-linecap: round; stroke-linejoin: round; }
+
+/* RoDyGS: shaky cam + dynamic ghosts */
+#buddy.react-rodygs .ghost { opacity: .3; }
+#buddy.react-rodygs .g2 { opacity: .15; }
+#buddy.react-rodygs .g1 { animation: buddy-trail1 .45s ease-in-out infinite alternate; }
+#buddy.react-rodygs .g2 { animation: buddy-trail2 .45s ease-in-out infinite alternate; }
+@keyframes buddy-trail1 { from { transform: translate(-9px, 2px); } to { transform: translate(-14px, -3px); } }
+@keyframes buddy-trail2 { from { transform: translate(-20px, 4px); } to { transform: translate(-26px, -4px); } }
+
+/* MV-SAM: marching mask outline + click point */
+#buddy .ring { left: -9px; top: -9px; width: calc(100% + 18px); height: calc(100% + 18px); }
+#buddy.react-mvsam .ring { opacity: 1; }
+#buddy .ring circle.fxs { stroke-dasharray: 6 5; animation: buddy-march 1s linear infinite; }
+@keyframes buddy-march { to { stroke-dashoffset: -22; } }
+
+/* SCNeRF: viewfinder + calibrating squash */
+#buddy .brackets { left: -8px; top: -8px; width: calc(100% + 16px); height: calc(100% + 16px); }
+#buddy.react-scnerf .brackets { opacity: 1; }
+#buddy.react-scnerf .rig { animation: buddy-calib 1.4s cubic-bezier(.2, .8, .3, 1) infinite; }
+@keyframes buddy-calib { 0% { transform: scale(1.28, .82) skewX(10deg); } 55%, 100% { transform: none; } }
+
+/* Q-Render: speed lines (+ faster follow in JS) */
+#buddy .speed { left: -30px; top: 18%; width: 28px; height: 64%; }
+#buddy.react-qrender .speed { opacity: 1; }
+#buddy .speed line { animation: buddy-zoom .35s linear infinite; }
+#buddy .speed line:nth-child(2) { animation-delay: -.12s; }
+#buddy .speed line:nth-child(3) { animation-delay: -.24s; }
+@keyframes buddy-zoom { from { transform: translateX(8px); opacity: 1; } to { transform: translateX(-10px); opacity: 0; } }
+
+/* LARC: latent thought cloud; the cloud is LARC's message, so no text bubble on top of it */
+#buddy .thought { left: -46px; top: -36px; width: 44px; height: 37px; }
+#buddy.react-larc .thought { opacity: 1; }
+#buddy.react-larc .bubble.from-hover { opacity: 0; }
+#buddy .thought .dot { fill: var(--react); animation: buddy-think 1.2s ease-in-out infinite; }
+#buddy .thought .dot:nth-of-type(2) { animation-delay: .2s; }
+#buddy .thought .dot:nth-of-type(3) { animation-delay: .4s; }
+@keyframes buddy-think { 0%, 100% { opacity: .2; } 50% { opacity: 1; } }
+
+/* CHOIR: spin, then snap to canonical */
+#buddy.react-choir .rig { animation: buddy-canon 1.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes buddy-canon { 0% { transform: rotate(0); } 30% { transform: rotate(-150deg); } 52% { transform: rotate(80deg); } 70% { transform: rotate(-10deg); } 80%, 100% { transform: rotate(0); } }
+
+/* Cog3DMap: a top-down map grid appears under him, a pin drops on it */
+#buddy .mapgrid { left: 6px; top: calc(100% - 4px); width: 72px; height: 24px; }
+#buddy.react-cogmap .mapgrid { opacity: 1; }
+#buddy .mapgrid .pin { animation: buddy-pin 1.4s cubic-bezier(.3, 1.6, .5, 1) infinite; }
+@keyframes buddy-pin { 0% { transform: translateY(-8px); opacity: 0; } 30%, 85% { transform: none; opacity: 1; } 100% { opacity: 0; } }
+
+/* VaLR: a tiny image frame beside his glasses, glinting */
+#buddy .frame { left: -34px; top: 24px; width: 30px; height: 26px; }
+#buddy.react-valr .frame { opacity: 1; }
+#buddy .frame .glint { transform-box: fill-box; transform-origin: center; animation: buddy-pop .6s ease-out infinite alternate; }
+
+/* NVS-Adapter: he turns; two ghost profiles to his left and right, like novel views */
+#buddy.react-nvsadapter .ghost { opacity: .28; }
+#buddy.react-nvsadapter .g1 { animation: buddy-view-l 1.2s ease-in-out infinite alternate; }
+#buddy.react-nvsadapter .g2 { animation: buddy-view-r 1.2s ease-in-out infinite alternate; }
+#buddy.react-nvsadapter .rig { animation: buddy-turn 2.4s ease-in-out infinite; }
+@keyframes buddy-view-l { from { transform: translateX(-20px) scale(.84, .9) skewY(4deg); } to { transform: translateX(-26px) scale(.78, .9) skewY(6deg); } }
+@keyframes buddy-view-r { from { transform: translateX(20px) scale(.84, .9) skewY(-4deg); } to { transform: translateX(26px) scale(.78, .9) skewY(-6deg); } }
+@keyframes buddy-turn { 0%, 100% { transform: none; } 25% { transform: scaleX(.88) skewY(3deg); } 75% { transform: scaleX(.88) skewY(-3deg); } }
+
+/* SeLCA: an up-arrow beside his head wobbles, then snaps upright (left side: the bubble owns the top) */
+#buddy .arrow { left: -24px; top: -2px; width: 18px; height: 30px; }
+#buddy.react-selca .arrow { opacity: 1; }
+#buddy .arrow path { transform-box: fill-box; transform-origin: 50% 100%; animation: buddy-upright 1.6s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes buddy-upright { 0% { transform: rotate(-70deg); } 20% { transform: rotate(50deg); } 40% { transform: rotate(-30deg); } 55%, 100% { transform: rotate(0); } }
+
+/* NeRF-Factory: little cameras orbiting him */
+#buddy .orbit { left: -16px; top: -16px; width: calc(100% + 32px); height: calc(100% + 32px); }
+#buddy.react-nerffactory .orbit { opacity: 1; }
+#buddy .orbit .track { opacity: .5; }
+#buddy .orbit .spin { transform-origin: 50px 57px; animation: buddy-orbit 3s linear infinite; }
+@keyframes buddy-orbit { to { transform: rotate(360deg); } }
+
+/* PeRFception: tiny label chips pop up around him */
+#buddy .chips { left: -46px; top: -4px; width: 176px; height: 84px; }
+#buddy.react-perf .chips { opacity: 1; }
+#buddy .chips text { font: 600 9px/1 system-ui, sans-serif; fill: var(--ink); }
+#buddy .chip { transform-box: fill-box; transform-origin: center; animation: buddy-chip 1.8s cubic-bezier(.3, 1.6, .5, 1) infinite; }
+#buddy .chip.c2 { animation-delay: .25s; }
+#buddy .chip.c3 { animation-delay: .5s; }
+@keyframes buddy-chip { 0% { transform: scale(0); opacity: 0; } 20%, 80% { transform: scale(1); opacity: 1; } 100% { transform: scale(.6); opacity: 0; } }
+
+/* Fast Point Transformer: voxel squares flicker, then speed lines */
+#buddy .voxels { left: -32px; top: 18%; width: 28px; height: 64%; }
+#buddy.react-fpt .voxels { animation: buddy-fpt-a 1.6s steps(1) infinite; }
+#buddy.react-fpt .speed { animation: buddy-fpt-b 1.6s steps(1) infinite; }
+#buddy .voxels .v { animation: buddy-flicker .3s steps(2) infinite; }
+#buddy .voxels .v2, #buddy .voxels .v5 { animation-delay: -.1s; }
+#buddy .voxels .v3, #buddy .voxels .v6 { animation-delay: -.2s; }
+@keyframes buddy-fpt-a { 0% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes buddy-fpt-b { 0% { opacity: 0; } 50%, 100% { opacity: 1; } }
+@keyframes buddy-flicker { 0% { opacity: .25; } 50% { opacity: 1; } }
+
+/* Self-supervised scale & orientation: head rotates and scales a bit, then recovers */
+#buddy.react-sslso .rig { animation: buddy-sslso 1.8s cubic-bezier(.4, 0, .2, 1) infinite; }
+@keyframes buddy-sslso { 0% { transform: none; } 25% { transform: rotate(28deg) scale(1.18); } 50% { transform: rotate(-18deg) scale(.86); } 70%, 100% { transform: none; } }
+
+/* Distill: shrinks to a compact little size, then pops back */
+#buddy.react-distill .rig { transform-origin: 50% 90%; animation: buddy-distill 1.6s cubic-bezier(.3, 1.6, .5, 1) infinite; }
+@keyframes buddy-distill { 0%, 10% { transform: none; } 30%, 60% { transform: scale(.45); } 75% { transform: scale(1.1); } 85%, 100% { transform: none; } }
+
+/* ---------- moods ---------- */
+#buddy .sleep-face, #buddy .dizzy-face, #buddy .yawn-face, #buddy .ouch-face { opacity: 0; }
+
+/* sleep: closed-arc eyes, nodding head, z Z z */
+#buddy.is-sleep .pupils, #buddy.yawn .pupils { opacity: 0; }
+#buddy.is-sleep .sleep-face, #buddy.yawn .sleep-face { opacity: 1; }
+#buddy.is-sleep .rig { transform-origin: 50% 90%; animation: buddy-nod 2.6s ease-in-out infinite; }
+@keyframes buddy-nod { 0%, 100% { transform: rotate(4deg) translateY(2px); } 50% { transform: rotate(10deg) translateY(5px); } }
+#buddy .zzz { right: -18px; top: -30px; width: 30px; height: 40px; }
+#buddy.is-sleep .zzz { opacity: 1; }
+#buddy .zzz text { font: 600 11px/1 "Fredoka", "Trebuchet MS", system-ui, sans-serif; fill: var(--ink); stroke: var(--paper); stroke-width: 3px; paint-order: stroke; stroke-linejoin: round; animation: buddy-float 2.4s ease-in infinite; }
+#buddy .zzz .z2 { font-size: 14px; animation-delay: .8s; }
+#buddy .zzz .z3 { animation-delay: 1.6s; }
+@keyframes buddy-float { 0% { transform: translate(0, 6px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translate(4px, -8px); opacity: 0; } }
+
+/* yawn (night owl): round mouth, eyes shut */
+#buddy.yawn .mouth { opacity: 0; }
+#buddy.yawn .yawn-face { opacity: 1; }
+
+/* dizzy: spiral eyes */
+#buddy.is-dizzy .pupils { opacity: 0; }
+#buddy.is-dizzy .dizzy-face { opacity: 1; }
+#buddy .spiral { transform-box: fill-box; transform-origin: center; animation: buddy-orbit .8s linear infinite; }
+
+/* page end: sparkle waves */
+#buddy .wavesfx { left: 55px; top: 2px; width: 40px; height: 40px; }
+#buddy.waves .wavesfx { opacity: 1; }
+#buddy.waves .sparkle { animation: buddy-pop .4s ease-out infinite alternate; }
+#buddy .wavesfx .w { animation: buddy-wave 1.2s ease-out infinite; }
+#buddy .wavesfx .w2 { animation-delay: .2s; }
+#buddy .wavesfx .w3 { animation-delay: .4s; }
+@keyframes buddy-wave { 0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; } }
+
+/* hit: wince (> < eyes, wobbly mouth, red anger mark, shake) */
+#buddy.ouch .ouch-face { opacity: 1; }
+#buddy.ouch .pupils, #buddy.ouch .mouth, #buddy.ouch .sleep-face, #buddy.ouch .dizzy-face, #buddy.ouch .yawn-face { opacity: 0; }
+#buddy .pow { left: -14px; top: -10px; width: 26px; height: 26px; }
+#buddy.ouch .pow { opacity: 1; animation: buddy-pow .35s cubic-bezier(.3, 1.8, .5, 1); }
+@keyframes buddy-pow { from { transform: scale(.2); } to { transform: scale(1); } }
+#buddy.ouch .rig { animation: buddy-wince .38s ease-out; }
+@keyframes buddy-wince { 0% { transform: scale(1.15, .8); } 20% { transform: translateX(-4px) rotate(-6deg); } 40% { transform: translateX(4px) rotate(5deg); } 60% { transform: translateX(-3px); } 80% { transform: translateX(2px); } 100% { transform: none; } }
+
+/* footer toggle: a plain text button */
+.companion-toggle {
+  background: none; border: 0; padding: 0; margin-left: .5em;
+  font: inherit; color: inherit; text-decoration: underline; cursor: pointer;
+}
+.companion-toggle:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  #buddy .glasses, #buddy .bubble { transition: none; }
+  #buddy .sparkle, #buddy.push .sparkle, #buddy.waves .sparkle { animation: none; }
+  #buddy .rig, #buddy .ghost, #buddy .fx * { animation: none !important; }
+  #buddy.react-fpt .voxels { opacity: 1; }
+}

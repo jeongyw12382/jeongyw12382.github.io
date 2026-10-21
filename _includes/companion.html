@@ -1,0 +1,90 @@
+<!-- Companion: hand-drawn Yoonwoo head (ported from docs/superpowers/specs/assets/yoonwoo-companion.html v9) -->
+<!-- shared hand-drawn wobble filter -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="wobble" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence id="wobble-noise" type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="1.8" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<template id="yw-art">
+<svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+  <g filter="url(#wobble)">
+    <!-- sparkle -->
+    <path class="sparkle ink" d="M107 22 Q108 30 114 31 Q108 32 107 40 Q106 32 100 31 Q106 30 107 22 Z" stroke-width="2"/>
+    <g class="head" transform="rotate(-9 60 66)">
+      <!-- headphone cups (behind face) -->
+      <ellipse class="ink" cx="21" cy="78" rx="10" ry="15" fill="var(--paper)"/>
+      <ellipse class="ink" cx="99" cy="78" rx="10" ry="15" fill="var(--paper)"/>
+      <!-- headphone band -->
+      <path class="ink" d="M16 66 C10 12 110 12 104 66"/>
+      <path class="ink" d="M23 65 C19 22 101 22 97 65"/>
+      <!-- face -->
+      <circle cx="60" cy="72" r="36" fill="var(--paper)"/>
+      <circle class="ink" cx="60" cy="72" r="36" stroke-dasharray="214 12" stroke-dashoffset="192"/>
+      <!-- brows -->
+      <path class="ink" d="M44 47 L47 49 M62 40 L62 44" stroke-width="2"/>
+      <!-- blush -->
+      <g fill="var(--blush)" fill-opacity=".28" stroke="var(--blush)" stroke-width="1.4" stroke-opacity=".75">
+        <circle cx="40" cy="88" r="6.5"/>
+        <circle cx="83" cy="86" r="6.5"/>
+      </g>
+      <!-- glasses + dot eyes -->
+      <g class="glasses">
+        <circle class="ink" cx="45" cy="71" r="14" fill="var(--paper)" fill-opacity=".001"/>
+        <circle class="ink" cx="77" cy="69" r="14"/>
+        <path class="ink" d="M59 69 L63 68"/>
+        <g class="pupils" fill="var(--ink)">
+          <ellipse class="eye" cx="45" cy="71" rx="1.9" ry="1.9"/>
+          <ellipse class="eye" cx="77" cy="69" rx="1.9" ry="1.9"/>
+        </g>
+        <!-- sleep / yawn: closed-arc eyes -->
+        <path class="ink sleep-face" d="M40 70 Q45 75 50 70 M72 68 Q77 73 82 68" stroke-width="2.2"/>
+        <!-- dizzy: spiral eyes -->
+        <g class="dizzy-face">
+          <path class="ink spiral" d="M45 71 a1 1 0 0 1 1 1 a2 2 0 0 1 -2 2 a3 3 0 0 1 -3 -3 a4 4 0 0 1 4 -4 a5 5 0 0 1 5 5" stroke-width="1.8"/>
+          <path class="ink spiral" d="M77 69 a1 1 0 0 1 1 1 a2 2 0 0 1 -2 2 a3 3 0 0 1 -3 -3 a4 4 0 0 1 4 -4 a5 5 0 0 1 5 5" stroke-width="1.8"/>
+        </g>
+      </g>
+      <!-- smug smile with curled corners -->
+      <path class="ink mouth" d="M55 90 Q65 96 73 87"/>
+      <path class="ink mouth" d="M53 86 Q51.5 89 54 92 M73 84 Q76 87 74 90" stroke-width="2"/>
+      <!-- yawn: a little round mouth -->
+      <ellipse class="ink yawn-face" cx="64" cy="91" rx="4" ry="5.5" fill="var(--paper)"/>
+      <!-- wince: > < eyes and a wobbly mouth -->
+      <g class="ouch-face">
+        <path class="ink" d="M40 66 L47 71 L40 76 M82 64 L75 69 L82 74" stroke-width="2.2"/>
+        <path class="ink" d="M53 91 Q56 87 59.5 91 Q63 95 66.5 90 Q69.5 86 72.5 89" stroke-width="2.2"/>
+      </g>
+    </g>
+  </g>
+</svg>
+</template>
+
+<div id="buddy" aria-hidden="true">
+  <div class="fx">
+    <svg class="pow" viewBox="0 0 26 26"><g fill="none" stroke="#e03131" stroke-width="2.4" stroke-linecap="round"><path d="M4 10 Q10 10 10 4"/><path d="M16 4 Q16 10 22 10"/><path d="M22 16 Q16 16 16 22"/><path d="M10 22 Q10 16 4 16"/></g></svg>
+    <svg class="ring" viewBox="0 0 100 100"><circle class="fxs" cx="50" cy="54" r="44" stroke-width="2.6"/><circle cx="72" cy="30" r="3.4" fill="var(--react)"/></svg>
+    <svg class="brackets" viewBox="0 0 100 100"><path class="fxs" stroke-width="3" d="M4 20 V4 H20 M80 4 H96 V20 M96 80 V96 H80 M20 96 H4 V80"/></svg>
+    <svg class="speed" viewBox="0 0 28 40"><line class="fxs" x1="4" y1="8" x2="24" y2="8" stroke-width="2.4"/><line class="fxs" x1="0" y1="20" x2="22" y2="20" stroke-width="2.4"/><line class="fxs" x1="6" y1="32" x2="24" y2="32" stroke-width="2.4"/></svg>
+    <svg class="thought" viewBox="0 0 40 34"><circle cx="34" cy="31" r="2" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.2"/><circle cx="29" cy="25" r="3" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.2"/><rect x="2" y="2" width="30" height="17" rx="8.5" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.4"/><circle class="dot" cx="10" cy="10.5" r="2"/><circle class="dot" cx="17" cy="10.5" r="2"/><circle class="dot" cx="24" cy="10.5" r="2"/></svg>
+    <!-- Cog3DMap: a little top-down map grid with a pin, under him -->
+    <svg class="mapgrid" viewBox="0 0 72 24"><path class="fxs" stroke-width="1.6" d="M16 6 H56 L70 22 H2 Z M30 6 L26 22 M42 6 L46 22 M10 14 H62"/><g class="pin"><path d="M50 2 C46 2 45 6 47 9 L50 13 L53 9 C55 6 54 2 50 2 Z" fill="var(--react)"/><circle cx="50" cy="6" r="1.3" fill="var(--paper)"/></g></svg>
+    <!-- VaLR: a tiny image frame with a glint, beside his glasses -->
+    <svg class="frame" viewBox="0 0 30 26"><rect x="2" y="4" width="22" height="18" rx="2" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.4"/><path class="fxs" stroke-width="1.6" d="M5 19 L11 12 L15 16 L18 13 L22 19"/><circle cx="17" cy="9" r="2" fill="var(--react)"/><path class="glint" d="M26 1 Q26.5 4 29 4.5 Q26.5 5 26 8 Q25.5 5 23 4.5 Q25.5 4 26 1 Z" fill="var(--react)"/></svg>
+    <!-- SeLCA: an up-arrow that wobbles, then snaps upright -->
+    <svg class="arrow" viewBox="0 0 18 30"><path class="fxs" stroke-width="2.6" d="M9 28 V4 M3 10 L9 3 L15 10"/></svg>
+    <!-- NeRF-Factory: little cameras orbiting him -->
+    <svg class="orbit" viewBox="0 0 100 100"><circle class="fxs track" cx="50" cy="57" r="47" stroke-width="1" stroke-dasharray="2 5"/><g class="spin"><g fill="var(--paper)" stroke="var(--react)" stroke-width="1.6" stroke-linejoin="round"><path d="M46 7 h7 v6 h-7 Z M53 9 l3 -2 v6 l-3 -2"/><path d="M87 77 h7 v6 h-7 Z M94 79 l3 -2 v6 l-3 -2"/><path d="M5 77 h7 v6 h-7 Z M12 79 l3 -2 v6 l-3 -2"/></g></g></svg>
+    <!-- PeRFception: tiny task chips pop up around him -->
+    <svg class="chips" viewBox="0 0 176 84"><g class="chip c1"><rect x="2" y="8" width="32" height="15" rx="7.5" fill="var(--paper)" stroke="var(--react)" stroke-width="1.4"/><text x="18" y="19" text-anchor="middle">cls</text></g><g class="chip c2"><rect x="140" y="22" width="34" height="15" rx="7.5" fill="var(--paper)" stroke="var(--react)" stroke-width="1.4"/><text x="157" y="33" text-anchor="middle">seg</text></g><g class="chip c3"><rect x="4" y="52" width="30" height="15" rx="7.5" fill="var(--paper)" stroke="var(--react)" stroke-width="1.4"/><text x="19" y="63" text-anchor="middle">3D</text></g></svg>
+    <!-- Fast Point Transformer: voxel squares flicker, then speed lines -->
+    <svg class="voxels" viewBox="0 0 28 40"><g fill="var(--react)"><rect class="v v1" x="2" y="6" width="7" height="7"/><rect class="v v2" x="11" y="6" width="7" height="7"/><rect class="v v3" x="20" y="15" width="7" height="7"/><rect class="v v4" x="2" y="15" width="7" height="7"/><rect class="v v5" x="11" y="24" width="7" height="7"/><rect class="v v6" x="20" y="33" width="7" height="7"/></g></svg>
+    <!-- sleep: z Z z floats up -->
+    <svg class="zzz" viewBox="0 0 30 40"><text class="z z1" x="2" y="36">z</text><text class="z z2" x="10" y="26">Z</text><text class="z z3" x="20" y="14">z</text></svg>
+    <!-- page end: sparkle waves ripple out from his sparkle -->
+    <svg class="wavesfx" viewBox="0 0 40 40"><g fill="none" stroke="#f2b705" stroke-linecap="round" stroke-width="2"><path class="w w1" d="M20 12 A8 8 0 0 1 28 20"/><path class="w w2" d="M20 6 A14 14 0 0 1 34 20"/><path class="w w3" d="M20 0 A20 20 0 0 1 40 20"/></g></svg>
+  </div>
+  <div class="rig" id="rig"><div class="ghost g2"></div><div class="ghost g1"></div></div>
+  <div class="bubble" id="buddy-bubble"></div>
+</div>

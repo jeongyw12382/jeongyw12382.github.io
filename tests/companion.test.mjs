@@ -1,0 +1,219 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { createRequire } from 'node:module';
+
+const C = createRequire(import.meta.url)('../assets/js/companion.js');
+const { reduce, onFace, isShake, isNightOwl, HIT_LINES, initState, bubbleOf } = C;
+
+// his box: 84px wide at (200, 200); face center (242, 250.4), box center (242, 242)
+const box = { left: 200, top: 200, width: 84 };
+const run = (s, events) => events.reduce(reduce, s);
+
+test('HIT_LINES are the approved escalation', () => {
+  assert.deepEqual(HIT_LINES, ['Ouch!', 'Hey, that hurts!', 'Why me?!', "I'm telling my advisor."]);
+});
+
+test('onFace: true at the face center, false at the box corner', () => {
+  const r = { left: 100, top: 100, width: 84 };
+  assert.equal(onFace(100 + 42, 100 + 84 * 0.6, r), true);
+  assert.equal(onFace(100, 100, r), false);
+  assert.equal(onFace(184, 184, r), false);
+});
+
+test('cursor stepping toward his face within 100 px makes him rest', () => {
+  let s = initState(0);
+  s = reduce(s, { type: 'move', now: 10, x: 330, y: 250, box });
+  assert.equal(s.mode, 'follow');
+  s = reduce(s, { type: 'move', now: 20, x: 320, y: 250, box }); // 78 px away, closer
+  assert.equal(s.mode, 'rest');
+});
+
+test('his own catch-up toward a still cursor does not count as approach', () => {
+  let s = initState(0);
+  s = reduce(s, { type: 'move', now: 10, x: 330, y: 250, box: { left: 150, top: 200, width: 84 } });
+  // cursor unchanged; he moved closer (box shifted right)
+  s = reduce(s, { type: 'move', now: 20, x: 330, y: 250, box: { left: 200, top: 200, width: 84 } });
+  s = reduce(s, { type: 'move', now: 30, x: 330, y: 250, box: { left: 230, top: 200, width: 84 } });
+  assert.equal(s.mode, 'follow');
+  // and a cursor moving away from the same face position also does not count
+  s = reduce(s, { type: 'move', now: 40, x: 340, y: 250, box: { left: 240, top: 200, width: 84 } });
+  assert.equal(s.mode, 'follow');
+});
+
+test('cursor more than 160 px away returns him to follow', () => {
+  let s = run(initState(0), [
+    { type: 'move', now: 10, x: 330, y: 250, box },
+    { type: 'move', now: 20, x: 320, y: 250, box }
+  ]);
+  assert.equal(s.mode, 'rest');
+  s = reduce(s, { type: 'move', now: 30, x: 380, y: 250, box }); // 138 px from box center: still near
+  assert.equal(s.mode, 'rest');
+  s = reduce(s, { type: 'move', now: 40, x: 420, y: 250, box }); // 178 px
+  assert.equal(s.mode, 'follow');
+});
+
+test('rests after 1100 ms still once he has caught up', () => {
+  let s = reduce(initState(0), { type: 'move', now: 0, x: 600, y: 600, box });
+  s = reduce(s, { type: 'tick', now: 1000, box, settled: true });
+  assert.equal(s.mode, 'follow');
+  s = reduce(s, { type: 'tick', now: 1200, box, settled: false });
+  assert.equal(s.mode, 'follow');
+  s = reduce(s, { type: 'tick', now: 1210, box, settled: true });
+  assert.equal(s.mode, 'rest');
+});
+
+test('4 hits say HIT_LINES in order, the 5th sends him to sulk', () => {
+  let s = initState(0);
+  for (let i = 0; i < 4; i++) {
+    s = reduce(s, { type: 'hit', now: 100 + i * 200 });
+    assert.equal(s.say.text, HIT_LINES[i]);
+    assert.equal(s.ouch, true);
+    assert.equal(s.mode, 'rest');
+  }
+  s = reduce(s, { type: 'hit', now: 1000 });
+  assert.equal(s.mode, 'sulk');
+  assert.equal(s.say.text, 'Hmph.');
+  s = reduce(s, { type: 'tick', now: 1000 + 3499 });
+  assert.equal(s.mode, 'sulk');
+  s = reduce(s, { type: 'tick', now: 1000 + 3500 });
+  assert.equal(s.mode, 'follow');
+});
+
+test('hit counter resets after 5000 ms', () => {
+  let s = run(initState(0), [{ type: 'hit', now: 0 }, { type: 'hit', now: 100 }]);
+  assert.equal(s.say.text, HIT_LINES[1]);
+  s = reduce(s, { type: 'hit', now: 5200 });
+  assert.equal(s.say.text, HIT_LINES[0]);
+});
+
+test('a hit during the choir reaction winces but keeps the reaction', () => {
+  let s = reduce(initState(0), { type: 'paperHover', now: 0, react: 'choir', say: 'Canonical pose!', accent: '#c2255c' });
+  s = reduce(s, { type: 'hit', now: 50 });
+  assert.equal(s.ouch, true);
+  assert.equal(s.react, 'choir');
+  s = reduce(s, { type: 'tick', now: 1000 });
+  assert.equal(s.ouch, false);
+  assert.equal(s.react, 'choir');
+  // once the hit line expires the paper's line comes back
+  assert.equal(bubbleOf(s, 2000).text, 'Canonical pose!');
+});
+
+test('paper hover sets react, line and accent; leave clears them', () => {
+  let s = reduce(initState(0), { type: 'paperHover', now: 0, react: 'distill', say: 'Fits in my pocket!', accent: '#123456' });
+  assert.equal(s.react, 'distill');
+  assert.deepEqual(bubbleOf(s, 10), { text: 'Fits in my pocket!', accent: '#123456', hover: true });
+  s = reduce(s, { type: 'paperLeave', now: 100 });
+  assert.equal(s.react, null);
+  assert.ok(bubbleOf(s, 200));
+  assert.equal(bubbleOf(s, 500), null);
+  // LARC has no line: no bubble at all
+  s = reduce(s, { type: 'paperHover', now: 600, react: 'larc', say: '', accent: '#7b61ff' });
+  assert.equal(bubbleOf(s, 700), null);
+});
+
+test('career hover shows the greeting with its accent', () => {
+  let s = reduce(initState(0), { type: 'careerHover', now: 0, greet: 'Bonjour!', accent: '#0055a4' });
+  assert.equal(bubbleOf(s, 10).text, 'Bonjour!');
+  assert.equal(bubbleOf(s, 10).accent, '#0055a4');
+  s = reduce(s, { type: 'careerLeave', now: 20 });
+  assert.equal(bubbleOf(s, 1000), null);
+});
+
+test('idle for 8000 ms puts him to sleep; a move wakes him startled', () => {
+  let s = reduce(initState(0), { type: 'idle', now: 7999 });
+  assert.equal(s.mode, 'follow');
+  s = reduce(s, { type: 'idle', now: 8000 });
+  assert.equal(s.mode, 'sleep');
+  s = reduce(s, { type: 'move', now: 9000, x: 10, y: 10, box });
+  assert.equal(s.mode, 'follow');
+  assert.equal(s.startle, true);
+  assert.equal(s.say.text, '!');
+  s = reduce(s, { type: 'tick', now: 10000, box, settled: false });
+  assert.equal(s.startle, false);
+});
+
+test('scroll/key input also counts as activity and wakes him', () => {
+  let s = reduce(initState(0), { type: 'input', now: 7000 });
+  s = reduce(s, { type: 'idle', now: 9000 });
+  assert.equal(s.mode, 'follow');
+  s = reduce(s, { type: 'idle', now: 15000 });
+  assert.equal(s.mode, 'sleep');
+  s = reduce(s, { type: 'input', now: 15100 });
+  assert.equal(s.mode, 'follow');
+  assert.equal(s.startle, true);
+});
+
+test('shake makes him dizzy with "@_@" for 1500 ms', () => {
+  let s = reduce(initState(0), { type: 'shake', now: 100 });
+  assert.equal(s.mode, 'dizzy');
+  assert.equal(bubbleOf(s, 200).text, '@_@');
+  s = reduce(s, { type: 'tick', now: 1599 });
+  assert.equal(s.mode, 'dizzy');
+  s = reduce(s, { type: 'tick', now: 1600 });
+  assert.equal(s.mode, 'follow');
+});
+
+test('isShake: zig-zag yes, straight drag no', () => {
+  const zig = [0, 50, 0, 50, 0, 50].map((x, i) => ({ x, t: 1000 + i * 80 }));
+  assert.equal(isShake(zig), true);
+  const straight = Array.from({ length: 10 }, (_, i) => ({ x: i * 40, t: 1000 + i * 50 }));
+  assert.equal(isShake(straight), false);
+  const small = [0, 20, 0, 20, 0, 20].map((x, i) => ({ x, t: 1000 + i * 80 }));
+  assert.equal(isShake(small), false);
+  const slow = [0, 50, 0, 50, 0, 50].map((x, i) => ({ x, t: 1000 + i * 300 }));
+  assert.equal(isShake(slow), false);
+});
+
+test('isNightOwl: 02:00 yes, 14:00 no', () => {
+  assert.equal(isNightOwl(new Date(2026, 0, 1, 2)), true);
+  assert.equal(isNightOwl(new Date(2026, 0, 1, 14)), false);
+  assert.equal(isNightOwl(new Date(2026, 0, 1, 5)), false);
+});
+
+test('night owl yawns at most once per 60 s', () => {
+  const night = new Date(2026, 0, 1, 1);
+  let s = reduce(initState(0), { type: 'night', now: 1000, date: night });
+  assert.equal(s.say.text, 'Still up? Deadline too?');
+  const first = s.lastNight;
+  s = reduce(s, { type: 'night', now: 30000, date: night });
+  assert.equal(s.lastNight, first);
+  s = reduce(s, { type: 'night', now: 61000, date: night });
+  assert.equal(s.lastNight, 61000);
+  const day = reduce(initState(0), { type: 'night', now: 1000, date: new Date(2026, 0, 1, 14) });
+  assert.equal(day.say, null);
+});
+
+test('contact links say hi; page end thanks once', () => {
+  let s = reduce(initState(0), { type: 'contact', now: 0, on: true });
+  assert.equal(bubbleOf(s, 10).text, 'Say hi!');
+  s = reduce(s, { type: 'contact', now: 20, on: false });
+  assert.equal(bubbleOf(s, 1000), null);
+  // asleep: no hover chatter
+  const zz = reduce(reduce(s, { type: 'contact', now: 1100, on: true }), { type: 'idle', now: 9000 });
+  assert.equal(zz.mode, 'sleep');
+  assert.equal(bubbleOf(zz, 9100), null);
+  s = reduce(s, { type: 'end', now: 2000 });
+  assert.equal(bubbleOf(s, 2100).text, 'Thanks for reading!');
+  assert.ok(s.waveUntil > 2000);
+  const again = reduce(s, { type: 'end', now: 9000 });
+  assert.equal(again.waveUntil, s.waveUntil);
+});
+
+test('reduce does not mutate its input', () => {
+  const s = initState(0);
+  const copy = JSON.stringify(s);
+  reduce(s, { type: 'hit', now: 1 });
+  reduce(s, { type: 'move', now: 1, x: 1, y: 1, box });
+  assert.equal(JSON.stringify(s), copy);
+});
+
+test('built pages include the companion once, its script, and the footer toggle', async () => {
+  const { loadSite, count } = await import('./helpers.mjs');
+  for (const page of ['index.html', 'publications/index.html']) {
+    const html = loadSite(page);
+    assert.equal(count(html, /id="buddy"/), 1, page);
+    assert.equal(count(html, /id="yw-art"/), 1, page);
+    assert.match(html, /assets\/js\/companion\.js/);
+    assert.equal(count(html, /id="companion-toggle"/), 1, page);
+  }
+});

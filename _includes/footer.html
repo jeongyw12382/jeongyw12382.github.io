@@ -8,6 +8,7 @@
         {%- if site.last_updated -%}
         Last updated: {{ "now" | date: '%B %d, %Y' }}.
         {%- endif %}
+        <button type="button" class="companion-toggle" id="companion-toggle" hidden>Hide companion</button>
       </div>
     </footer>
     {%- else -%}
@@ -20,6 +21,7 @@
         {%- if site.last_updated -%}
         Last updated: {{ "now" | date: '%B %d, %Y' }}.
         {%- endif %}
+        <button type="button" class="companion-toggle" id="companion-toggle" hidden>Hide companion</button>
       </div>
     </footer>
     {%- endif %}
