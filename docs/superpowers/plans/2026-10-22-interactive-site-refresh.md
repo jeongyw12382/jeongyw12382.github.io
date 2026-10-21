@@ -37,7 +37,7 @@
 
 **Files:**
 - Create: `tests/build.sh` (runs Jekyll build in Docker into `_site/`)
-- Create: `tests/helpers.mjs` (`loadSite(path) -> string` reads `_site/<path>`; `$$(html, selector)` using `node-html-parser` vendored? no — use regex helpers `count(html, re)`)
+- Create: `tests/helpers.mjs` exporting `loadSite(path: string) -> string` (reads `_site/<path>`) and `count(html: string, re: RegExp) -> number` (no npm deps; regex-based assertions)
 - Modify: `.gitignore` (ensure `_site/`, `.jekyll-cache/`, `node_modules/`)
 
 - [ ] **Step 1:** Run `bash bin/docker_build_image.sh` to build the `al-folio:latest` image. Expected: the image is built.
