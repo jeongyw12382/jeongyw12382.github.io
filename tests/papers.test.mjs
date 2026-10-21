@@ -159,7 +159,7 @@ test('publications page: category chips with counts, year headings kept', () => 
 
 test('about page selected papers use the same card', () => {
   const html = loadSite('index.html');
-  assert.ok(count(html, /<article class="paper-card"/) >= 10);
+  assert.equal(count(html, /<article class="paper-card"/), 8); // ruling M: 8 selected
   assert.match(html, /assets\/js\/papers\.js/);
 });
 

@@ -1,0 +1,23 @@
+{%- comment -%} One career timeline card. Param: item (an _experience/_education doc). {%- endcomment -%}
+{%- assign it = include.item -%}
+{%- case it.landmark -%}
+  {%- when 'paris' -%}{%- assign lm_title = 'Eiffel Tower, Paris' -%}
+  {%- when 'taipei' -%}{%- assign lm_title = 'Taipei 101, Taipei' -%}
+  {%- when 'pangyo' -%}{%- assign lm_title = 'Office towers of Pangyo Techno Valley' -%}
+  {%- when 'pohang' -%}{%- assign lm_title = 'POSTECH campus by the sea, Pohang' -%}
+  {%- when 'busan' -%}{%- assign lm_title = 'Gwangan Bridge, Busan' -%}
+  {%- else -%}{%- assign lm_title = it.place -%}
+{%- endcase %}
+              <li class="tl-item" style="--accent:{{ it.accent }}" tabindex="0" data-greet="{{ it.greet }}" data-accent="{{ it.accent }}">
+                <span class="tl-node" aria-hidden="true"></span>
+                <svg class="tl-landmark" viewBox="0 0 80 80" role="img"><title>{{ lm_title }}</title><use href="#lm-{{ it.landmark }}"/></svg>
+                <div class="tl-body">
+                  <p class="tl-when"><time>{{ it.years }}</time>{% if it.years_note %} <span class="tl-note">{{ it.years_note }}</span>{% endif %}<span class="tl-place"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> {{ it.place }}</span></p>
+                  <h3 class="tl-role">{{ it.role }}</h3>
+                  <p class="tl-org">{% if it.org_url %}<a href="{{ it.org_url }}">{{ it.org }}</a>{% else %}{{ it.org }}{% endif %}</p>
+                  {%- if it.mentor %}
+                  <p class="tl-mentor">{{ it.mentor_label | default: 'Mentor' }}: {% if it.mentor_url %}<a href="{{ it.mentor_url }}">{{ it.mentor }}</a>{% else %}{{ it.mentor }}{% endif %}</p>
+                  {%- endif %}
+                  <p class="tl-blurb">{{ it.blurb }}</p>
+                </div>
+              </li>

@@ -1,25 +1,14 @@
-          
-          <div class="experience">
+
+          <section class="experience tl-section">
             <h2>Experience</h2>
-            {% if site.experience != blank -%} 
-            <div class="table-responsive">
-              <table class="table table-sm table-borderless">
-              {%- assign experience = site.experience | reverse -%} 
-              {% for item in experience limit: site.experience_limit %} 
-                <tr>
-                  <th scope="row">{{ item.start_end }}</th>
-                  <td>
-                    {% if item.inline -%} 
-                      {{ item.content | remove: '<p>' | remove: '</p>' | emojify }}
-                    {%- else -%} 
-                      <a class="experience-title" href="{{ item.url | relative_url }}">{{ item.title }}</a>
-                    {%- endif %} 
-                  </td>
-                </tr>
-              {%- endfor %} 
-              </table>
-            </div>
-          {%- else -%} 
+            {% if site.experience != blank -%}
+            <ol class="timeline">
+            {%- assign experience = site.experience | reverse -%}
+            {% for item in experience %}
+              {%- include timeline_item.html item=item -%}
+            {% endfor %}
+            </ol>
+            {%- else -%}
             <p>No experience so far...</p>
-          {%- endif %} 
-          </div>
+            {%- endif %}
+          </section>

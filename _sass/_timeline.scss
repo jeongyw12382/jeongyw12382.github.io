@@ -1,0 +1,225 @@
+/*******************************************************************************
+ * Career timeline (_includes/timeline_item.html, assets/js/timeline.js)
+ ******************************************************************************/
+
+// Each card sets --accent inline. --tl-ink is a contrast-safe version of it
+// for text and landmark strokes; --tl-soft / --tl-line tint the card.
+.tl-item {
+  --tl-ink: var(--global-text-color);
+  --tl-soft: transparent;
+  --tl-line: var(--global-divider-color);
+  --tl-muted: #5f6368;
+}
+html[data-theme='dark'] .tl-item { --tl-muted: #b4b8bd; }
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  .tl-item {
+    --tl-ink: color-mix(in srgb, var(--accent) 66%, #000);
+    --tl-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+    --tl-line: color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  html[data-theme='dark'] .tl-item {
+    --tl-ink: color-mix(in srgb, var(--accent) 55%, #fff);
+    --tl-soft: color-mix(in srgb, var(--accent) 20%, transparent);
+    --tl-line: color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+}
+
+.tl-section { margin-bottom: 2.5rem; }
+
+ol.timeline {
+  --tl-gutter: 46px;
+  --tl-rail: 18px;          // x of the journey rail inside the gutter
+  position: relative;
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0 0 0 var(--tl-gutter);
+
+  // fallback rail when the script hasn't drawn the journey path
+  &::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--tl-rail) - 1.5px);
+    top: 2.5rem;
+    bottom: 2.5rem;
+    border-left: 3px dotted var(--global-divider-color);
+  }
+  &.has-journey::before { display: none; }
+}
+
+.tl-journey {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  overflow: visible;
+  pointer-events: none;
+
+  path { fill: none; stroke-linecap: round; }
+  .tl-journey-ghost { stroke: var(--global-divider-color); stroke-width: 2; stroke-dasharray: 0 8; }
+  .tl-journey-road { stroke-width: 4.5; stroke-dasharray: 0 8; }
+}
+
+.tl-item {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  column-gap: 1.25rem;
+  align-items: center;
+  margin: 0 0 1.1rem;
+  padding: 1.1rem 1.35rem 1.1rem 1.1rem;
+  color: var(--global-text-color);
+  background:
+    linear-gradient(105deg, var(--tl-soft) 0%, transparent 75%),
+    var(--global-card-bg-color);
+  border: 1px solid var(--tl-line);
+  border-left: 5px solid var(--accent);
+  border-radius: 14px;
+  outline: none;
+  transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+
+  &:hover, &:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 14px 32px -18px var(--accent), 0 0 0 1px var(--tl-line);
+  }
+  &:hover { transform: translateY(-2px); }
+  &:focus-visible { box-shadow: 0 0 0 3px var(--tl-line), 0 14px 32px -18px var(--accent); }
+
+  p { margin: 0; }
+  a { color: var(--tl-ink); }
+  a:hover { color: var(--tl-ink); text-decoration: underline; }
+}
+
+// dot on the journey rail, level with the landmark
+.tl-node {
+  position: absolute;
+  left: calc(var(--tl-rail) - var(--tl-gutter) - 8px);
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--global-bg-color), 0 0 0 6px var(--tl-line);
+  transition: transform .25s ease;
+}
+.tl-item:hover .tl-node, .tl-item:focus-within .tl-node { transform: scale(1.25); }
+
+.tl-landmark {
+  width: 92px;
+  height: 92px;
+  padding: 6px;
+  color: var(--tl-ink);
+  background: radial-gradient(circle at 50% 55%, var(--tl-soft) 0 62%, transparent 63%);
+  overflow: visible;
+}
+
+.tl-when {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: .6rem;
+  row-gap: .1rem;
+
+  time {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -.01em;
+    color: var(--tl-ink);
+    font-variant-numeric: tabular-nums;
+  }
+}
+.tl-note {
+  font-size: .8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--tl-muted);
+}
+.tl-place {
+  font-size: .85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--tl-muted);
+  i { color: var(--tl-ink); margin-right: .15rem; }
+}
+.tl-role {
+  margin: .35rem 0 .1rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--global-text-color);
+}
+.tl-org { font-size: 1rem; font-weight: 500; }
+.tl-mentor { font-size: .9rem; color: var(--tl-muted); }
+.tl-blurb {
+  margin-top: .45rem !important;
+  padding-left: .7rem;
+  border-left: 3px solid var(--tl-line);
+  font-size: .95rem;
+  line-height: 1.45;
+}
+
+// Pointer devices: the CV one-liner unfolds on hover/focus.
+// Touch devices always show it.
+@media (hover: hover) {
+  .tl-blurb {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    margin-top: 0 !important;
+    transition: max-height .35s ease, opacity .3s ease, margin-top .3s ease;
+  }
+  .tl-item:hover .tl-blurb, .tl-item:focus-within .tl-blurb {
+    max-height: 6em;
+    opacity: 1;
+    margin-top: .45rem !important;
+  }
+}
+
+// Landmark line drawing (paths use pathLength="100"; dash props inherit into <use>).
+@keyframes tl-draw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes tl-redraw { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+.tl-item.in-view:not(.drawn) .tl-landmark {
+  stroke-dasharray: 100;
+  animation: tl-draw 1.6s cubic-bezier(.45, .05, .25, 1) both;
+}
+.tl-item:hover .tl-landmark, .tl-item:focus-within .tl-landmark {
+  stroke-dasharray: 100;
+  animation: tl-redraw 1.2s cubic-bezier(.45, .05, .25, 1) both;
+}
+
+.see-all-papers {
+  margin: .25rem 0 0;
+  text-align: right;
+  font-weight: 600;
+  a { color: var(--global-theme-color); }
+}
+
+@media (max-width: 576px) {
+  ol.timeline { --tl-gutter: 30px; --tl-rail: 11px; }
+  .tl-item {
+    grid-template-columns: 60px minmax(0, 1fr);
+    column-gap: .8rem;
+    align-items: start;
+    padding: .85rem .9rem .85rem .75rem;
+  }
+  .tl-node { top: 2.75rem; }
+  .tl-landmark { width: 60px; height: 60px; padding: 3px; }
+  .tl-when time { font-size: 1.35rem; }
+  .tl-place { font-size: .75rem; }
+  .tl-role { font-size: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-item, .tl-node, .tl-blurb { transition: none !important; }
+  .tl-item:hover { transform: none; }
+  .tl-item .tl-landmark,
+  .tl-item:hover .tl-landmark,
+  .tl-item:focus-within .tl-landmark,
+  .tl-item.in-view .tl-landmark {
+    animation: none !important;
+    stroke-dasharray: none !important;
+  }
+}

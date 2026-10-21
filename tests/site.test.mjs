@@ -47,3 +47,73 @@ test('paper cards: stylesheet compiled and script loaded on both pages', () => {
     assert.match(loadSite(p), /<script defer src="\/assets\/js\/papers\.js"><\/script>/, p);
   }
 });
+
+// ---- Task 7: about page order + career timeline ----
+const section = (html, cls) => {
+  const i = html.search(new RegExp(`<(?:div|section) class="${cls}[ "]`));
+  assert.ok(i > 0, `section .${cls} missing`);
+  return i;
+};
+const sectionBody = (html, cls) => {
+  const start = section(html, cls);
+  const end = html.indexOf('</section>', start);
+  return html.slice(start, end > 0 ? end : undefined);
+};
+
+test('about page order: intro, publications, experience, education, honors, academic', () => {
+  const html = loadSite('index.html');
+  const order = ['publications', 'experience', 'education', 'honors', 'academic'].map((c) => section(html, c));
+  assert.ok(html.indexOf('class="clearfix"') < order[0], 'intro first');
+  for (let i = 1; i < order.length; i++) assert.ok(order[i - 1] < order[i], `order at ${i}`);
+});
+
+test('about page: 8 selected papers then a link to all 15', () => {
+  const html = loadSite('index.html');
+  assert.equal(count(html, /<article class="paper-card"/), 8);
+  const keys = ['gwak2026cog3dmap', 'jeon2026larc', 'jeon2026valr', 'jeong2026mvsam', 'jeong2025quantile', 'jeong2024rodygs', 'jeong2024nvsadapter', 'jeong2022scnerf'];
+  const bib = readFileSync(resolve(root, '_bibliography/papers.bib'), 'utf8');
+  const selected = bib.split(/\n@(?!string)/).slice(1).filter((e) => /selected=\{true\}/.test(e)).map((e) => e.match(/^\w+\{([^,]+),/)[1]);
+  assert.deepEqual(selected.sort(), [...keys].sort());
+  assert.match(html, /<a[^>]*href="\/publications\/"[^>]*>\s*See all 15 publications →\s*<\/a>/);
+});
+
+test('timeline: 5 experience and 3 education items, each a focusable accented card', () => {
+  const html = loadSite('index.html');
+  const exp = sectionBody(html, 'experience');
+  const edu = sectionBody(html, 'education');
+  assert.equal(count(exp, /<li class="tl-item"/), 5);
+  assert.equal(count(edu, /<li class="tl-item"/), 3);
+  const items = [...html.matchAll(/<li class="tl-item"[^>]*>/g)].map((m) => m[0]);
+  assert.equal(items.length, 8);
+  for (const li of items) {
+    assert.match(li, /style="--accent:#[0-9a-f]{6}"/i, li);
+    assert.match(li, /tabindex="0"/, li);
+    assert.match(li, /data-greet="[^"]+"/, li);
+  }
+  for (const [frag, greet, lm] of [['Meta', 'Bonjour!', 'paris'], ['NVIDIA', '你好!', 'taipei'], ['Kakao Brain', '안녕하세요!', 'pangyo'], ['Korea Science Academy', '안녕하세요!', 'busan'], ['Computer Vision Lab', '안녕하세요!', 'pohang']]) {
+    const i = html.indexOf(frag, html.indexOf('<li class="tl-item"'));
+    const li = html.slice(html.lastIndexOf('<li class="tl-item"', i), i);
+    assert.match(li, new RegExp(`data-greet="${greet}"`), frag);
+    assert.match(li, new RegExp(`href="#lm-${lm}"`), frag);
+  }
+  assert.match(exp, /<time[^>]*>2026<\/time>/);
+  assert.match(exp, /Mentor:[\s\S]*Jaesung Choe/);
+  assert.match(edu, /Advisor:[\s\S]*Minsu Cho/);
+  assert.match(exp, /class="tl-blurb"[^>]*>\s*Developed a video generative model built on DINO representations\./);
+});
+
+test('every landmark <use> resolves to a symbol on the page', () => {
+  const html = loadSite('index.html');
+  const uses = [...html.matchAll(/<use href="#(lm-[a-z]+)"/g)].map((m) => m[1]);
+  assert.equal(uses.length, 8);
+  for (const id of new Set(uses)) assert.equal(count(html, new RegExp(`<symbol id="${id}"`)), 1, id);
+  for (const id of ['paris', 'taipei', 'pangyo', 'pohang', 'busan']) assert.match(html, new RegExp(`<symbol id="lm-${id}"`));
+  assert.equal(count(html, /<svg class="tl-landmark"[^>]*>\s*<title>[^<]+<\/title>/), 8);
+});
+
+test('timeline styles and script are shipped', () => {
+  const css = loadSite('assets/css/main.css');
+  assert.match(css, /\.tl-item/);
+  assert.match(css, /\.tl-journey/);
+  assert.match(loadSite('index.html'), /<script defer src="\/assets\/js\/timeline\.js"><\/script>/);
+});
