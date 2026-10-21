@@ -2,7 +2,9 @@
  * Pure logic (reduce, onFace, isShake, isNightOwl, HIT_LINES) is exported for tests;
  * the browser glue below routes every state change through reduce().
  * Ported from the approved prototype docs/superpowers/specs/assets/yoonwoo-companion.html (v9).
- * Written in ES5 so jekyll-minifier can handle it. */
+ * Written in ES5 so jekyll-minifier can handle it. Everything lives in one IIFE (no globals). */
+(function () {
+'use strict';
 
 var HIT_LINES = ['Ouch!', 'Hey, that hurts!', 'Why me?!', "I'm telling my advisor."];
 
@@ -226,13 +228,43 @@ function bubbleOf(s, now) {
   return null;
 }
 
+/** Earliest future moment at which time alone changes his state or what is shown (Infinity: none).
+ * The frame loop sleeps while nothing moves and sets a timer for this instead of polling. */
+function nextWake(s, now) {
+  var t = [];
+  if (s.ouch) t.push(s.ouchUntil);
+  if (s.startle) t.push(s.startleUntil);
+  if (s.mode === 'sulk') t.push(s.sulkUntil);
+  if (s.mode === 'dizzy') t.push(s.dizzyUntil);
+  if (s.say) t.push(s.say.until);
+  t.push(s.yawnUntil, s.waveUntil);
+  if (s.mode === 'follow') t.push(s.lastMove + T.rest);
+  if (s.mode === 'follow' || s.mode === 'rest') t.push(s.lastInput + T.sleep);
+  var next = Infinity;
+  for (var i = 0; i < t.length; i++) if (t[i] > now && t[i] < next) next = t[i];
+  return next;
+}
+
+/** Does the next frame still have motion to draw? (distance to target, hop, kick, RoDyGS jitter) */
+function busy(k) {
+  return k.dist > 0.3 || k.hop > 0 || Math.abs(k.kick.x) + Math.abs(k.kick.y) > 0.1 || !!k.jitter;
+}
+
+/** Contact links make him say hi, but not the Code/GitHub links of papers or the career cards. */
+var CONTACT = 'a[href^="mailto:"], a[href*="github.com"], a[href*="scholar.google"]';
+var NOT_CONTACT = '.paper-card, .tl-item';
+function contactOf(target) {
+  var a = target && target.closest ? target.closest(CONTACT) : null;
+  return a && !a.closest(NOT_CONTACT) ? a : null;
+}
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { reduce: reduce, onFace: onFace, isShake: isShake, isNightOwl: isNightOwl,
-    HIT_LINES: HIT_LINES, initState: initState, bubbleOf: bubbleOf, T: T, track: track, initGesture: initGesture };
+    HIT_LINES: HIT_LINES, initState: initState, bubbleOf: bubbleOf, T: T, track: track, initGesture: initGesture,
+    nextWake: nextWake, busy: busy, contactOf: contactOf, CONTACT: CONTACT, NOT_CONTACT: NOT_CONTACT };
 }
 
 /* ------------------------------------------------------------------ browser glue */
-(function () {
   if (typeof document === 'undefined' || typeof window === 'undefined') return;
 
   function boot() {
@@ -260,7 +292,8 @@ if (typeof module !== 'undefined' && module.exports) {
     var t0 = performance.now();
     var state = initState(t0);
     // while hidden nothing reaches reduce, so once-per-view moments (page end, night) are not used up
-    function dispatch(e) { if (enabled) state = reduce(state, e); }
+    // every event may change what he shows, so it also wakes the (otherwise idle) frame loop
+    function dispatch(e) { if (enabled) { state = reduce(state, e); wake(); } }
 
     var W = finePointer ? 84 : 64;
     var mouse = { x: innerWidth * 0.7, y: innerHeight * 0.6, seen: false };
@@ -334,10 +367,9 @@ if (typeof module !== 'undefined' && module.exports) {
     });
     document.addEventListener('career:leave', function () { dispatch({ type: 'careerLeave', now: performance.now() }); });
 
-    var CONTACT = 'a[href^="mailto:"], a[href*="github.com"], a[href*="scholar.google"]';
     var contactLink = null;
     document.addEventListener('pointerover', function (e) {
-      var a = e.target && e.target.closest ? e.target.closest(CONTACT) : null;
+      var a = contactOf(e.target);
       if (a === contactLink) return;
       contactLink = a;
       dispatch({ type: 'contact', now: performance.now(), on: !!a });
@@ -362,18 +394,29 @@ if (typeof module !== 'undefined' && module.exports) {
     /* ---- hand-drawn line boil ---- */
     var noise = document.getElementById('wobble-noise');
     var seed = 2;
-    function boil() { if (document.hidden) return; seed = (seed % 4) + 1; noise.setAttribute('seed', seed); }
+    function boil() { if (document.hidden || state.mode === 'sleep') return; seed = (seed % 4) + 1; noise.setAttribute('seed', seed); }
 
     /* ---- show / hide: hidden means no loop, no timers, no state changes ---- */
-    var rafId = 0;
+    var rafId = 0, wakeTimer = 0, wakeAt = Infinity;
+    function wake() {
+      if (!enabled || rafId) return;   // already scheduled, or inside a frame (rafId === -1)
+      last = -1;                       // first frame after a pause: one nominal step, no catch-up jump
+      rafId = requestAnimationFrame(frame);
+    }
+    // nothing moves: stop drawing, and come back only when time alone changes something
+    function idleUntil(now) {
+      var at = nextWake(state, now);
+      if (at === wakeAt) return;
+      clearTimeout(wakeTimer); wakeAt = at;
+      if (at < Infinity) wakeTimer = setTimeout(function () { wakeAt = Infinity; wake(); }, at - now + 20);
+    }
     function startAll() {
       if (!reduced) timers.blink = setTimeout(blink, 1500);
-      if (!reduced && noise) timers.boil = setInterval(boil, 180);
+      // the hand-drawn boil only while he can move about (not parked on touch screens)
+      if (!reduced && !parked && noise) timers.boil = setInterval(boil, 180);
       timers.night0 = setTimeout(night, 4000);
       timers.night = setInterval(night, 61000);
-      last = performance.now();
-      dispatch({ type: 'input', now: last }); // fresh activity clock, so he doesn't wake up asleep
-      if (!rafId) rafId = requestAnimationFrame(frame);
+      dispatch({ type: 'input', now: performance.now() }); // fresh activity clock (also starts the loop)
     }
     function stopAll() {
       clearTimeout(timers.blink); clearTimeout(timers.open); clearTimeout(timers.night0);
@@ -381,6 +424,7 @@ if (typeof module !== 'undefined' && module.exports) {
       setEyes(1.9, 1.9);
       if (rafId) cancelAnimationFrame(rafId);
       rafId = 0;
+      clearTimeout(wakeTimer); wakeAt = Infinity;
       gesture = initGesture();
     }
     function applyEnabled() {
@@ -453,9 +497,9 @@ if (typeof module !== 'undefined' && module.exports) {
     var last = performance.now();
     var wasStartled = false;
     function frame(now) {
+      rafId = -1;
       if (!enabled) { rafId = 0; return; }
-      rafId = requestAnimationFrame(frame);
-      var dt = Math.min(50, now - last) / 16.67; last = now;
+      var dt = last < 0 ? 1 : Math.max(0, Math.min(50, now - last)) / 16.67; last = now;
       var H = W;
 
       // sit just below-right of the cursor, never underneath it
@@ -482,12 +526,15 @@ if (typeof module !== 'undefined' && module.exports) {
       pos.x += vx; pos.y += vy;
       var speed = Math.hypot(vx, vy);
       var moving = speed > 0.35 && !reduced;
+      // standing still, the gentle idle sway is a CSS animation (.still), so the loop can stop
+      buddy.classList.toggle('still', !moving && !reduced);
 
       phase += moving ? Math.min(0.4, speed * 0.05) * dt : 0;
-      var bounce = reduced ? 0 : moving ? Math.abs(Math.sin(phase)) * -7 : Math.sin(now / 800) * 1;
+      var bounce = moving ? Math.abs(Math.sin(phase)) * -7 : 0;
       if (hop > 0) hop = Math.max(0, hop - 0.04 * dt);
-      var jump = reduced ? 0 : -Math.sin(hop * Math.PI) * 18;
-      var tilt = reduced ? 0 : moving ? Math.max(-12, Math.min(12, vx * 1.5)) : Math.sin(now / 1300) * 3;
+      if (reduced) hop = 0;
+      var jump = -Math.sin(hop * Math.PI) * 18;
+      var tilt = moving ? Math.max(-12, Math.min(12, vx * 1.5)) : 0;
       // squash a little on each landing
       var squash = moving ? 1 - (1 - Math.abs(Math.sin(phase))) * 0.06 : 1;
 
@@ -499,7 +546,16 @@ if (typeof module !== 'undefined' && module.exports) {
         tilt.toFixed(2) + 'deg) scale(' + (2 - squash).toFixed(3) + ', ' + squash.toFixed(3) + ')';
       if (mouse.seen && !reduced) look(mouse.x, mouse.y);
       render(now);
+
+      if (busy({ dist: Math.hypot(tx - pos.x, ty - pos.y), hop: hop, kick: kick, jitter: shake > 0 })) {
+        rafId = requestAnimationFrame(frame);
+      } else {
+        rafId = 0;
+        kick = { x: 0, y: 0 };
+        idleUntil(performance.now());
+      }
     }
+    addEventListener('resize', function () { wake(); }, { passive: true });
     applyEnabled();
   }
 

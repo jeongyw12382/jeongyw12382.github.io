@@ -15,6 +15,11 @@
   will-change: transform; filter: drop-shadow(0 3px 5px rgba(20, 24, 40, .16));
 }
 #buddy[hidden] { display: none; }
+/* standing still: a gentle idle sway on the individual translate/rotate properties, so it composes with
+   the inline transform companion.js writes while he walks (and the JS frame loop can stop) */
+#buddy.still { animation: buddy-bob 5s ease-in-out infinite, buddy-sway 8.2s ease-in-out infinite; }
+@keyframes buddy-bob { 0%, 50%, 100% { translate: 0 0; } 25% { translate: 0 1px; } 75% { translate: 0 -1px; } }
+@keyframes buddy-sway { 0%, 50%, 100% { rotate: none; } 25% { rotate: 3deg; } 75% { rotate: -3deg; } }
 /* on the dark theme a thin paper halo keeps the ink lines outside his face (headphones, sparkle) legible */
 html[data-theme="dark"] #buddy .rig, html[data-theme="dark"] #buddy .fx { filter: drop-shadow(0 0 1px rgba(251, 250, 246, .85)); }
 #buddy svg { width: 100%; height: auto; display: block; overflow: visible; }
@@ -194,6 +199,7 @@ html[data-theme="dark"] #buddy .rig, html[data-theme="dark"] #buddy .fx { filter
 
 @media (prefers-reduced-motion: reduce) {
   #buddy .glasses, #buddy .bubble { transition: none; }
+  #buddy.still { animation: none; }
   #buddy .sparkle, #buddy.push .sparkle, #buddy.waves .sparkle { animation: none; }
   #buddy .rig, #buddy .ghost, #buddy .fx * { animation: none !important; }
   #buddy.react-fpt .voxels { opacity: 1; }

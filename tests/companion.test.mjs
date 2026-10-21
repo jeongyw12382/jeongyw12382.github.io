@@ -283,3 +283,62 @@ test('gesture: touch scroll starting on his face is not a hit; a still tap is', 
   r = track(r.g, { type: 'click', now: 470 });
   assert.equal(r.swallow, true);
 });
+
+/* ---- idle: the frame loop sleeps when nothing moves, and wakes for the next deadline ---- */
+test('nextWake: nothing pending while resting with no bubble -> only the sleep deadline', () => {
+  let s = initState(0);
+  s = reduce(s, { type: 'move', now: 100, x: 500, y: 500, box });
+  s = reduce(s, { type: 'tick', now: 1300, box, settled: true }); // -> rest
+  assert.equal(s.mode, 'rest');
+  assert.equal(C.nextWake(s, 1300), 100 + C.T.sleep);
+});
+
+test('nextWake: following waits for the rest deadline; bubbles, ouch, sulk wake earlier', () => {
+  let s = initState(0);
+  s = reduce(s, { type: 'move', now: 100, x: 500, y: 500, box });
+  assert.equal(C.nextWake(s, 200), 100 + C.T.rest);
+  s = reduce(s, { type: 'hit', now: 300 });
+  assert.equal(C.nextWake(s, 310), 300 + C.T.ouch);
+  s = reduce(s, { type: 'tick', now: 300 + C.T.ouch, box, settled: true });
+  assert.equal(C.nextWake(s, 300 + C.T.ouch), 300 + C.T.line);
+});
+
+test('nextWake: asleep with nothing else pending never wakes on its own', () => {
+  let s = assign0({ mode: 'sleep' });
+  assert.equal(C.nextWake(s, 50000), Infinity);
+});
+function assign0(o) { return Object.assign(initState(0), o); }
+
+test('nextWake: past deadlines are ignored', () => {
+  const s = assign0({ mode: 'sulk', sulkUntil: 10, say: { text: 'x', until: 5 }, lastInput: 0 });
+  assert.equal(C.nextWake(s, 100), Infinity);
+});
+
+test('busy: the loop keeps running only while something actually moves', () => {
+  const still = { dist: 0.1, hop: 0, kick: { x: 0.01, y: 0 }, jitter: false };
+  assert.equal(C.busy(still), false);
+  assert.equal(C.busy({ ...still, dist: 3 }), true);
+  assert.equal(C.busy({ ...still, hop: 0.5 }), true);
+  assert.equal(C.busy({ ...still, kick: { x: 2, y: 0 } }), true);
+  assert.equal(C.busy({ ...still, jitter: true }), true);
+});
+
+test('contactOf: mail/GitHub/Scholar links count, except inside paper cards and the timeline', () => {
+  const link = (excluded) => ({ closest: q => (q === C.CONTACT ? null : excluded ? {} : null) });
+  const a = link(false), b = link(true);
+  assert.equal(C.contactOf({ closest: q => (q === C.CONTACT ? a : null) }), a);
+  assert.equal(C.contactOf({ closest: q => (q === C.CONTACT ? b : null) }), null);
+  assert.equal(C.contactOf({ closest: () => null }), null);
+  assert.equal(C.contactOf(null), null);
+  assert.match(C.NOT_CONTACT, /\.paper-card/);
+  assert.match(C.NOT_CONTACT, /\.tl-item/);
+});
+
+test('companion.js leaks no globals', async () => {
+  const vm = await import('node:vm');
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync(new URL('../assets/js/companion.js', import.meta.url), 'utf8');
+  const ctx = vm.createContext({});
+  vm.runInContext(src, ctx);
+  assert.deepEqual(Object.keys(ctx), []);
+});
