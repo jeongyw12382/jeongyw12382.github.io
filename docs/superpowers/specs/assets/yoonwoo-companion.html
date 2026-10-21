@@ -261,6 +261,7 @@ h1 { font-family: var(--display); font-weight: 600; font-size: 2rem; margin: 0; 
   const mouse = { x: innerWidth * 0.7, y: innerHeight * 0.6, seen: false };
   const pos = { x: innerWidth - 90, y: innerHeight - 110 };
   let hop = 0, enabled = true, phase = 0;
+  const prevMouse = { x: mouse.x, y: mouse.y };
   let lastMove = 0, resting = false, hits = 0, lastHit = 0, sulkUntil = 0, kick = { x: 0, y: 0 };
   const LINES = ['Ouch!', 'Hey, that hurts!', 'Why me?!', 'I\'m telling my advisor.'];
 
@@ -367,6 +368,13 @@ h1 { font-family: var(--display); font-weight: 600; font-size: 2rem; margin: 0; 
 
     // rest once the cursor has been still a moment; stay put until it wanders off
     const near = Math.hypot(mouse.x - (pos.x + W / 2), mouse.y - (pos.y + H / 2)) < 160;
+    // moving the cursor toward him makes him stop and wait, so he's easy to reach
+    // (compare old vs new cursor against the same face position, so his own movement doesn't count)
+    const fx = pos.x + W * 0.5, fy = pos.y + W * 0.6;
+    const dFace = Math.hypot(mouse.x - fx, mouse.y - fy);
+    const approaching = dFace < 100 && dFace < Math.hypot(prevMouse.x - fx, prevMouse.y - fy) - 0.8;
+    prevMouse.x = mouse.x; prevMouse.y = mouse.y;
+    if (!resting && approaching) resting = true;
     if (!resting && now - lastMove > 1100 && Math.hypot(tx - pos.x, ty - pos.y) < 6) resting = true;
     else if (resting && !near) resting = false;
     if (resting) { tx = pos.x; ty = pos.y; }

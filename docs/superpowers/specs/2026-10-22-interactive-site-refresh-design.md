@@ -118,7 +118,7 @@ while staying an academic homepage first. Records must match the newly updated C
   - Bobs/"walks" while moving; idle breathing when stopped; random blink.
   - Pupils look toward the cursor.
   - When hovering a paper card: pushes up glasses + the per-paper reaction above.
-  - **Poke to annoy**: after ~1 s of cursor stillness he rests in place (stops following until the cursor
+  - **Poke to annoy**: after ~1 s of cursor stillness — or as soon as the cursor moves toward his face (within 100 px) — he rests in place (stops following until the cursor
     goes >160px away). A click inside his face circle is a hit **whether or not he is resting**
     (geometric hit test on capture-phase pointerdown; the following click is swallowed so links
     underneath don't fire). A hit also makes him rest. Hit reaction: `> <` eyes, wobbly mouth, red anger mark,
