@@ -125,7 +125,7 @@ test('Meta timeline card lists DINO managers and collaborator', () => {
   assert.match(card, /Collaborator:\s*<a href="https:\/\/shaamallow\.com\/"[^>]*>Eyal Benaroche<\/a>/);
 });
 
-test('two embargoed DINO-team papers show as locked cards (publications 2026 + About)', () => {
+test('two embargoed DINO-team papers show as locked cards on the publications page only', () => {
   const pubs = loadSite('publications/index.html');
   const y2026 = pubs.match(/<section class="pub-year" data-year="2026">[\s\S]*?<\/section>/)[0];
   const locked = y2026.match(/<article class="locked-card"[\s\S]*?<\/article>/g) || [];
@@ -138,8 +138,7 @@ test('two embargoed DINO-team papers show as locked cards (publications 2026 + A
     assert.match(c, /data-say="[^"]+"/);
   }
   const about = loadSite('index.html');
-  const sel = about.match(/<div class="publications selected-papers">[\s\S]*?see-all-papers/)[0];
-  assert.equal(count(sel, /<article class="locked-card"/), 2);
+  assert.equal(count(about, /<article class="locked-card"/), 0);
 });
 
 test('2026 papers are newest-first by venue date: NeurIPS > ICML > arXiv (Mar) > tech report (Jan)', () => {
