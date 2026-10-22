@@ -33,12 +33,17 @@ test('bib: VaLR is ICML 2026', () => {
   match(e, /year=\{2026\}/);
   match(e, /abbr=\{ICML\}/);
 });
-test('bib: RoDyGS year 2025, authors per ruling F', () => {
-  const e = entry('jeong2024rodygs'.replace('2024', '2024'));
+test('bib: RoDyGS year 2025, new author order, co-first authors', () => {
+  const e = entry('jeong2024rodygs');
   match(e, /year=\{2025\}/);
   match(e, /author=\{Junmyeong Lee and Hoseung Choi and Yoonwoo Jeong and Minsu Cho\}/);
-  doesNotMatch(e, /\*/);
-  doesNotMatch(e, /equal_contrib/);
+  match(e, /equal_contrib_authors=\{Junmyeong Lee, Hoseung Choi, Yoonwoo Jeong\}/);
+  match(e, /role=\{Co-first author\}/);
+});
+test('bib: SSL scale/orientation links to arXiv, not the expired BMVC domain', () => {
+  const e = entry('lee2022sslso');
+  doesNotMatch(e, /bmvc2021-virtualconference/);
+  match(e, /arxiv=\{2206.07259\}/);
 });
 test('bib: SSL scale/orientation is BMVC 2021', () => {
   const e = entry('lee2022sslso');

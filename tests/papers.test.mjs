@@ -125,8 +125,10 @@ test('companion contract and author marks', () => {
   const larc = card('jeon2026larc').body;
   assert.equal(count(larc, /title="Equal advising">†/), 2);
   const ro = card('jeong2024rodygs').body;
-  assert.equal(count(ro, /<sup title=/), 0);
-  assert.match(ro, /<span class="role-badge">Third author<\/span>/);
+  // co-first authors (project page: Jeong*, Lee*, Choi* — equal contribution)
+  assert.equal(count(ro, /<sup title="Equal contribution">\*<\/sup>/), 3);
+  assert.match(ro, /<span class="role-badge">Co-first author<\/span>/);
+  assert.doesNotMatch(ro, /Third author/);
   assert.match(card('jeong2022nerffac').body, /<span class="role-badge">Project lead<\/span>/);
   assert.match(card('jeong2025quantile').body, /class="result-num">43.7×</);
   assert.doesNotMatch(card('jeon2026larc').body, /result-num/);
