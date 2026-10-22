@@ -7,6 +7,10 @@
   background-color: var(--global-bg-color);
   color: var(--global-text-color);
   border-bottom: 1px solid var(--global-divider-color);
+  // stays pinned just under the fixed navbar (56px) while the page scrolls
+  position: sticky;
+  top: 56px;
+  z-index: 1020; // under the navbar (1030) and the companion (1035)
 
   &[hidden] { display: none; }
 
@@ -80,3 +84,6 @@
 @media (max-width: 575px) {
   .news-banner { padding: 0.3rem 0.5rem; gap: 0.4rem; }
 }
+
+// in-page anchors land below navbar + banner instead of under them
+html { scroll-padding-top: 100px; }

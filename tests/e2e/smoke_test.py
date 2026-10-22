@@ -127,6 +127,12 @@ try:
         pg.mouse.click(b3['x'] + b3['width'] * .5, b3['y'] + b3['height'] * .6); pg.wait_for_timeout(700)
         r = pg.evaluate("(()=>{const r=document.querySelector('#buddy .bubble').getBoundingClientRect();return [r.left,r.right,innerWidth]})()")
         check('(e) bubble clamped inside viewport', r[0] >= 15 and r[1] <= r[2] - 15, r)
+        # (l) the news banner stays pinned under the navbar while scrolling
+        pg.evaluate("scrollTo(0,0)"); pg.wait_for_timeout(200)
+        pg.evaluate("scrollTo(0, 1500)"); pg.wait_for_timeout(300)
+        nb = pg.evaluate("(()=>{const n=document.querySelector('.navbar').getBoundingClientRect(), b=document.querySelector('.news-banner').getBoundingClientRect(); return [Math.round(n.bottom), Math.round(b.top), Math.round(b.height)]})()")
+        check('(l) news banner stays under the navbar when scrolled', abs(nb[0] - nb[1]) <= 1 and nb[2] > 0, nb)
+        pg.evaluate("scrollTo(0,0)"); pg.wait_for_timeout(200)
         # (k) he steps aside from the link under the cursor, and clicks on it always reach the link
         link = pg.locator('.paper-links a').first
         link.scroll_into_view_if_needed(); pg.wait_for_timeout(200)
