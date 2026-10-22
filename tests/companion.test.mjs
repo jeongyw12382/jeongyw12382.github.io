@@ -342,3 +342,31 @@ test('companion.js leaks no globals', async () => {
   vm.runInContext(src, ctx);
   assert.deepEqual(Object.keys(ctx), []);
 });
+
+// ---- stepping aside for links/buttons ----
+const overlaps = (a, r) => a.x < r.right && a.x + a.w > r.left && a.y < r.bottom && a.y + a.h > r.top;
+
+test('dodge: leaves a target alone when it does not cover the control', () => {
+  const t = { x: 500, y: 500, w: 84, h: 84 };
+  assert.deepEqual(C.dodge(t, { left: 100, top: 100, right: 160, bottom: 130 }, 1200, 900), { x: 500, y: 500 });
+});
+
+test('dodge: moves him off a link he would cover, staying inside the viewport', () => {
+  const r = { left: 300, top: 300, right: 360, bottom: 324 };      // e.g. a "PDF" button
+  const t = { x: 320, y: 316, w: 84, h: 84 };                        // cursor+offset lands on it
+  const p = C.dodge(t, r, 1200, 900);
+  const moved = { x: p.x, y: p.y, w: 84, h: 84 };
+  assert.ok(!overlaps(moved, { left: r.left - 10, top: r.top - 10, right: r.right + 10, bottom: r.bottom + 10 }));
+  assert.ok(p.x >= 0 && p.y >= 0 && p.x + 84 <= 1200 && p.y + 84 <= 900);
+});
+
+test('dodge: near the bottom-right corner it picks a side that still fits', () => {
+  const r = { left: 1100, top: 840, right: 1190, bottom: 870 };
+  const p = C.dodge({ x: 1110, y: 800, w: 84, h: 84 }, r, 1200, 900);
+  assert.ok(p.x + 84 <= 1200 && p.y + 84 <= 900 && p.x >= 0 && p.y >= 0);
+  assert.ok(!overlaps({ x: p.x, y: p.y, w: 84, h: 84 }, r));
+});
+
+test('INTERACTIVE selector covers links, buttons, chips and paper media', () => {
+  for (const s of ['a[href]', 'button', '.filter-chip', '.paper-media']) assert.ok(C.INTERACTIVE.includes(s), s);
+});

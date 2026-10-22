@@ -127,6 +127,18 @@ try:
         pg.mouse.click(b3['x'] + b3['width'] * .5, b3['y'] + b3['height'] * .6); pg.wait_for_timeout(700)
         r = pg.evaluate("(()=>{const r=document.querySelector('#buddy .bubble').getBoundingClientRect();return [r.left,r.right,innerWidth]})()")
         check('(e) bubble clamped inside viewport', r[0] >= 15 and r[1] <= r[2] - 15, r)
+        # (k) he steps aside from the link under the cursor, and clicks on it always reach the link
+        link = pg.locator('.paper-links a').first
+        link.scroll_into_view_if_needed(); pg.wait_for_timeout(200)
+        lb = link.bounding_box()
+        pg.evaluate("window.__linkClicks=0; document.querySelectorAll('.paper-links a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();window.__linkClicks++}))")
+        pg.mouse.move(lb['x'] - 60, lb['y'] - 40); pg.wait_for_timeout(300)
+        pg.mouse.move(lb['x'] + lb['width'] / 2, lb['y'] + lb['height'] / 2, steps=12); pg.wait_for_timeout(1500)
+        bb = buddy.bounding_box()
+        clear = bb['x'] >= lb['x'] + lb['width'] or bb['x'] + bb['width'] <= lb['x'] or bb['y'] >= lb['y'] + lb['height'] or bb['y'] + bb['height'] <= lb['y']
+        check('(k) companion steps off the hovered link', clear and 'yield' in (buddy.get_attribute('class') or ''), f'link={lb} buddy={bb}')
+        pg.mouse.click(lb['x'] + lb['width'] / 2, lb['y'] + lb['height'] / 2); pg.wait_for_timeout(200)
+        check('(k) click on the link reaches the link', pg.evaluate('window.__linkClicks') == 1)
         pg.context.close()
         # (f) touch
         pg, errs = new_page(b, 'light', viewport={'width': 375, 'height': 800}, has_touch=True, is_mobile=True, device_scale_factor=2)

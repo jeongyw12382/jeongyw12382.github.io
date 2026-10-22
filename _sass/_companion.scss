@@ -17,7 +17,9 @@
 #buddy[hidden] { display: none; }
 /* standing still: a gentle idle sway on the individual translate/rotate properties, so it composes with
    the inline transform companion.js writes while he walks (and the JS frame loop can stop) */
-#buddy.still { animation: buddy-bob 5s ease-in-out infinite, buddy-sway 8.2s ease-in-out infinite; }
+// idle sway lives on the inner rig: on #buddy itself the rotate would pivot around the page origin
+// (it composes before the inline translate) and swing him ~30px across whatever is beside him
+#buddy.still .rig { transform-origin: 50% 90%; animation: buddy-bob 5s ease-in-out infinite, buddy-sway 8.2s ease-in-out infinite; }
 @keyframes buddy-bob { 0%, 50%, 100% { translate: 0 0; } 25% { translate: 0 1px; } 75% { translate: 0 -1px; } }
 @keyframes buddy-sway { 0%, 50%, 100% { rotate: none; } 25% { rotate: 3deg; } 75% { rotate: -3deg; } }
 /* on the dark theme a thin paper halo keeps the ink lines outside his face (headphones, sparkle) legible */
@@ -207,3 +209,7 @@ html[data-theme="dark"] #buddy .rig, html[data-theme="dark"] #buddy .fx { filter
 
 /* touch / coarse pointers: a smaller parked companion covers less text (matches W in companion.js) */
 @media not all and (hover: hover) and (pointer: fine) { #buddy { width: 64px; } }
+
+// a link/button is under the cursor: he steps aside (companion.js dodge) and turns see-through
+#buddy { transition: opacity .2s ease; }
+#buddy.yield { opacity: .35; }

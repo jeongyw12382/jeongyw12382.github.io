@@ -258,10 +258,33 @@ function contactOf(target) {
   return a && !a.closest(NOT_CONTACT) ? a : null;
 }
 
+// Controls he must never cover or steal a click from.
+var INTERACTIVE = 'a[href], button, input, select, textarea, label, summary, [role="button"], .filter-chip, .paper-media';
+
+/** Target position for his box t {x,y,w,h} that keeps clear of control rect r (+gap), inside vw×vh.
+ *  Returns t unchanged when it doesn't overlap; otherwise the nearest side (below, right, above, left) that fits. */
+function dodge(t, r, vw, vh, gap) {
+  gap = gap == null ? 10 : gap;
+  var L = r.left - gap, R = r.right + gap, Tp = r.top - gap, B = r.bottom + gap;
+  var hits = function (x, y) { return x < R && x + t.w > L && y < B && y + t.h > Tp; };
+  if (!hits(t.x, t.y)) return { x: t.x, y: t.y };
+  var fits = function (p) { return p.x >= 0 && p.y >= 0 && p.x + t.w <= vw && p.y + t.h <= vh; };
+  var cands = [{ x: t.x, y: B }, { x: R, y: t.y }, { x: t.x, y: Tp - t.h }, { x: L - t.w, y: t.y }];
+  var best = null, bestD = Infinity;
+  cands.forEach(function (p) {
+    p = { x: Math.min(Math.max(p.x, 0), vw - t.w), y: Math.min(Math.max(p.y, 0), vh - t.h) };
+    if (!fits(p) || hits(p.x, p.y)) return;
+    var d = Math.hypot(p.x - t.x, p.y - t.y);
+    if (d < bestD) { bestD = d; best = p; }
+  });
+  return best || { x: t.x, y: t.y };
+}
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { reduce: reduce, onFace: onFace, isShake: isShake, isNightOwl: isNightOwl,
     HIT_LINES: HIT_LINES, initState: initState, bubbleOf: bubbleOf, T: T, track: track, initGesture: initGesture,
-    nextWake: nextWake, busy: busy, contactOf: contactOf, CONTACT: CONTACT, NOT_CONTACT: NOT_CONTACT };
+    nextWake: nextWake, busy: busy, contactOf: contactOf, CONTACT: CONTACT, NOT_CONTACT: NOT_CONTACT,
+    dodge: dodge, INTERACTIVE: INTERACTIVE };
 }
 
 /* ------------------------------------------------------------------ browser glue */
@@ -336,7 +359,9 @@ if (typeof module !== 'undefined' && module.exports) {
     }
     addEventListener('pointerdown', function (e) {
       var now = performance.now();
-      var face = enabled && onFace(e.clientX, e.clientY, buddy.getBoundingClientRect());
+      // a press on a link/button is always for that control, even if he's drawn over it
+      var onControl = e.target && e.target.closest && e.target.closest(INTERACTIVE);
+      var face = enabled && !onControl && onFace(e.clientX, e.clientY, buddy.getBoundingClientRect());
       var r = feed({ type: 'down', now: now, x: e.clientX, y: e.clientY, pointerType: e.pointerType,
         button: e.button, isPrimary: e.isPrimary, face: face }, e.clientX, e.clientY);
       if (face) return; // on his face: a hit (now, or on release for touch), never a hop
@@ -366,6 +391,14 @@ if (typeof module !== 'undefined' && module.exports) {
       dispatch({ type: 'careerHover', now: performance.now(), greet: d.greet, accent: d.accent });
     });
     document.addEventListener('career:leave', function () { dispatch({ type: 'careerLeave', now: performance.now() }); });
+
+    // the control under the cursor: he steps aside and turns see-through so it stays visible
+    var control = null;
+    document.addEventListener('pointerover', function (e) {
+      var c = e.target && e.target.closest ? e.target.closest(INTERACTIVE) : null;
+      if (c && buddy.contains(c)) c = null;
+      if (c !== control) { control = c; buddy.classList.toggle('yield', !!c); wake(); }
+    });
 
     var contactLink = null;
     document.addEventListener('pointerover', function (e) {
@@ -516,6 +549,11 @@ if (typeof module !== 'undefined' && module.exports) {
       if (s.mode === 'sulk') {
         tx = mouse.x < innerWidth / 2 ? innerWidth - W - 24 : 24;
         ty = mouse.y < innerHeight / 2 ? innerHeight - H - 24 : 24;
+      }
+      if (control && !parked) {
+        var cr = control.getBoundingClientRect();
+        var d = dodge({ x: tx, y: ty, w: W, h: H }, cr, innerWidth, innerHeight);
+        tx = d.x; ty = d.y;
       }
       tx = Math.min(Math.max(tx + kick.x, 4), innerWidth - W - 4);
       ty = Math.min(Math.max(ty + kick.y, 4), innerHeight - H - 4);
