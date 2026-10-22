@@ -356,6 +356,8 @@ function truncateAuthors(n, limit) {
         if (li) li.hidden = !show;
         if (!show) stop(c);
       });
+      // embargoed placeholders have no category; show them only under "All"
+      Array.prototype.forEach.call(document.querySelectorAll('.locked-card'), function (l) { l.hidden = value !== 'all'; });
       Array.prototype.forEach.call(document.querySelectorAll('.pub-year'), function (sec) {
         sec.hidden = !sec.querySelector('.paper-card:not([hidden])');
       });
@@ -385,8 +387,18 @@ function truncateAuthors(n, limit) {
     });
   }
 
+  // embargoed cards: let the companion react ("Shh…")
+  function wireLocked(card) {
+    var detail = { key: card.id, react: 'secret', say: card.dataset.say || '', accent: '#6b7280' };
+    var enter = function () { document.dispatchEvent(new CustomEvent('paper:hover', { detail: detail })); };
+    var leave = function () { document.dispatchEvent(new CustomEvent('paper:leave', { detail: { key: card.id } })); };
+    card.addEventListener('pointerenter', enter);
+    card.addEventListener('pointerleave', leave);
+  }
+
   function init() {
     Array.prototype.forEach.call(document.querySelectorAll('.paper-card'), wire);
+    Array.prototype.forEach.call(document.querySelectorAll('.locked-card'), wireLocked);
     wireFilters();
     document.documentElement.classList.add('papers-ready');
   }

@@ -1,6 +1,7 @@
 
           <div class="publications selected-papers">
             <h2>Selected Publications</h2>
+            {% include locked_cards.html %}
             {% bibliography -f papers -q @*[selected=true]* %}
             <p class="see-all-papers"><a href="{{ '/publications/' | relative_url }}">See all {% bibliography_count -f papers %} publications →</a></p>
           </div>

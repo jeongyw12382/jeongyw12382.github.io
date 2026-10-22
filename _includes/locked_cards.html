@@ -1,0 +1,14 @@
+{%- comment -%} Embargoed papers (_data/embargoed_papers.yml): only "done with the DINO team" is public. {%- endcomment -%}
+{%- for p in site.data.embargoed_papers %}
+<article class="locked-card" id="{{ p.id }}" data-say="{{ p.say }}" aria-label="Unpublished paper from {{ p.org }}, under embargo">
+  <div class="locked-media" aria-hidden="true">
+    <svg class="lock-icon" viewBox="0 0 48 48" focusable="false"><rect x="10" y="21" width="28" height="21" rx="4"/><path d="M16 21v-6a8 8 0 0 1 16 0v6"/><circle cx="24" cy="30.5" r="2.6"/><path d="M24 33v4"/></svg>
+  </div>
+  <div class="locked-body">
+    <p class="locked-eyebrow">Under embargo</p>
+    <p class="locked-title">Paper #{{ forloop.index }} with the DINO team at Meta</p>
+    <p class="locked-meta">{{ p.org }} · {{ p.year }}</p>
+    <p class="locked-note">Title, authors and details will appear here once the work is public.</p>
+  </div>
+</article>
+{%- endfor %}

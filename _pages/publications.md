@@ -21,6 +21,7 @@ nav_order: 1
 {%- for y in page.years %}
 <section class="pub-year" data-year="{{ y }}">
   <h2 class="year">{{y}}</h2>
+  {%- if y == 2026 %}{% include locked_cards.html %}{% endif %}
   {% bibliography -f papers -q @*[year={{y}}]* %}
 </section>
 {% endfor %}

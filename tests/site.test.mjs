@@ -124,3 +124,20 @@ test('Meta timeline card lists DINO managers and collaborator', () => {
   assert.match(card, /Managers:\s*Maxime Oquab,\s*Piotr Bojanowski/);
   assert.match(card, /Collaborator:\s*<a href="https:\/\/shaamallow\.com\/"[^>]*>Eyal Benaroche<\/a>/);
 });
+
+test('two embargoed DINO-team papers show as locked cards (publications 2026 + About)', () => {
+  const pubs = loadSite('publications/index.html');
+  const y2026 = pubs.match(/<section class="pub-year" data-year="2026">[\s\S]*?<\/section>/)[0];
+  const locked = y2026.match(/<article class="locked-card"[\s\S]*?<\/article>/g) || [];
+  assert.equal(locked.length, 2);
+  for (const c of locked) {
+    assert.match(c, /Under embargo/);
+    assert.match(c, /Meta/);
+    assert.match(c, /DINO Team/);
+    assert.match(c, /class="lock-icon"/);
+    assert.match(c, /data-say="[^"]+"/);
+  }
+  const about = loadSite('index.html');
+  const sel = about.match(/<div class="publications selected-papers">[\s\S]*?see-all-papers/)[0];
+  assert.equal(count(sel, /<article class="locked-card"/), 2);
+});
