@@ -1,14 +1,9 @@
 name: deploy
 
+# Legacy gh-pages deploy. The site is published by jekyll.yml (GitHub Pages "workflow" source),
+# so this only runs on demand; on push it failed (403: the token can't push to gh-pages).
 on:
-  push:
-    branches:
-      - master
-      - main
-  pull_request:
-    branches:
-      - master
-      - main
+  workflow_dispatch:
 
 jobs:
   deploy:
