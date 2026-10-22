@@ -1,0 +1,20 @@
+/*******************************************************************************
+ * Visitor map (MapMyVisitors widget, About page)
+ ******************************************************************************/
+
+// The widget draws a fixed light map; frame it as a light card so it reads in both themes.
+.visitor-map {
+  margin-top: 2.5rem;
+
+  .visitor-map-frame {
+    display: inline-block;
+    max-width: 100%;
+    padding: .75rem;
+    background: #ffffff;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 12px;
+    overflow: hidden;
+
+    img, canvas, a { max-width: 100%; height: auto; }
+  }
+}

@@ -74,6 +74,11 @@ layout: default
           {%- include academic.html %}
           {%- endif %}
 
+          {% if site.mapmyvisitors_token -%}
+          <!-- Visitor map -->
+          {%- include visitor_map.html %}
+          {%- endif %}
+
           {%- if page.social %}
           <!-- Social -->
           <div class="social">
