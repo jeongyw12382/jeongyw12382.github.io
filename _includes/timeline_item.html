@@ -19,6 +19,9 @@
                   {%- if it.mentor %}
                   <p class="tl-mentor">{{ it.mentor_label | default: 'Mentor' }}: {% if it.mentor_url %}<a href="{{ it.mentor_url }}">{{ it.mentor }}</a>{% else %}{{ it.mentor }}{% endif %}</p>
                   {%- endif %}
+                  {%- for group in it.people %}
+                  <p class="tl-mentor">{{ group.label }}: {% for p in group.names %}{% if p.url %}<a href="{{ p.url }}">{{ p.name }}</a>{% else %}{{ p.name }}{% endif %}{% unless forloop.last %}, {% endunless %}{% endfor %}</p>
+                  {%- endfor %}
                   <p class="tl-blurb">{{ it.blurb }}</p>
                 </div>
               </li>

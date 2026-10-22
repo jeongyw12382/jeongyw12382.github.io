@@ -117,3 +117,10 @@ test('timeline styles and script are shipped', () => {
   assert.match(css, /\.tl-journey/);
   assert.match(loadSite('index.html'), /<script defer src="\/assets\/js\/timeline\.js"><\/script>/);
 });
+
+test('Meta timeline card lists DINO managers and collaborator', () => {
+  const html = loadSite('index.html');
+  const card = html.match(/<li class="tl-item"[^>]*>(?:(?!<\/li>)[\s\S])*Meta \(DINO Team\)[\s\S]*?<\/li>/)[0];
+  assert.match(card, /Managers:\s*Maxime Oquab,\s*Piotr Bojanowski/);
+  assert.match(card, /Collaborator:\s*<a href="https:\/\/shaamallow\.com\/"[^>]*>Eyal Benaroche<\/a>/);
+});
