@@ -152,17 +152,21 @@ try:
         card.scroll_into_view_if_needed(); bx = card.bounding_box()
         pg.touchscreen.tap(bx['x'] + bx['width'] / 2, bx['y'] + bx['height'] / 2); pg.wait_for_timeout(300)
         check('(f) mobile tap no errors', not errs, errs[:3])
-        # (j) news ticker can be paused by touch (WCAG 2.2.2)
+        # (j) news shows one item at a time, rotates, and can be paused by touch (WCAG 2.2.2)
         pg.evaluate("scrollTo(0,0)"); pg.wait_for_timeout(200)
+        vis = "[...document.querySelectorAll('.news-banner .news-item')].filter(li=>!li.hidden).map(li=>li.textContent.trim())"
+        one = pg.evaluate(vis)
+        pg.wait_for_timeout(6500)
+        two = pg.evaluate(vis)
+        check('(j) news shows one item and rotates', len(one) == 1 and len(two) == 1 and one != two, [one, two])
         pz = pg.locator('.news-banner .news-pause')
         if pz.count() and pz.is_visible():
             pz.tap(); pg.wait_for_timeout(200)
-            st = pg.evaluate("[document.querySelector('.news-pause').getAttribute('aria-pressed'), getComputedStyle(document.querySelector('.news-track')).animationPlayState]")
             pg.touchscreen.tap(10, 700); pg.wait_for_timeout(200)  # focus leaves the banner; stays paused
-            st2 = pg.evaluate("getComputedStyle(document.querySelector('.news-track')).animationPlayState")
-            check('(j) news pause toggle pauses on touch', st == ['true', 'paused'] and st2 == 'paused', [st, st2])
+            a1 = pg.evaluate(vis); pg.wait_for_timeout(6500); a2 = pg.evaluate(vis)
+            check('(j) news pause toggle stops rotation on touch', pz.get_attribute('aria-pressed') == 'true' and a1 == a2, [a1, a2])
         else:
-            check('(j) news pause toggle pauses on touch', False, 'no visible .news-pause')
+            check('(j) news pause toggle stops rotation on touch', False, 'no visible .news-pause')
         pg.context.close()
         # (g) screenshots
         for dev, vp, kw in (('desktop', {'width': 1280, 'height': 900}, {}), ('mobile', {'width': 375, 'height': 800}, {'has_touch': True, 'is_mobile': True})):

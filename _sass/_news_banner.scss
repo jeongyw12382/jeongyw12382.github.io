@@ -23,23 +23,25 @@
   }
 
   .news-track {
-    display: flex;
-    width: max-content;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   .news-item {
-    flex: none;
     white-space: nowrap;
-    padding-right: 3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     time { margin-right: 0.4rem; color: var(--global-text-color-light); }
     a { color: var(--global-theme-color); }
+    &[hidden] { display: none; }
+    &.is-current { animation: news-in .45s ease-out; }
   }
+  // before JS (or without it) show just the newest item
+  &:not(.is-rotating) .news-item:not(:first-child) { display: none; }
 
-  .news-controls { display: none; flex: none; }
+  .news-controls { display: flex; flex: none; }
 
   button {
     flex: none;
@@ -53,13 +55,6 @@
     &:hover, &:focus-visible { color: var(--global-theme-color); }
   }
 
-  &.is-animated {
-    .news-track { animation: news-scroll 40s linear infinite; }
-    &:hover .news-track,
-    &:focus-within .news-track,
-    &.is-paused .news-track { animation-play-state: paused; }
-  }
-
   .news-pause {
     font-size: .8rem;
     letter-spacing: -.1em;
@@ -71,20 +66,15 @@
     }
   }
 
-  &.is-static {
-    .news-controls { display: flex; }
-    .news-track { width: auto; }
-    .news-item { white-space: normal; padding-right: 0; }
-  }
 }
 
-@keyframes news-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+@keyframes news-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .news-banner .news-track { animation: none !important; }
+  .news-banner .news-item { animation: none !important; }
 }
 
 @media (max-width: 575px) {
