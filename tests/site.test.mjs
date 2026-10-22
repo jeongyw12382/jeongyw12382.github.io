@@ -141,3 +141,11 @@ test('two embargoed DINO-team papers show as locked cards (publications 2026 + A
   const sel = about.match(/<div class="publications selected-papers">[\s\S]*?see-all-papers/)[0];
   assert.equal(count(sel, /<article class="locked-card"/), 2);
 });
+
+test('2026 papers are newest-first by venue date: NeurIPS > ICML > arXiv (Mar) > tech report (Jan)', () => {
+  const want = ['jeon2026larc', 'jeon2026valr', 'gwak2026cog3dmap', 'jeong2026mvsam'];
+  for (const page of ['publications/index.html', 'index.html']) {
+    const keys = [...loadSite(page).matchAll(/class="paper-card"[^>]*data-key="([^"]+)"/g)].map(m => m[1]).filter(k => want.includes(k));
+    assert.deepEqual(keys, want, page);
+  }
+});
